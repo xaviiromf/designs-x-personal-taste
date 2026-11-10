@@ -113,10 +113,23 @@ Effects are added here batch by batch as designs are accepted, as built. The art
 
 | Design | Ground | Name | Subject |
 |---|---|---|---|
+| `portfolio-isometric-artist` | `#0C3F8F` | blueprint cobalt | an isometric pixel illustrator |
 | `crud-memory-card` | `#27323E` | gunmetal slate | the house memory card of a retro game bar |
 | `nav-game-museum` | `#0F4638` | verdigris | a museum of arcade and home video games |
 | `faq-handheld-clinic` | `#2F3210` | olive drab | a mail-in repair clinic for handheld consoles |
 | `contact-hackerspace` | `#3B1014` | oxblood | a hackerspace at the end of a harbour pier |
+
+### `portfolio-isometric-artist`
+- **Signature:** commissions as an isometric city on a low-resolution canvas: one tower per year, one floor slab per commission in the hue of its kind, read against an axis.
+- **Pointer:** survey: the tower under the pointer steps its floors apart so they can be counted, with a dimension line and total beside it (touch: tap; keyboard: roving buttons on the axis labels).
+- **Scroll:** construction: a crane's hook carries each slab down in whole steps and sets it; the scrub position decides how many floors stand.
+- **Load:** lot tiles laid in diagonal rows, then the headline lines land like slabs, bottom line first, in two whole steps.
+- **Button:** editor zoom: a pixel grid cuts in over the face in two steps (16 px, then 8 px) with a colour swap; nudge: the face jumps one grid cell down and right while pressed.
+- **Link:** stair underline: eight segments step up into a 2:1 staircase.
+- **Field:** a drafting ruler under the field with a marker that jumps to the width of the typed text.
+- **Dialog:** stands up: from a flat isometric tile to the screen plane in four stepped frames.
+- **Success:** topping out: a small tower with one floor per answer, windows switching on floor by floor, then a pennant.
+- **Other:** regrouping demolishes the towers floor by floor and rebuilds them; picked tiles of an isometric 10x10 floor rise in an anti-diagonal sweep.
 
 ### `crud-memory-card`
 - **Signature:** a 15-block memory card; each save sits in one to three blocks in its game's hue, with a two-frame identicon generated from the player tag and link pips between adjacent blocks.

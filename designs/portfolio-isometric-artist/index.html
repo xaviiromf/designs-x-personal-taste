@@ -236,14 +236,14 @@
   }
   /* Under the pointer a key shows the editor grid at once; while it is pressed its rim is the picking orange. */
   @media (hover: hover) {
-    :is(.key[aria-pressed="false"], .chip, .phase):hover {
+    :is(.key, .chip, .phase):hover {
       border-color: var(--paper);
       background-image: linear-gradient(var(--lot-line) 1px, transparent 0), linear-gradient(90deg, var(--lot-line) 1px, transparent 0);
       background-size: var(--cell) var(--cell);
     }
   }
-  :is(.key, .chip, .phase):active { border-color: var(--crane); }
-  .key[aria-pressed="true"] { border-color: var(--paper); background: var(--paper); color: var(--blueprint); }
+  .key[aria-pressed="true"] { border-color: var(--paper); background-color: var(--paper); color: var(--blueprint); }
+  :is(.key, .chip, .phase):active { border-color: var(--crane); box-shadow: inset 0 0 0 2px var(--crane); }
   .seg { display: flex; }
   .seg .key + .key { margin-left: -2px; }
   .seg .key[aria-pressed="true"] { position: relative; }
@@ -1187,10 +1187,9 @@
         const gy = d - gx, p = phase[gy * N + gx];
         if (p === undefined) continue;
         const up = (d <= S.sweep ? S.pick : S.old) === p, cx = OX + (gx - gy) * 8, cy = OY + d * 4 - (up ? LIFT : 0);
-        for (let r = 0; r < 7; r++) {   // the tile: rows of 4, 8, 12, 16, 12, 8, 4, with its two top edges left dark
-          const w = r < 4 ? 2 * (r + 1) : 2 * (7 - r);
-          g.fillStyle = C.tone[p]; g.fillRect(cx - w, cy + r, 2 * w, 1);
-          if (r < 4) { g.fillStyle = C.ground; g.fillRect(cx - w, cy + r, 2, 1); g.fillRect(cx + w - 2, cy + r, 2, 1); }
+        for (let r = 0; r < 7; r++) {   // the tile: rows of 4, 8, 12, 16, 12, 8, 4, less one pixel at each end of its top edges
+          const w = r < 4 ? 2 * (r + 1) : 2 * (7 - r), e = r < 4 ? 1 : 0;
+          g.fillStyle = C.tone[p]; g.fillRect(cx - w + e, cy + r, 2 * (w - e), 1);
         }
         if (up) {   // a lifted tile shows its two walls in the picking orange
           g.fillStyle = C.crane;
@@ -1355,7 +1354,9 @@
   };
   if (lib && !reduced.matches) { city.S.lot = -1; city.S.cap = 0; }   // the load sequence lays the lot; until then, only the crane
   paint(); city.read(); hours.read();
-  if (window.matchMedia('(hover: none)').matches) $('#hint').textContent = 'Tap a tower to count its floors. Tap the lot to let go.';
+  const hintFor = (fine) => { $('#hint').textContent = fine ? 'Move over a tower to count its floors. Scroll to build the rest of the city.'
+    : window.matchMedia('(hover: none)').matches ? 'Tap a tower to count its floors. Tap the lot to let go.' : 'Pick a tower, or the label under it, to count its floors.'; };
+  hintFor(false);
   if (window.ResizeObserver) new ResizeObserver(() => city.measure()).observe($('#city'));
   window.addEventListener('resize', () => city.measure());
 
@@ -1399,7 +1400,7 @@
     const DROP = parseFloat(css('--drop'));
 
     root.classList.add('fx'); // pins the first screen on wide windows
-    if (fine) hint.textContent = 'Move over a tower to count its floors. Scroll to build the rest of the city.';
+    hintFor(fine);
 
     // Lenis on GSAP's clock. Touch keeps native scrolling.
     lenis = new Lenis({ lerp: .1, smoothWheel: true, autoRaf: false });
@@ -1500,6 +1501,7 @@
       gsap.ticker.lagSmoothing(500, 33);
       lenis.destroy(); lenis = null;
       root.classList.remove('fx');
+      hintFor(false);
       stage.style.removeProperty('--stage-h');
       gsap.set([...lines, ...cut], { clearProps: 'transform,visibility' });
       if (S.mode !== wanted) city.regroup(wanted);
