@@ -1236,7 +1236,7 @@
         const shut = (m) => !!blockAt(hx + m[0], hy + m[1]) && !blockAt(hx, hy);
         if (st.avoid && shut(mv)) {
           const alt = st.axis === 'x' ? (dy ? [0, Math.sign(dy)] : null) : (dx ? [Math.sign(dx), 0] : null);
-          if (alt && !shut(alt)) mv = alt;
+          if (alt && !st.slide && !shut(alt)) mv = alt; // once sliding, keep sliding until the way ahead opens
           else {
             if (!st.slide) {
               const q = blockAt(hx + mv[0], hy + mv[1]);
