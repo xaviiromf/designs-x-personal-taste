@@ -526,7 +526,7 @@
             <div class="view-in">
               <canvas class="space" width="224" height="150" aria-hidden="true"></canvas>
               <div class="tags" aria-hidden="true"></div>
-              <p class="hud cut" role="status"><i class="hud-mark" aria-hidden="true"></i><span id="hud-step">Step 1 of 5, Muster</span><span class="hud-sys" id="hud-sys">Docked at Halfway Station</span></p>
+              <p class="hud cut" role="status"><i class="hud-mark" aria-hidden="true"></i><span id="hud-step">Step 1 of 5, Muster</span><span class="hud-sys" id="hud-sys">At Halfway Station</span></p>
             </div>
           </div>
           <nav class="route cut" aria-label="Steps of the night">
@@ -649,11 +649,11 @@
   };
   // One star system per step: the body the convoy is flying towards, and the line the HUD shows under the step.
   const SYSTEMS = [
-    { body: 'station', note: 'Docked at Halfway Station' },
-    { body: 'binary', note: 'Bound for the Twin Lamps' },
+    { body: 'station', note: 'At Halfway Station' },
+    { body: 'binary', note: 'Near the Twin Lamps' },
     { body: 'ringed', note: 'In the lane off Ringfall' },
-    { body: 'depot', note: 'On approach to Tallow Dock' },
-    { body: 'moon', note: 'Parked over the Quiet Moon' }];
+    { body: 'depot', note: 'Docking at Tallow Dock' },
+    { body: 'moon', note: 'Over the Quiet Moon' }];
   // A 5x7 pixel alphabet for the constellation: seven rows per glyph, each row five bits written as one base-32 digit.
   const GLYPHS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
   const BITS = 'EHHVHHHUHHUHHUEHGGGHEUHHHHHUVGGUGGVVGGUGGGEHGNHHFHHHVHHHE44444E72222ICHIKOKIHGGGGGGVHRLLHHHHPLJHHHEHHHHHEUHHUGGGEHHHLIDUHHUKIHFGGE11UV444444HHHHHHEHHHHHA4HHHLLLAHHA4AHHHHA4444V1248GV'
@@ -790,9 +790,13 @@
       const rows = [...text].map(glyph).filter(Boolean).slice(0, 3);
       if (!rows.length || !W) return false;
       end();
-      const P = clamp(3, 6, Math.floor((H * .36 - 8) / 7));   // cell pitch: the letters live in the sky above the convoy
-      const width = rows.length * 4 * P + (rows.length - 1) * 2 * P + 1;
-      const hudR = Math.ceil(hud.offsetWidth / S) + 3;        // keep clear of the HUD in the corner
+      // The letters live in the sky above the convoy, to the right of the HUD in the corner. The cell pitch is
+      // as large as that sky allows (6px at most) and shrinks to 3px before a third letter would be dropped.
+      const hudR = Math.ceil(hud.offsetWidth / S) + 3, span = (n, p) => n * 4 * p + (n - 1) * 2 * p + 1;
+      let P = clamp(3, 6, Math.floor((H * .36 - 8) / 7));
+      while (P > 3 && hudR + span(rows.length, P) > W - 2) P--;
+      while (rows.length > 1 && hudR + span(rows.length, P) > W - 2) rows.pop();
+      const width = span(rows.length, P);
       const x0 = clamp(Math.min(hudR, W - width - 2), W - width - 2, Math.round((W - width) * .56)), y0 = P > 3 ? 3 : 1;
       const lit = (r, col, row) => col >= 0 && col < 5 && row >= 0 && row < 7 && !!(r[row] & (16 >> col));
       const pts = [], ink = [];
