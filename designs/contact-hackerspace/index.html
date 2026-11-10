@@ -14,21 +14,21 @@
        Colour tokens are six-digit hex: the chart reads them and mixes its brightness steps from them. */
     --watch: #3B1014;      /* oxblood, the red working light: page ground, dialog panel */
     --deep: #26080C;       /* the same oxblood, darker: water on the chart, field wells, label chips, ink on amber and bone faces */
-    --land: #651F27;       /* the same oxblood, lighter: land and piers on the chart (canvas only, 1.5:1 on deep) */
-    --block: #9A3A49;      /* lighter again: buildings, bollards and rails on the chart (canvas only, 2.5:1 on deep) */
+    --land: #651F27;       /* the same oxblood, lighter: land and piers on the chart (1.6:1 on deep), list rules, hover fills (bone on it 10.1:1) */
+    --block: #9A3A49;      /* lighter again: buildings, bollards and rails on the chart (canvas only, 2.7:1 on deep) */
     --scrim: rgb(38 8 12 / .86);   /* dialog backdrop: the deep tone */
-    --bone: #F6ECE4;       /* text and the marks that belong to it: button rims, link Morse (14.2:1 on watch, 15.7:1 on deep) */
-    --dust: #CDAEAA;       /* secondary text, chart grid, resting rules and field strips (8.1:1 on watch, 8.9:1 on deep) */
-    --sweep: #FFB83D;      /* the radar's own light: ping rings, range labels and the range in use, the primary button, focus rings (9.6:1 on watch; deep ink on it 10.6:1) */
-    --door-blip: #B8F26A;  /* the door and the way to it (12.6:1 on watch, 13.9:1 on deep) */
-    --transit: #6FE3F5;    /* public transport: the tram line, its stop, the ferry landing (11.0:1 on watch, 12.2:1 on deep) */
-    --racks: #D2B5FF;      /* where you leave wheels: bike racks and the car park (9.3:1 on watch, 10.3:1 on deep) */
-    --you: #FF9CC2;        /* the visitor, and only the visitor: their blip and their name (8.5:1 on watch, 9.4:1 on deep) */
-    --fault: #FFA08A;      /* validation errors only (8.4:1 on watch, 9.3:1 on deep) */
+    --bone: #F6ECE4;       /* text and the marks that belong to it: button rims, link Morse (14.2:1 on watch, 16.1:1 on deep) */
+    --dust: #CDAEAA;       /* secondary text, chart grid, resting rules and field strips (8.1:1 on watch, 9.1:1 on deep) */
+    --sweep: #FFB83D;      /* the radar's own light: ping rings, range labels and the range in use, the primary button, focus rings (9.6:1 on watch; deep ink on it 10.9:1) */
+    --door-blip: #B8F26A;  /* the door and the way to it (12.6:1 on watch, 14.2:1 on deep) */
+    --transit: #6FE3F5;    /* public transport: the tram line, its stop, the ferry landing (11.0:1 on watch, 12.5:1 on deep) */
+    --racks: #D2B5FF;      /* where you leave wheels: bike racks and the car park (9.3:1 on watch, 10.5:1 on deep) */
+    --you: #FF9CC2;        /* the visitor, and only the visitor: their blip and their name (8.5:1 on watch, 9.6:1 on deep) */
+    --fault: #FFA08A;      /* validation errors only (8.4:1 on watch, 9.5:1 on deep) */
     --lit-1: 1;            /* a blip the ring has just crossed: its hue at full strength... */
-    --lit-2: .74;          /* ...then mixed toward the water in two more steps... */
-    --lit-3: .54;
-    --lit-rest: .38;       /* ...and at rest */
+    --lit-2: .78;          /* ...then mixed toward the water in two more steps... */
+    --lit-3: .62;
+    --lit-rest: .46;       /* ...and at rest */
     --grid-a: .42;         /* chart grid: dust mixed into the water at this strength */
 
     /* Type */
@@ -42,6 +42,7 @@
     --t-lede: 20px;
     --t-h3: 28px;
     --t-num: 44px;                   /* Handjet numerals in the dialog */
+    --t-scope: 11px;                 /* Handjet range and north mark on the chart: this, times --k */
     --t-h2: clamp(46px, min(6.2vw, 12svh), 88px);   /* follows the height too, so short laptops keep the first screen */
     --lh-body: 1.5;
     --lh-lede: 1.45;
@@ -253,7 +254,7 @@
   .scope-range, .scope-n, .scope-px { position: absolute; margin: 0; pointer-events: none; }
   .scope-range, .scope-n {
     top: 0;
-    font: 700 calc(var(--k) * 11px)/.8 var(--font-display);
+    font: 700 calc(var(--k) * var(--t-scope))/.8 var(--font-display);
     font-variation-settings: var(--modules);
   }
   .scope-range { left: 0; color: var(--sweep); }
@@ -311,6 +312,10 @@
   .is-row .readout { grid-column: 1; grid-row: 1; min-height: calc(var(--t-ctl) * 1.35 * 5); margin-top: 0; }
   .is-row .ranges { grid-column: 1; grid-row: 2; grid-template-columns: minmax(0, 1fr); }
   .is-row .legend { grid-column: 1; grid-row: 3; flex-direction: column; align-items: flex-start; margin-top: var(--s2); }
+  /* Tablets, where the chart is stacked but narrower than the column: the same, with the controls on the right. */
+  .radar.is-flip { grid-template-columns: var(--size) var(--side); }
+  .is-flip .scope { grid-column: 1; }
+  .is-flip .readout, .is-flip .ranges, .is-flip .legend { grid-column: 2; }
   @media (hover: hover) {
     .rg:hover .rg-face { background: var(--bone); }
     .rg:hover .rg-in { background: var(--land); }
@@ -764,7 +769,7 @@
         o.fillRect(X(10), Y(9), 5, 1); o.fillRect(X(10), Y(9), 1, 5); o.fillRect(X(10), Y(9) + 4, 5, 1);                   // the lookout, a square on the roof
         [[6, 0], [4, 2], [2, 4]].forEach(([w, dy]) => o.clearRect(X(-12), Y(18) + dy, w, 2));                             // landing steps cut into the pier's corner
         o.fillStyle = col.block;
-        [[3, 7], [1, 10], [0, 11], [1, 10], [3, 7]].forEach(([dx, w], row) => o.fillRect(X(-9) + dx, Y(18) - 8 + row, w, 1));                   // the pilot boat, moored by the steps
+        [[3, 7], [1, 10], [0, 11], [1, 10], [3, 7]].forEach(([dx, w], row) => o.fillRect(X(-9) + dx, Y(18) - 8 + row, w, 1));   // the pilot boat, moored by the steps
       }
       o.globalCompositeOperation = 'destination-in';
       o.beginPath(); disc(c, R, (x, y, n) => o.rect(x, y, n, 1)); o.fill();
@@ -792,7 +797,7 @@
     let you = null;
     let cur = lib ? 0 : 1, k = 3, dpr = 1, reveal = lib && !reduced.matches ? 0 : R;
     let rings = [], hot = new Set(), focus = null, timer = 0, inView = true;
-    const api = { live: false, wake: null, N, C };
+    const api = { live: false, wake: null }; // live: pings travel; wake: starts the motion layer's loop
     const shown = () => [...blips.filter((b) => b.on.includes(cur)), ...(you ? [you] : [])];
     const near = (x, y) => Math.hypot(x - C, y - C) <= reveal + .5;
 
@@ -861,13 +866,14 @@
       const side = getComputedStyle(radar).position === 'sticky', w = layout.clientWidth;
       const max = Math.max(2, Math.min(side ? 4 : 3, Math.floor((side ? w * .5 : w) / N)));
       const top = parseFloat(getComputedStyle(layout.parentElement).paddingTop);
-      radar.classList.remove('is-row');
+      radar.classList.remove('is-row', 'is-flip');
       for (k = max; k > 2; k--) {
         radar.style.setProperty('--k', k);
         if (!side || top + radar.offsetHeight <= window.innerHeight - 4) break;
       }
       // A short, wide window: keep three screen pixels per chart pixel and move the controls beside the scope.
       if (side && k === 2 && w >= 1100 && top + N * 3 <= window.innerHeight - 4) { radar.classList.add('is-row'); k = 3; }
+      if (!side && w >= N * k + 16 + parseFloat(css('--side'))) radar.classList.add('is-row', 'is-flip');
       radar.style.setProperty('--k', k);
       dpr = Math.min(2, Math.ceil(window.devicePixelRatio || 1));
       ink.width = ink.height = N * k * dpr;
@@ -985,7 +991,7 @@
         const on = all.filter((b) => b === you || b.on.includes(cur));
         const text = kind === 'door' ? undefined : kind === 'you' ? `You are at the landward edge of the chart, ${you.name}.`
           : 'From the door: ' + on.map((b) => `${b.name.toLowerCase()} ${metres(Math.hypot(b.x, b.y), 5)}, bearing ${bearing(b.x, b.y)}`).join('; ') + '.';
-        on.forEach((b, n) => emit(...b.p[cur], { from: b, say: text, ...o }));
+        on.forEach((b) => emit(...b.p[cur], { from: b, say: text, ...o }));
       },
       arrive(name) { // the visitor: a pink blip at the landward edge, the same place at every range
         const p = [150, 105];

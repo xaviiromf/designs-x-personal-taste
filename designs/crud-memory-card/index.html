@@ -257,6 +257,13 @@
     border-left: 2px solid var(--pencil);
   }
   @media (max-width: 899px) { .detail { border-left: 0; padding-inline: 0; } }
+  /* Beside the card the panel runs to the card's height: the legend and the actions settle on its bottom rule. */
+  @media (min-width: 900px) {
+    .detail { display: flex; flex-direction: column; border-bottom: 2px solid var(--pencil); }
+    #d-over, #d-save { flex: 1; display: flex; flex-direction: column; }
+    .detail .legend { margin-top: auto; padding-top: var(--s3); gap: var(--s2); }
+    .detail .d-foot { margin-top: auto; padding-top: var(--s3); }
+  }
   .detail h3, .saves h3, .rules h3 { margin: 0; font: 600 var(--t-h3)/1.2 var(--font-text); letter-spacing: -.01em; }
   .d-title { display: flex; align-items: center; gap: var(--s2); overflow-wrap: anywhere; }
   .d-title .mark { width: var(--s3); height: var(--s3); }
@@ -509,6 +516,9 @@
   @media (min-width: 640px) { .rows { grid-template-columns: repeat(2, minmax(0, 1fr)); } .row-wide { grid-column: 1 / -1; } }
   .row { min-width: 0; margin: 0; padding: 0; border: 0; }
   .lbl, .row legend { display: block; padding: 0; margin-top: var(--s3); font-weight: 600; }
+  /* A floated legend lays out like a label, so the fieldset rows line up with the field rows beside them. */
+  .row legend { float: left; width: 100%; }
+  .row legend + * { clear: both; }
   .field { position: relative; margin-top: var(--s1); }
   .field input, .field select {
     display: block;
@@ -550,8 +560,10 @@
   .row.is-ok .wp i { transform: translateX(0); }
   .row.is-bad .wp { background: var(--busy); box-shadow: none; }
   .row.is-bad .field input, .row.is-bad .field select, .row.is-bad .seg span { border-color: var(--busy); }
-  .segs { position: relative; display: inline-flex; max-width: 100%; flex-wrap: wrap; align-items: center; gap: var(--s2); margin-top: var(--s1); padding-right: calc(var(--wp-w) + var(--s3)); }
-  .segs .wp { right: 0; }
+  .segs { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s2); margin-top: var(--s1); }
+  /* A group's tab sits in its own socket: the same well and 2px outline as a field, at the end of the options. */
+  .sock { position: relative; flex: none; width: calc(var(--wp-w) + 2 * var(--s3)); height: var(--tap); border: 2px solid var(--pencil); background: var(--shell-lo); }
+  .row.is-bad .sock { border-color: var(--busy); }
   .seg { position: relative; display: block; cursor: pointer; -webkit-tap-highlight-color: transparent; }
   .seg span {
     display: flex; align-items: center;
@@ -755,7 +767,7 @@
             <div class="segs">
               <label class="seg"><input class="vh" type="radio" name="finished" value="yes" required aria-describedby="m-finished"><span>Yes</span></label>
               <label class="seg"><input class="vh" type="radio" name="finished" value="no" required aria-describedby="m-finished"><span>Not yet</span></label>
-              <span class="wp" aria-hidden="true"><i></i></span>
+              <span class="sock" aria-hidden="true"><span class="wp"><i></i></span></span>
             </div>
             <p class="msg" id="m-finished" data-hint="Saw the ending at least once.">Saw the ending at least once.</p>
           </fieldset>
@@ -765,7 +777,7 @@
               <label class="seg"><input class="vh" type="radio" name="blocks" value="1" required aria-describedby="m-blocks"><span>1 block</span></label>
               <label class="seg"><input class="vh" type="radio" name="blocks" value="2" required aria-describedby="m-blocks"><span>2 blocks</span></label>
               <label class="seg"><input class="vh" type="radio" name="blocks" value="3" required aria-describedby="m-blocks"><span>3 blocks</span></label>
-              <span class="wp" aria-hidden="true"><i></i></span>
+              <span class="sock" aria-hidden="true"><span class="wp"><i></i></span></span>
             </div>
             <p class="msg" id="m-blocks" data-hint="">The game tells you on its save screen.</p>
           </fieldset>
@@ -937,7 +949,7 @@
     const errors = Object.fromEntries(Object.entries(r).map(([k, v]) => [k, v.msg]));
     if (r.tag.ok && r.game.ok) {
       const twin = state.saves.find((s) => s.id !== editingId && s.game === r.game.value && s.tag.toLocaleLowerCase('pl') === r.tag.value.toLocaleLowerCase('pl'));
-      if (twin) errors.tag = `${twin.tag} already has a ${GAMES[twin.game]} save on ${blockWord(twin.blocks)}. Edit that save instead.`;
+      if (twin) errors.tag = `${twin.tag} already has a ${GAMES[twin.game]} save. Edit that one instead.`;
     }
     if (r.blocks.ok) {
       const mine = editingId ? (state.saves.find((s) => s.id === editingId)?.blocks.length || 0) : 0;
