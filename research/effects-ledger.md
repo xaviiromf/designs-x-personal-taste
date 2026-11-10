@@ -118,6 +118,10 @@ Effects are added here batch by batch as designs are accepted, as built. The art
 | `nav-game-museum` | `#0F4638` | verdigris | a museum of arcade and home video games |
 | `faq-handheld-clinic` | `#2F3210` | olive drab | a mail-in repair clinic for handheld consoles |
 | `contact-hackerspace` | `#3B1014` | oxblood | a hackerspace at the end of a harbour pier |
+| `portfolio-security-researcher` | `#1B3A10` | moss | an independent security researcher |
+| `crud-cartridge-stall` | `#4D270B` | rust | a second-hand game stall at a flea market |
+| `process-convoy-night` | `#0B3350` | petrol blue | a flight club's weekly convoy in a space-trading simulator |
+| `footer-cartridge-publisher` | `#3B2731` | dusty mauve | a publisher of new cartridges for old consoles |
 
 ### `portfolio-isometric-artist`
 - **Signature:** commissions as an isometric city on a low-resolution canvas: one tower per year, one floor slab per commission in the hue of its kind, read against an axis.
@@ -174,3 +178,47 @@ Effects are added here batch by batch as designs are accepted, as built. The art
 - **Field:** a strip of pixel noise under the field that settles to a flat line when the value is valid.
 - **Dialog:** clock wipe: a clip-path polygon sweeps clockwise in eight steps.
 - **Success:** the visitor's blip joins the chart and the door pings it.
+
+### `portfolio-security-researcher`
+- **Signature:** a trace that follows the visitor along grid lines only: one cell per step, right-angle turns, a solid line that keeps the last 48 cells; content blocks are obstacles, so the line hugs the edge of whatever is pointed at.
+- **Pointer:** the trace (touch: a drag draws it, a tap routes an L-shaped run; keyboard: the head runs to the focused control and once around it).
+- **Scroll:** the embargo lifts: each write-up's lifecycle chip steps through reported, triaged, fixed, disclosed, then redaction bars over its words are cut away one at a time.
+- **Load:** the head enters along the row under the headline and boxes the primary button.
+- **Button:** packets: the face splits into three segments with opening gaps; on press they jump right one after another.
+- **Link:** endpoints: a square node at each end of the underline.
+- **Field:** double wall: a second border inside the first; a breached (dashed) outer wall when invalid.
+- **Dialog:** reassembled: three horizontal bands step in from alternate sides.
+- **Success:** a three-way handshake drawn as three arrows between two endpoints.
+
+### `crud-cartridge-stall`
+- **Signature:** a crate as a grid inventory: each record is a tile whose size depends on its kind, packed first-fit; tidying clears the crate and deals the tiles back one at a time.
+- **Pointer:** a price tag on a string drops from the tile's corner in two steps (touch: tap; keyboard: grid arrows).
+- **Scroll:** tally marks (four strokes and a diagonal) stamped one at a time as the totals rise through the viewport.
+- **Load:** the stall's lamps come on: the page starts in two unlit tones and cuts to full colour in two halves.
+- **Button:** a starburst sticker stamped on the corner in two frames; a till flag pops up above the button on press.
+- **Link:** two jagged chalk lines, the second a moment after the first.
+- **Field:** a paper tag: a string is threaded and knotted through its hole on focus; a live reading of the typed value in its type's format.
+- **Dialog:** hung on a peg: tilted 4 degrees, then 2, then level.
+- **Success:** chalked up: the tile is dealt in with its tag and a new tally mark is stamped; delete strikes a mark, with Undo.
+
+### `process-convoy-night`
+- **Signature:** the jump: between steps every star stretches into a stepped streak from the vanishing point, the field cuts to that step's own star system, and the streaks collapse.
+- **Pointer:** break formation: pointing at a wing's chip moves that wing's three ships ahead and labels them (touch: tap toggles; keyboard: focus).
+- **Scroll:** scroll chooses the step; each boundary crossed is one jump, and a fast scroll across several is a single jump to the last.
+- **Load:** dropping out of a jump: full streaks collapse to stars.
+- **Button:** thrust: an exhaust plume of three blocks builds off the hull's left edge; burn: the hull jumps right and the plume doubles on press.
+- **Link:** the underline shoots past the end of the text and thins, like a star stretching.
+- **Field:** docking clamps close onto the field's two ends.
+- **Dialog:** the airlock cycles: frame and a four-cell pressure bar first, then the content.
+- **Success:** a constellation: stars step out of the field to spell the callsign's initials, hold, and drift back.
+
+### `footer-cartridge-publisher`
+- **Signature:** the wordmark as dust: thousands of square specks sampled from the display face; a breath blows them along the pointer's direction and they walk home in whole pixels.
+- **Pointer:** the breath (touch: a drag blows, a tap puffs; keyboard: a "Blow the dust off" button sends a gust, and focusing a link puffs the word above it).
+- **Scroll:** the dust settles: specks fall into place row by row, the name building from its feet upward.
+- **Load:** column titles stuck on like labels: a hollow plate for one frame, then filled (on first view of the footer).
+- **Button:** a cartridge that lifts on its gold contact fingers; pushed back into its slot on press.
+- **Link:** three specks fly off the end of the underline.
+- **Field:** a stepped notch cut into the field's corner; the end label takes the chosen line's hue.
+- **Dialog:** pulled out of its sleeve: the panel slides out from behind a fixed spine in four steps.
+- **Success:** an end label with the visitor's email on a ruled line, and one gust across the wordmark.
