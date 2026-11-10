@@ -763,6 +763,8 @@
         o.fillStyle = col.land;
         o.fillRect(X(10), Y(9), 5, 1); o.fillRect(X(10), Y(9), 1, 5); o.fillRect(X(10), Y(9) + 4, 5, 1);                   // the lookout, a square on the roof
         [[6, 0], [4, 2], [2, 4]].forEach(([w, dy]) => o.clearRect(X(-12), Y(18) + dy, w, 2));                             // landing steps cut into the pier's corner
+        o.fillStyle = col.block;
+        [[3, 7], [1, 10], [0, 11], [1, 10], [3, 7]].forEach(([dx, w], row) => o.fillRect(X(-9) + dx, Y(18) - 8 + row, w, 1));                   // the pilot boat, moored by the steps
       }
       o.globalCompositeOperation = 'destination-in';
       o.beginPath(); disc(c, R, (x, y, n) => o.rect(x, y, n, 1)); o.fill();
