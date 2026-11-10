@@ -1,100 +1,105 @@
 ---
 title: Capsule machine testimonials
 section: testimonials
-subject: Capsule Club, a fictional monthly subscription from a three-person studio in Nagoya that posts one pixel-creature figure, a sticker and a card in a capsule. Nine subscribers say what they did with the figures, what went wrong and who they gave it to.
-aesthetic: A toy capsule machine drawn in flat pixels on electric violet. Pixel-disc capsules in three series hues, a brass crank with four detents, paper slips that sit between the halves of a capsule, and a coin that drops into every button.
+subject: Capsule Club, a fictional monthly subscription from a three-person studio in Nagoya that posts one capsule a month (a small pixel-creature figure by an independent artist, a sticker and the artist's card), in three series named Pond, Attic and Rooftop. Nine subscribers say what they did with the figures, what went wrong and how it was fixed, and who they give it to.
+aesthetic: "A generic coin-operated capsule machine drawn in whole pixels on electric violet: a glass dome holding a staggered pile of 24 two-tone capsules, a brass crank with four detents, a chute and a tray. Every quote is a milk paper slip printed in violet ink between the two stepped halves of its capsule, from the card at the top to the list and the form."
 mode: dark
 fonts:
-  - Handjet (Google Fonts, variable). Display only: the h2, set at 700 with ELSH 2 and ELGR 1 so the modules are square tiles.
-  - Host Grotesk (Google Fonts, variable wght 300-800). Everything else: quotes at 500, names and buttons at 700, tabular-nums on months, sizes and dates.
-js: Draws the machine on an 84 x 106 canvas and runs its pile, crank and chute logic, fills the card, parses the nine testimonials from the list in the page, validates the subscription form, handles the dialog and, with the libraries, plays the load, the scrubbed capsule halves and the dialog and success frames.
+  - Handjet (Google Fonts, variable). Display only, at ELSH 2 and ELGR 1 so its modules are square tiles. Used for the H2 at weight 700 and nothing else.
+  - Host Grotesk (Google Fonts, variable 300-800). Everything else, 17px body, 13px minimum, with tabular figures in the facts, the counter and the meta lines.
+js: Draws the machine on a 128 x 184 canvas scaled by whole pixels, turns a crank in quarter-turn detents (drag, tap, keyboard), plays the release, settle, chute and lid steps and cuts the card, scrubs the list's capsules open, and runs the subscription form, the dialog and the confirmation (nothing is sent).
 libraries: [GSAP 3.15 (ScrollTrigger), Lenis 1.3.26]
-tags: [testimonials, capsule, vending, subscription, canvas, crank, pointer, dialog, form, dark, violet, gsap, lenis]
+tags: [testimonials, subscription, capsule, toy, vending machine, canvas, rotary control, pixel, violet, dialog, form, dark, gsap, lenis]
 use_when:
-  - A subscription, collectible or drop-based product whose reviews are best met one at a time, as something the visitor draws out.
-  - You want testimonials that are all present in plain text but still give the visitor something to operate.
-  - The brand is playful and small, with a physical object (a box, a tin, a machine) that can stand for the content.
+  - Testimonials for a subscription box, a blind-box toy line or anything that arrives sealed and is opened by the customer.
+  - A set of short quotes (six to twelve) that are worth reading one at a time and also in full.
+  - The product comes in a few series, editions or flavours that can each own one hue.
 avoid_when:
-  - Testimonials that must be compared side by side, or carry star ratings and numbers to scan. The machine shows one at a time.
-  - Serious or regulated sectors, where a toy machine reads as a joke.
-  - A page that already has a large canvas or a pointer effect near the first screen.
+  - Quotes longer than about 60 words: the slip reserves the height of the longest one, and the machine only shows one at a time.
+  - Serious or regulated subjects (health, finance, legal). A toy machine makes every quote feel like a prize.
+  - Pages that already have a playful hero or another large drawing beside the copy. Two machines fight.
 ---
 
 ## Why it works
 
-**The one bold idea: a testimonial is what comes out of a capsule.** The machine on the right is the whole signature. A dome holds 24 pixel-disc capsules in the three series hues. Turn the crank one full turn and one capsule leaves: the pile settles in whole steps, the capsule goes down the chute cell by cell to the tray, its top half lifts off in three steps, and the card on the left cuts to that subscriber's words. The capsule that falls is the colour of the series the subscriber started with, because the order in which the 24 capsules will leave is simulated before the dome is filled, and each capsule is given the series of the card it will bring. Nothing about the machine is decoration: its colours, its count ("23 capsules in the dome") and its tray all say what the card is.
+**The one bold idea: a testimonial is something that comes out of a capsule.** The machine on the right is the reason to read. One full turn of its crank lets one capsule out of the pile: the capsules above the gap settle down in whole steps, the capsule goes down the chute one cell at a time, lands in the tray, and its lid lifts off in three steps. On the first of those steps the card on the left cuts to that subscriber's words, and the card's own top half lifts with the tray lid, step for step. The slip that pokes out from between the tray capsule's halves carries the subscriber's first name and points back at the card. So the visitor sees where the words came from, and the colour of the capsule is always the colour of the series that subscriber started with.
 
-- **Nothing is hidden behind the machine.** The card shows one testimonial; "Read all nine" is a plain ordered list of all of them, each on a milk paper slip between the two halves of its capsule. The card and the machine read their data from that list, so there is one copy of the words. The queue cycles through all nine in shuffled order before any repeats, and never repeats across the seam. The dome refills with a hard cut when it is empty.
-- **The crank is a real rotary control.** It has four detents (up, right, down, left). Dragging round the hub turns it in quarter clicks, four clicks make a turn. A tap or click without a drag plays a full turn as four clicks 120 ms apart. The crank is a `<button>` laid over the drawn hub: Enter and Space turn once, arrow keys click a quarter at a time, and "Turn the crank for another" does the same as Enter. A half-turned crank clicks back to rest after 2.5 s.
-- **Colour jobs.** `--violet` is the ground (and the deep, mid, lite and hi tones are the machine: body, shadow side, chute, glass, edges). `--milk` is text and the paper slips. `--haze` is secondary text and rules. `--pond`, `--attic` and `--rooftop`, each with a deeper lower-half tone, appear only on capsules, chips and marks of that series. `--coin` is for what the visitor operates: the crank, the coin, the primary button, the checked box and every focus ring. `--fault` is errors only. Series are always named in words too ("Started with Pond"), so colour is never the only carrier.
-- **Structure.** Machine and card sit side by side on desktop (the machine is sized in whole pixel multiples to the window height, so it is above the fold at 1440x900, 1366x650 and 1280x600) and the machine drops under the headline on phones. Then the list, then the form. The first heading is the `h2`; the list and the form have `h3`s; the dialog's title is an `h2`.
-- **Type.** Handjet at square modules for the headline only, Host Grotesk for everything else. Quotes are 20px at weight 500 on a milk slip with deep-violet ink (14.8:1).
-- **Copy.** Real numbers and places: 8 + 8 + 6 figures over 22 months, 11 euro a month, 38 countries, shipping on the first working day. The nine testimonials include what went wrong (a lost foot, a cracked seam, an empty capsule, a wrong address) and how it was fixed.
-- **Flows.** The form validates on submit with specific messages, `aria-invalid`, a reserved two-line error space per field and focus on the first bad control. Success echoes the series and the email, computes the first working day of next month in script, and "Change this" restores the form. The dialog is a native `<dialog>` closed by Close, Escape and a backdrop click that began on the backdrop, returns focus to its opener and scrolls inside itself on short screens.
-- **Different from the nearest designs.** The cyberdeck kit also assembles a drawn object, but there the scroll builds it from blocks; here the visitor operates it and it dispenses content. The racing and net-café designs also run canvases, but this one has no loop at all: the canvas is redrawn only when a step happens.
+- **One system, top to bottom.** The same component carries every quote: a milk slip (the paper inside every real capsule) between a stepped top half in the light tone of its series and a stepped bottom half in the deep tone, with a 4px violet-deep seam on each rim. It is the card at the top, each of the nine list items, the series tiles in the form (drawn as whole capsules in CSS), and the confirmation (your own capsule in a tray, with your email on the slip). The type scale, the 8px spacing cell and the 4px notch are the same in all four places.
+- **The pile is a pile, not a shelf.** Capsules sit on a staggered lattice (even rows six, odd rows five, set in by half a capsule, 14 px apart vertically so they nest). The top is uneven (rows of 6, 5, 6, 4 and 3, with a gap). A release vacates the exit slot, and a pure `settle()` pulls a capsule down from above, alternating left and right, then the gap that leaves pulls the next, all the way up; when nothing is above the exit, the nearest floor capsule rolls to it one place at a time; and anything left with nothing beneath it drops. So every turn visibly reshuffles four or five capsules diagonally and changes the shape of the top. Because `settle()` is deterministic, `refill()` simulates all 24 releases ahead and gives each capsule the series of the subscriber it will deliver. When the dome is empty it refills with a hard cut.
+- **The machine reads as parts.** A haze-framed glass dome with a glint, a dark neck, a lighter violet front face with a darker shadow side, a chute with rails and a tick at each cell, a coin slot with a lit slit, a crank plate, and a tray that stands proud of the face with posts and a lip. The tray capsule is drawn at 24 machine pixels against the dome's 16 (the tray sits nearer the eye), so its two halves and its 10-pixel lid lift read at a glance, about 96 CSS px across at 1440 x 900.
+- **Whole pixels only.** The script picks one machine pixel of 2 to 5 CSS px so the machine fits the window: 4 at 1440 x 900 (512 x 736), 3 at 1366 x 650 and 1280 x 600 (384 x 552, the whole machine above the fold), 2 on phones, where it sits under the headline. The canvas is drawn at that scale times the device ratio, with integer coordinates, so edges stay hard.
+- **Colour jobs.** Violet is the ground and the material of the machine: a darker violet for its shadow side, chute, tray well, seams and the dialog scrim, lighter ones for the front face and the dome glass, and violet is also the ink printed on the milk slips. Milk is text and the paper slips. Haze is secondary text, rules, outlines and resting field walls. Pond aqua, Attic peach and Rooftop lime appear only on their own capsules, chips and tiles, each in two tones. Coin brass is everything you operate: the crank, the coin slot, the primary button and its coin, the ticked box, the focused field's lid and every focus ring. Fault red is errors only.
+- **What differs from the nearest designs in the ledger.** `crud-memory-card` also fills slots, but with blocks of saves; here the slots are a hexagonal pile that physically settles. `features-cyberdeck-kit` drops blocks in scroll; here nothing moves on scroll except the list's capsule halves, and the pile moves only when the visitor turns a rotary control. No design in the ledger has a rotary input with detents, a vending sequence, or quotes held between capsule halves.
+- **Copy.** Nine short quotes, each with a concrete use, a concrete fault and a concrete fix (a lost foot, a cracked seam, stiff halves, the 20th cut-off, a large-type card, slow post to Canada, an empty capsule, a scratch), plus who it was given to. Series hues match the series each person started with, three each, interleaved so a run of turns shows all three colours. No ratings.
+- **Semantics.** The section is labelled by its `h2`. The card is inside an `aria-live="polite"` region, so a turn announces the new quote. The canvas is `aria-hidden`; the crank is a real `<button>` over the drawn crank, with a description, and its label says how many clicks of the current turn have been made. The nine are an `<ol>` of `figure`/`blockquote`/`figcaption`. The facts are a `dl`, the series are a `fieldset` of radios with a `legend`, the dialog's contents are a `table`.
 
 Deviations from the brief, and why:
 
-- **The chute is four cells, not five,** after the drawing was changed to a 10-pixel capsule pitch so neighbouring capsules never merge. The idea is unchanged.
-- **The load starts with an empty dome** (the shell is drawn at once) rather than hiding the machine under `html.js:not(.go)`: the dome is a canvas, so its pre-state is the script's `shown` row count, reset to full on cleanup and in reduced motion. No text is ever hidden.
-- **On wide windows shorter than 700px the hint and count under the machine become visually hidden** so nothing is cut by the bottom edge; they remain available to assistive tech.
+- **The tray capsule is 24 machine pixels, not 16.** At the dome's size it read as small in the tray, and the art director asked for it to read clearly as two halves. The tray is drawn standing out from the face, so the larger capsule reads as nearer, and it is a hard cut at the bottom of the chute.
+- **The crank hint and the capsule counter sit under the two text actions on desktop**, not under the machine, so the machine alone fills the right column and nothing is cut at the bottom of a 650 px window. On phones they stay under the machine.
 
 ## Do not touch
 
-- **The drawing is 84 x 106 logical pixels and is scaled by a whole number** (`fit()`), with `image-rendering: pixelated`. Fractional scaling gives uneven pixels. The crank button's percentages (11.9%, 63.21%, 40.48%, 32.08%) match the hub box x10-44, y67-101 of that drawing; change the drawing and change them together.
-- **The chute column, bottom row and rest row** (`EXX 63`, `ROW0 51`, `REST 91`, pitch 10) are tied to the dome, channel and tray in `render()`.
-- **The order is simulated before the dome is filled** (`drainOrder`, `fillPile`). Changing the settle rules without that simulation breaks the match between a falling capsule and the card it brings.
-- **The list is the data.** `TESTI` is read from `.nine > li` (data-series, quote, name, meta). Keep those classes.
-- **Pixel corners live on inner spans, not on the `<button>`/`<a>`,** so focus outlines are never clipped. The slip, chips and button faces carry the `clip-path`.
-- **The caps never cover text.** Closed, the halves overlap only the slip's padding (8px of the 28px top and bottom padding); the row gap (72px) leaves room for the 18px of travel.
-- **Hover and press use `:hover`, `:focus-visible` and `:active` in CSS plus `.is-hot`, `.is-down` and `.is-tap` from script**, so touch and keyboard see the same states and a quick tap is held for at least 160 ms (a link for 200 ms).
-- **Hues keep their jobs.** Do not use a series hue for a button or a link, or `--coin` for a series.
+- **`settle()` must stay pure and deterministic.** `refill()` plans each capsule's colour by simulating every release with the same function and the same left/right alternation (`flip`). If the live settle and the plan diverge, the capsule that comes down the chute will not match the card.
+- **The machine pixel is a whole number.** `fit()` sets `--p` from 2 to 5; the crank button and the slip tag are placed in `calc(var(--p) * n px)` from the same geometry the canvas uses (hub at 90, 128; tray at 44, 147). Change one coordinate in `draw()` and the button no longer sits on the crank.
+- **The quote is never covered.** A closed half overlaps the slip only by `--ov`, and the slip's padding is `--ov` plus 16px. The three list states are `data-open` 0 (touching), 1 (6px), 2 (12px), and no attribute (fully apart by `--part`). No attribute is the state without the libraries and with reduced motion.
+- **The card slip reserves the height of the longest quote** at the current width (`sizeCard()`), so a cut never moves the page.
+- **Pixel corners live on inner elements** (`.btn-face`, `.slip`, `.dlg-rim`), never on a `<button>` or `<a>`, so focus rings are not clipped.
+- **No loop runs at rest.** The machine redraws only when its state changes; every step of a turn is a `gsap.delayedCall`, and the matchMedia cleanup runs any pending steps at once (`flush()`), so the machine can never be left half way.
+- **Hidden states exist only under `html.js:not(.go)`** (the crank hint while stocking). When the libraries are present and motion is allowed, the plain-JS first draw already shows the empty dome, so there is no flash of a full one before stocking.
 
 ## Motion
 
-House rule: everything moves in whole steps. `steps(1, end)` keyframes, hard cuts from script, whole-pixel offsets, no easing on anything larger than a few pixels. The libraries are used for the timeline and for scroll; the machine's logic is plain JavaScript and the same functions run instantly without them. No loop runs at any time: the canvas is redrawn only on each step. Lenis runs on `gsap.ticker` with `autoRaf: false` and `lagSmoothing(0)`, and is stopped while the dialog is open. Everything is built inside `gsap.matchMedia` (motion, reduce).
+House stepping: everything moves in whole steps on a visible frame rate, 60 to 120 ms per frame, set by `--d-*` tokens. Nothing eases. Colour changes are instant. Lenis runs on `gsap.ticker` (`autoRaf: false`, `lagSmoothing(0)`, `lenis.on('scroll', ScrollTrigger.update)`); touch keeps native scroll. The load waits for the fonts (1.5 s timeout) and a visible page. Without the libraries, and with reduced motion, `sched` is null and every step of a turn runs at once, in order.
 
 | Animation | Technique | Trigger | Timing | Reduced motion |
 |---|---|---|---|---|
-| Load: stocking | Canvas rows revealed bottom row first, hard cuts, then the crank goes to detent 1 and back | After fonts (1.5 s race) and a visible page | 5 rows, 90 ms apart (`--d-pile`); twitch 120 ms (`--d-twitch`) | Dome full, no twitch |
-| Crank click | Handle jumps between four drawn positions | Drag (quadrant of the pointer), arrow keys, or the tap sequence | One detent per click, 120 ms apart in a tap (`--d-click`) | Instant |
-| A turn: release | Plan of timed calls on a GSAP timeline: exit capsule leaves, pile settles one step per tick, capsule goes down the chute, top half lifts 3, 6, 9 px, card cuts, refill when empty | Fourth click; tap or click on the crank; Enter or Space; "Turn the crank for another" | Settle 70 ms a step (`--d-settle`), chute 4 cells at 70 ms (`--d-chute`), lift 3 steps at 110 ms (`--d-lift`) | All steps run at once, same result |
-| Drag partial reset | Timeout back to detent 0 | Pointer released with 1 to 3 clicks | 2.5 s (`--d-idle`) | Same |
-| Capsules open as they pass | ScrollTrigger per list item sets `--o` (0 to 3), CSS moves the halves 6 px per step | Item top at 94% to centre at 44% of the viewport, both directions | 4 states: closed, 6 px, 12 px, 18 px | All items open (`--o: 3`) |
-| Button hover: the coin drops | CSS keyframes, `steps(1, end)`, coin behind the face; slot turns coin | `:hover`, `:focus-visible`; touch: `.is-hot` for 600 ms on pointerdown | 3 steps over 240 ms (`--d-coin`) | Coin ends hidden, slot lit |
-| Button press: the return flap | Flap panel `scaleY(.25)` from its top edge (two states) and the face inverts | `:active`, `.is-down` (pointer, Enter, Space) | Held at least 160 ms (`--d-hold`) | Same (instant) |
-| Text link: the seam opens | Two 2px lines from a 4px seam, two keyframe steps | `:hover`, `:focus-visible`; touch `.is-tap` | 2 steps over 120 ms (`--d-seam`); touch held 200 ms (`--d-tap`) | Open state, instant |
-| Field: the lid lifts | Lid `translateY(-4px)` in two steps; invalid forces it shut | `:focus-within`; invalid on submit | 120 ms, `steps(2)` (`--d-lid`) | Instant |
-| Dialog tumble in | Four hard frames: x -45vw, -30vw, -15vw, 0 with rotation 270, 180, 90, 0 | Click "What is in a capsule" | 70 ms a frame (`--d-tumble`) | Instant |
-| Dialog out | Two frames: quarter turn, then out to the left, then `close()` and focus returns | Close, Escape, backdrop press-and-release | 2 frames, 70 ms | Instant |
-| Success: your capsule | Capsule offsets -72, -48, -24, 0, then -3, 0, -1, 0 px | Valid submit | 8 frames, 70 ms (`--d-drop`) | Lands at once |
-
-Touch and keyboard: the crank drags by touch (`touch-action: none`) or taps for a full turn; by keyboard it is a button with Enter, Space and arrows. Hover effects have `:focus-visible` and touch equivalents as above.
+| Stocking | Canvas rows, hard cuts | Load (fonts ready, page visible) | Empty dome, then rows 1 to 5 appear bottom first, one every 90 ms (`--d-stock`); additive, never alternating | Full dome |
+| Crank twitch | Canvas detent | End of stocking | One detent clockwise, back after 120 ms (`--d-click`) | None |
+| Crank, pointer and touch drag | Rotary control with four detents | pointerdown and pointermove on the crank (pointer capture, `touch-action: none`) | The angle round the hub is read; past 45 degrees from the current detent the handle jumps a quarter. Forward only past the start of a turn (a ratchet); the fourth click releases a capsule | Same, instant |
+| Crank, tap or click | Played full turn | click (tap, mouse, Enter, Space) and "Turn the crank for another" | Four clicks 120 ms apart, then the release | Instant release |
+| Crank, keyboard | Quarter clicks | ArrowRight / ArrowDown forward, ArrowLeft / ArrowUp back within a turn | One detent per key press | Same |
+| Crank hover and focus | Instant state | pointerenter, focus | The crank plate's ring turns coin | Same |
+| Release | Canvas hard cut | Fourth click | The exit capsule cuts into the top of the chute; the tray empties; the card's halves close | Instant |
+| Pile settles | Canvas, whole steps | Release | Each capsule pulled into a gap moves in two steps (half way, then in place), 70 ms apart (`--d-settle`), in chain order from the exit up; floor rolls move one place per step | Instant |
+| Chute | Canvas, cell by cell | Release | Four cells, 90 ms each (`--d-chute`), then a hard cut into the tray | Instant |
+| Lid lifts, card cuts | Canvas + `data-open` on the card | Landing | Three lid steps of 3, 6 and 10 machine pixels, 90 ms apart (`--d-lid`); on the first the card's quote cuts and its top half lifts 6, 12, then fully apart with the tray lid; on the third the slip and name tag appear | Instant, open |
+| Refill | Canvas hard cut | The release that empties the dome | Full pile, new colour plan | Same |
+| List capsules part | ScrollTrigger scrub, stepped | Each list capsule from top at 94% to top at 36% of the viewport | progress split in four: closed, 6 px, 12 px, fully apart (28 px) | All open |
+| Button hover: the coin drops | CSS keyframes, steps(3) | :hover (hover devices), :focus-visible | A 20 px coin appears above the slot at the right end and drops 33 px in three steps of 60 ms (`--d-coin`) behind the face; the slot's slit then stays lit in coin | Slit lit, no coin |
+| Button press: the return flap | Class held from pointerdown | pointerdown, held at least 140 ms (`--d-hold`) | The 4 px flap under the face drops 4 px to show the dark opening, and the face inverts (violet with a coin ring and coin text) | Same |
+| Text links: the seam opens | CSS transitions, steps | :hover, :focus-visible; touch: `.is-tap` for 200 ms from pointerdown | The 4 px seam (milk over haze) parts into 2 px, a 3 px gap, 2 px, in two 50 ms steps (`--d-seam`) | Instant |
+| Field: the lid lifts | CSS transition, steps(2) | :focus-within | The top border, a separate lid, lifts 4 px in two steps (`--d-fieldlid`) and turns coin with the walls; the label chip sits in the gap. Invalid: the lid stays shut and the field takes fault | Instant |
+| Dialog tumbles in | gsap.set frames | "What is in a capsule" | Four frames, 70 ms each (`--d-tumble`): from off the left edge at 270 degrees, then 180 and 90 while stepping to the centre, then upright. Leaves in two frames: a quarter turn and out to the right. Lenis stopped while open | Instant |
+| Success: your capsule | gsap.set frames | Valid submit | The capsule in the chosen series drops into the tray in three 90 ms steps (`--d-drop`), bounces 3 px then 1 px in 60 ms frames (`--d-bounce`), then the slip with your email appears; focus moves to the heading | Instant |
 
 ## Adapting
 
-1. Change the tokens first: the ground and its four machine tones, the three series hues (each with a deeper lower half), then `--coin` and `--fault`. Keep every hue's job.
-2. Replace the nine `<li>` in `.nine` (keep `data-series`, `.who`, `.meta`, the quote `p`) and the three series names in `SERIES`, the tile copy and the series classes. The card, queue and machine follow.
-3. To change the number of capsules, edit `MASK` (cells per row), keep `COLS`, `ROWS` and the exit column, and adjust the dome in `render()`.
-4. To redraw the machine, edit `render()` only; keep the 84 x 106 grid, or update `W`, `H`, the canvas attributes and the crank button's percentages together.
-5. Retime with the `--d-*` tokens; the script reads them.
-6. In a framework, keep the list as the source of truth, port the script as one effect that returns the `gsap.matchMedia` cleanup, and keep the pure functions (`stepSettle`, `drainOrder`, `shipDate`) separate.
+1. **Map the tokens first.** Keep the ground's family (ground, a darker one for the machine's shadow, chute and scrim, lighter ones for the face and glass), one paper colour for slips and text, one secondary text colour, one operating colour (crank, button, focus) and one error colour. Give each product line, edition or flavour one hue with a light and a deep tone; three works, five is the most the pile reads with.
+2. **Replace the quotes in the list only.** The card and the machine read `#list > li`: the `data-series` on `.cap`, the blockquote, `.who` and `.meta`. Keep each quote under about 60 words. Add a series by adding a `[data-series]` rule and the two hue tokens, plus a tile in the form.
+3. **Change the machine only through its geometry constants.** `START` (which lattice slots are filled), `EXIT`, `CHUTE`, `HUB`, `TRAY` and `LIDS` in the script, and the crank and tag positions in CSS, all in machine pixels. Keep 24 capsules or fewer so a 16 px capsule still reads at a scale of 3.
+4. **Retime from the tokens.** Every step duration is a `--d-*` token read by CSS and the script.
+5. **To drop motion pieces:** remove the list ScrollTriggers (the capsules stay open), or the stocking block (the dome starts full; set `willStock` to false). Keep the release sequence: it is the design.
+6. **In a framework,** render the markup statically, keep the canvas module plain, and port the matchMedia branch as one effect whose cleanup runs `flush()`.
 
 | Token | Role |
 |---|---|
-| `--violet` | The ground and the field label chips |
-| `--violet-deep` | Machine shadow side, chute, tray, ink on paper, seam, scrim, dialog surface |
-| `--violet-mid`, `--violet-lite`, `--violet-hi` | Dome glass, machine body, machine edges and the return flap (decorative) |
-| `--milk` | Text and the paper slips |
-| `--haze`, `--ink-soft` | Secondary text and rules; secondary text on paper (7.7:1) |
-| `--pond`, `--pond-deep` | Series Pond: upper and lower capsule halves, chips, marks |
-| `--attic`, `--attic-deep` | Series Attic |
-| `--rooftop`, `--rooftop-deep` | Series Rooftop |
-| `--coin` | Crank, coin, primary button, checked box, focus rings |
-| `--fault` | Errors only |
-| `--scrim` | Dialog backdrop |
+| `--violet` | Ground, the field ground, the inverted button face, ink on milk slips (10.8:1) |
+| `--violet-deep` | Machine shadow side, neck, chute, tray well, seams, button slot, the scrim's base |
+| `--violet-face`, `--violet-glass`, `--violet-glint` | The machine's front face, the dome glass, the glass reflection (decorative) |
+| `--milk` | Text (10.8:1), paper slips, the slip in the tray |
+| `--haze` | Secondary text (6.9:1), rules, outlines, the resting seam half, resting field walls |
+| `--pond`, `--pond-deep` | Pond capsules, chips and tile (7.9:1; 4.6:1) |
+| `--attic`, `--attic-deep` | Attic (6.7:1; 3.9:1, decorative half only) |
+| `--rooftop`, `--rooftop-deep` | Rooftop (9.3:1; 5.4:1) |
+| `--coin`, `--coin-deep` | Crank, coin slot, primary button, coin, ticked box, focused field, focus rings (8.3:1); the knob's shade, the coin's rim, the return flap |
+| `--fault` | Errors only (6.2:1) |
+| `--scrim` | Dialog backdrop (violet-deep at 88%) |
 | `--font-display`, `--font-text`, `--modules` | Handjet (ELSH 2, ELGR 1) and Host Grotesk |
-| `--t-small` to `--t-h2` | Type scale: 13, 17, 21, 20 (quote), 30, clamp(46px, min(6.4vw, 11.5svh), 100px) |
-| `--cell`, `--s1` to `--s8` | The 12px cell (8px on phones) and the spacing scale |
-| `--notch`, `--flap`, `--tap`, `--hit`, `--max-w` | Stepped corner 4px, return flap 4px, button height 48px, minimum text target 44px, content width 1296px |
-| `--d-*` | Durations: click, pile, twitch, settle, chute, lift, coin, hold, tap, seam, lid, tumble, drop, idle |
+| `--t-small` ... `--t-h2` | 13, 15, 17, 21, 22, 30, clamp(46px, 5.1vw, 78px); tighter on phones and on short wide windows |
+| `--lh-body`, `--lh-quote` | 1.55 and 1.45 |
+| `--cell`, `--s1` ... `--s9` | 8px cell; spacing 4 to 144 |
+| `--notch`, `--tap`, `--hit`, `--max-w` | 4px stepped corner, 48px button and field, 44px minimum target, 1296px content |
+| `--p` | One machine pixel in CSS px (2 to 5, set by the script) |
+| `--hh`, `--ov`, `--part` | Capsule half height, closed overlap into the slip, fully open stand-off |
+| `--d-*` | click 120, stock 90, settle 70, chute 90, lid 90, coin 60, hold 140, tap 200, seam 50, fieldlid 50, tumble 70, drop 90, bounce 60 (ms) |

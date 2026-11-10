@@ -120,6 +120,7 @@ Effects are added here batch by batch as designs are accepted, as built. The art
 | `contact-hackerspace` | `#3B1014` | oxblood | a hackerspace at the end of a harbour pier |
 | `portfolio-security-researcher` | `#1B3A10` | moss | an independent security researcher |
 | `crud-cartridge-stall` | `#4D270B` | rust | a second-hand game stall at a flea market |
+| `testimonials-capsule-club` | `#4A148C` | electric violet | a monthly capsule-toy subscription |
 | `process-convoy-night` | `#0B3350` | petrol blue | a flight club's weekly convoy in a space-trading simulator |
 | `footer-cartridge-publisher` | `#3B2731` | dusty mauve | a publisher of new cartridges for old consoles |
 
@@ -200,6 +201,17 @@ Effects are added here batch by batch as designs are accepted, as built. The art
 - **Field:** a paper tag: a string is threaded and knotted through its hole on focus; a live reading of the typed value in its type's format.
 - **Dialog:** hung on a peg: tilted 4 degrees, then 2, then level.
 - **Success:** chalked up: the tile is dealt in with its tag and a new tally mark is stamped; delete strikes a mark, with Undo.
+
+### `testimonials-capsule-club`
+- **Signature:** a capsule machine: one full turn of the crank releases a capsule from a staggered pile, which settles in whole steps; the capsule travels down the chute cell by cell, its lid lifts in the tray, and the card cuts to that subscriber's words.
+- **Pointer:** the crank is a rotary control with four detents: drag it round its hub in quarter-turn clicks (touch: the same drag, or a tap for four clicks; keyboard: Enter for a turn, arrows for a quarter).
+- **Scroll:** in the full list each testimonial sits between a capsule's two halves, which part in steps as the item rises through the viewport.
+- **Load:** stocking: the capsules drop into the dome one row at a time, then the crank twitches one detent and back.
+- **Button:** a coin drops into a slot at the button's end in three steps; a return flap opens and the face inverts on press.
+- **Link:** the seam opens: a two-tone underline parts into two lines.
+- **Field:** the lid lifts: the field's top border rises as a separate segment and the label sits in the gap.
+- **Dialog:** tumbles in a quarter turn at a time (270, 180, 90 degrees, upright).
+- **Success:** the visitor's capsule drops into a tray, bounces twice by whole pixels, and a paper slip with their email sticks out.
 
 ### `process-convoy-night`
 - **Signature:** the jump: between steps every star stretches into a stepped streak from the vanishing point, the field cuts to that step's own star system, and the streaks collapse.
