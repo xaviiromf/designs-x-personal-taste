@@ -15,7 +15,7 @@ use_when:
   - A set of short quotes (six to twelve) that are worth reading one at a time and also in full.
   - The product comes in a few series, editions or flavours that can each own one hue.
 avoid_when:
-  - Quotes longer than about 60 words: the slip reserves the height of the longest one, and the machine only shows one at a time.
+  - "Quotes longer than about 60 words: the slip reserves the height of the longest one, and the machine only shows one at a time."
   - Serious or regulated subjects (health, finance, legal). A toy machine makes every quote feel like a prize.
   - Pages that already have a playful hero or another large drawing beside the copy. Two machines fight.
 ---
