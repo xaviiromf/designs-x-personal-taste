@@ -219,6 +219,9 @@
   .st i { flex: 1 1 0; height: 2px; background: var(--chalk); transition: transform 0s linear calc(var(--i) * var(--d-stair)); }
   .tl:is(:focus-visible, .is-down) .st i { background: var(--paper); transform: translateY(calc(var(--i) * -1px)); }
   @media (hover: hover) { .tl:hover .st i { background: var(--paper); transform: translateY(calc(var(--i) * -1px)); } }
+  .tl-in { padding: 0 0 10px; vertical-align: top; }   /* a link inside a sentence */
+  .tl-in .st { bottom: 0; }
+  [tabindex="-1"]:focus { outline: none; }             /* a place the page has jumped to, not a control */
 
   /* ---------- Keys: the grouping toggle, the kind chips, the phase legend. Hard state changes, no motion. ---------- */
   .key, .chip, .phase {
@@ -231,7 +234,15 @@
     cursor: pointer;
     -webkit-tap-highlight-color: transparent;
   }
-  .key:hover, .chip:hover, .phase:hover { border-color: var(--paper); }
+  /* Under the pointer a key shows the editor grid at once; while it is pressed its rim is the picking orange. */
+  @media (hover: hover) {
+    :is(.key[aria-pressed="false"], .chip, .phase):hover {
+      border-color: var(--paper);
+      background-image: linear-gradient(var(--lot-line) 1px, transparent 0), linear-gradient(90deg, var(--lot-line) 1px, transparent 0);
+      background-size: var(--cell) var(--cell);
+    }
+  }
+  :is(.key, .chip, .phase):active { border-color: var(--crane); }
   .key[aria-pressed="true"] { border-color: var(--paper); background: var(--paper); color: var(--blueprint); }
   .seg { display: flex; }
   .seg .key + .key { margin-left: -2px; }
@@ -542,7 +553,7 @@
 
   <div class="band" id="projects">
     <h3>Six selected projects</h3>
-    <p class="band-lede">Two from each kind of work. Every sheet has the brief, the size of the job and the hours it took.</p>
+    <p class="band-lede">Two from each kind of work. Every sheet has the brief, the size of the job and the hours it took. If yours is another kind of job, <a class="tl tl-in" href="#enquiry">ask anyway</a>.</p>
     <ul class="works" id="works"></ul>
   </div>
 
@@ -999,16 +1010,15 @@
       if (dim.hidden !== !n) dim.hidden = !n;
     }
 
-    // Isometric hit-testing: the tower whose silhouette (top diamond, both walls, with the floors stepped apart
-    // if it is the picked one) holds the canvas pixel. Two pixels of slack for fingers.
+    // Isometric hit-testing: a tower owns its footprint diamond extruded straight up, from the 2:1 front edges
+    // of its base to the crane's jib. A short tower is as easy to pick as a tall one, and stepping the floors
+    // apart never moves the tower out from under the pointer. Three pixels of slack below the base for fingers.
     function hit(x, y) {
-      const { f, fh, bx } = G, hw = f >> 1, P = placed();
+      const { f, bx } = G, hw = f >> 1;
+      if (y < JIB + 6) return -1;
       for (let i = 0; i < T.length; i++) {
         const X = Math.floor(x) - bx[i];
-        if (X < -hw || X >= hw) continue;
-        const n = standing(i, P), ht = n * fh + (i === S.pick && n > 1 ? gapOf(n) * Math.min(n - 1, S.sep) : 0);
-        const Tl = BY - ht - (hw >> 1) + 1, yU = X < 0 ? Tl - ((X + hw) >> 1) : Tl - ((hw - 1) >> 1) + (X >> 1);
-        if (y >= yU - 2 && y <= BY + 3 - ((X < 0 ? -1 - X : X) >> 1)) return i;
+        if (X >= -hw && X < hw && y <= BY + 4 - ((X < 0 ? -1 - X : X) >> 1)) return i;
       }
       return -1;
     }
@@ -1053,6 +1063,8 @@
     can.addEventListener('pointermove', (e) => { if (e.pointerType === 'touch') return; const i = at(e); pick(i >= 0 ? i : lock); });
     can.addEventListener('pointerleave', (e) => { if (e.pointerType !== 'touch') pick(lock); });
     can.addEventListener('click', (e) => { const i = at(e); hold(i === lock ? -1 : i); });
+    xs.addEventListener('pointerover', (e) => { const b = e.target.closest('.x'); if (b && e.pointerType === 'mouse') pick(+b.dataset.i); });
+    xs.addEventListener('pointerleave', (e) => { if (e.pointerType === 'mouse') pick(lock); });
     xs.addEventListener('click', (e) => { const b = e.target.closest('.x'); if (b) hold(lock === +b.dataset.i ? -1 : +b.dataset.i); });
     xs.addEventListener('focusin', (e) => { const b = e.target.closest('.x'); if (b && b.matches(':focus-visible')) hold(+b.dataset.i); });
     xs.addEventListener('keydown', (e) => {
@@ -1313,12 +1325,26 @@
     closeSheet(() => {
       if (!done.classList.contains('is-off')) swap(false);
       if (kind) { form.elements.kind.value = kind; mark('kind', ''); }
+      go('#enquiry');
       form.elements.name.focus({ preventScroll: true });
-      if (lenis) lenis.scrollTo('#enquiry', { offset: -24 }); else $('#enquiry').scrollIntoView();
     });
   });
 
   $$('.btn, .tl').forEach((b) => { if (!$('.st', b)) wire(b); });
+
+  /* In-page anchors: a button waits until its press has been seen, then the page moves and focus follows. */
+  const go = (hash) => {
+    const t = $(hash);
+    if (!t) return;
+    t.tabIndex = -1; t.focus({ preventScroll: true });
+    if (lenis) lenis.scrollTo(t, { offset: -parseFloat(css('--s4')) }); else t.scrollIntoView();
+  };
+  document.addEventListener('click', (e) => {
+    const a = e.target.closest('a[href^="#"]');
+    if (!a || a === askLike) return;
+    e.preventDefault();
+    setTimeout(() => go(a.hash), a.classList.contains('btn') ? HOLD.btn : 0);
+  });
 
   /* ---------- First paint: the still frames ---------- */
   const paint = () => {
@@ -1376,7 +1402,7 @@
     if (fine) hint.textContent = 'Move over a tower to count its floors. Scroll to build the rest of the city.';
 
     // Lenis on GSAP's clock. Touch keeps native scrolling.
-    lenis = new Lenis({ lerp: .1, smoothWheel: true, autoRaf: false, anchors: true });
+    lenis = new Lenis({ lerp: .1, smoothWheel: true, autoRaf: false });
     lenis.on('scroll', ScrollTrigger.update);
     const tick = (t) => lenis.raf(t * 1000);
     gsap.ticker.add(tick);
