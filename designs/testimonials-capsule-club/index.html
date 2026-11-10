@@ -1,0 +1,1013 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark">
+<title>Capsule Club subscribers</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Handjet:ELGR,ELSH,wght@1..2,0..16,100..900&family=Host+Grotesk:wght@300..800&display=swap">
+<style>
+  :root {
+    /* Colour: a capsule machine on electric violet. Every hue has one job. */
+    --violet: #4A148C;       /* the ground; also the label chips on a field's lid (milk text 10.8:1, haze 6.7:1) */
+    --violet-deep: #2C0B57;  /* the machine's shadow side, the chute and tray, ink on paper, the seam, the scrim (milk 14.8:1, haze 9.1:1) */
+    --violet-mid: #5F2BAA;   /* dome glass; decorative only (1.4:1 on the ground) */
+    --violet-lite: #8450D4;  /* the machine's painted body; decorative only (2.3:1) */
+    --violet-hi: #A67BEA;    /* machine edges and the return flap's panel (3.8:1 on the ground) */
+    --milk: #F7F2FF;         /* text (10.8:1 on the ground) and the paper slips (deep ink on it 14.8:1) */
+    --haze: #CDB9EE;         /* secondary text, field borders and rules (6.7:1 on the ground, 9.1:1 on deep) */
+    --ink-soft: #5B3A93;     /* secondary text on a paper slip (7.7:1 on milk) */
+    --pond: #5FE8D8;         /* series Pond: its capsules, chips and marks only (7.9:1 on the ground; deep text on it 10.9:1) */
+    --pond-deep: #2AAE9F;    /* Pond's lower half */
+    --attic: #FFB08A;        /* series Attic: its capsules, chips and marks only (6.7:1; deep text on it 9.2:1) */
+    --attic-deep: #E27B52;   /* Attic's lower half */
+    --rooftop: #C8F26B;      /* series Rooftop: its capsules, chips and marks only (9.3:1; deep text on it 12.7:1) */
+    --rooftop-deep: #93BF3A; /* Rooftop's lower half */
+    --coin: #FFD34F;         /* what the visitor operates: the crank, the coin, the primary button, focus rings (8.3:1; deep text on it 11.4:1) */
+    --fault: #FFA3B0;        /* errors only (6.3:1 on the ground) */
+    --scrim: rgb(28 7 56 / .84);
+
+    /* Type */
+    --font-display: "Handjet", "Arial Narrow", sans-serif;
+    --font-text: "Host Grotesk", system-ui, sans-serif;
+    --modules: "ELSH" 2, "ELGR" 1;   /* square Handjet modules */
+    --t-small: 13px;
+    --t-body: 17px;
+    --t-lede: 21px;
+    --t-quote: 20px;
+    --t-h3: 30px;
+    --t-h2: clamp(46px, min(6.4vw, 11.5svh), 100px);
+    --lh-body: 1.55;
+
+    /* Space: a 12px cell, 8px on phones */
+    --cell: 12px;
+    --s1: 6px; --s2: 12px; --s3: 24px; --s4: 36px;
+    --s5: 48px; --s6: 72px; --s7: 96px; --s8: 144px;
+    --notch: 4px;           /* stepped corner */
+    --flap: 4px;            /* the return flap under a button */
+    --tap: 48px;
+    --hit: 44px;
+    --max-w: 1296px;
+
+    /* Motion: everything steps. Durations in one place. */
+    --d-click: .12s;        /* one crank detent; a tap plays four, 120 ms apart */
+    --d-pile: .09s;         /* one row of capsules dropping into the dome at load */
+    --d-twitch: .12s;       /* the crank's twitch at load */
+    --d-settle: .07s;       /* one step of the pile settling */
+    --d-chute: .07s;        /* one cell down the chute */
+    --d-lift: .11s;         /* one of three steps of the lid lifting */
+    --d-coin: .24s;         /* the coin's three-step drop */
+    --d-hold: .16s;         /* a press is shown for at least this long */
+    --d-tap: .2s;           /* a touch press on a text link is held this long */
+    --d-seam: .12s;         /* the seam's two steps */
+    --d-lid: .12s;          /* a field's lid, two steps */
+    --d-tumble: .07s;       /* one frame of the dialog's tumble */
+    --d-drop: .07s;         /* one frame of the capsule dropping into the tray */
+    --d-idle: 2.5s;         /* a half-turned crank clicks back to rest after this */
+  }
+  @media (max-width: 599px) {
+    :root { --cell: 8px; --t-body: 16px; --t-lede: 18px; --t-quote: 18px; --t-h3: 24px; }
+  }
+
+  /* Lenis rules, inlined from lenis@1.3.26/dist/lenis.css */
+  html.lenis, html.lenis body { height: auto; }
+  .lenis:not(.lenis-autoToggle).lenis-stopped { overflow: clip; }
+  .lenis [data-lenis-prevent] { overscroll-behavior: contain; }
+  .lenis.lenis-smooth iframe { pointer-events: none; }
+
+  *, *::before, *::after { box-sizing: border-box; }
+  html { background: var(--violet); }
+  body {
+    margin: 0;
+    background: var(--violet);
+    color: var(--milk);
+    font: 400 var(--t-body)/var(--lh-body) var(--font-text);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+  :focus-visible { outline: 2px solid var(--coin); outline-offset: 3px; }
+  ::selection { background: var(--coin); color: var(--violet-deep); }
+  .vh {
+    position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0;
+    overflow: hidden; clip-path: inset(50%); white-space: nowrap; border: 0;
+  }
+  h3 { margin: 0; font: 700 var(--t-h3)/1.15 var(--font-text); letter-spacing: -.01em; }
+
+  /* Shapes shared by everything: the 12-point stepped corner and the stepped octagon of a capsule. */
+  .shape, .btn, .demo {
+    --corners: polygon(0 var(--notch), var(--notch) var(--notch), var(--notch) 0, calc(100% - var(--notch)) 0, calc(100% - var(--notch)) var(--notch), 100% var(--notch), 100% calc(100% - var(--notch)), calc(100% - var(--notch)) calc(100% - var(--notch)), calc(100% - var(--notch)) 100%, var(--notch) 100%, var(--notch) calc(100% - var(--notch)), 0 calc(100% - var(--notch)));
+  }
+
+  /* Series: the three hues, each in two tones, set on whatever belongs to a series. */
+  .s-pond { --c: var(--pond); --cd: var(--pond-deep); }
+  .s-attic { --c: var(--attic); --cd: var(--attic-deep); }
+  .s-rooftop { --c: var(--rooftop); --cd: var(--rooftop-deep); }
+
+  /* ---------- The section ---------- */
+  .club { position: relative; overflow: clip; isolation: isolate; }
+  .wrap {
+    max-width: calc(var(--max-w) + 2 * var(--s3));
+    margin-inline: auto;
+    padding: var(--s6) var(--s3) var(--s7);
+  }
+  @media (min-width: 900px) and (max-height: 760px) { .wrap { padding-top: var(--s4); } }
+
+  .hero { display: grid; grid-template-columns: minmax(0, 1fr); grid-template-areas: "copy" "machine" "stage"; gap: var(--s5) var(--s6); }
+  .copy { grid-area: copy; }
+  .machine { grid-area: machine; justify-self: center; }
+  .stage { grid-area: stage; }
+  @media (min-width: 900px) {
+    .hero { grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: "copy machine" "stage machine"; grid-template-rows: auto 1fr; align-items: start; }
+    .machine { position: sticky; top: var(--s2); }
+  }
+
+  .h2 {
+    margin: 0;
+    font: 700 var(--t-h2)/.95 var(--font-display);
+    font-variation-settings: var(--modules);
+    letter-spacing: 0;
+    text-wrap: balance;
+    max-width: 11em;
+  }
+  .lede { margin: var(--s3) 0 0; max-width: 52ch; font-size: var(--t-lede); line-height: 1.45; }
+  @media (min-width: 900px) and (max-height: 760px) {
+    .lede { font-size: 18px; margin-top: var(--s2); }
+  }
+
+  /* ---------- The paper slip: the card, and every testimonial in the list ---------- */
+  .slip {
+    margin: 0;
+    padding: var(--s3) var(--s3) var(--s3);
+    background: var(--milk);
+    color: var(--violet-deep);
+    clip-path: var(--corners);
+  }
+  .slip blockquote { margin: 0; }
+  .slip p { margin: 0; overflow-wrap: anywhere; }
+  .slip figcaption { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s1) var(--s2); margin-top: var(--s2); }
+  .who { font-weight: 700; }
+  .meta { color: var(--ink-soft); font-variant-numeric: tabular-nums; }
+  .chip {
+    display: inline-flex; align-items: center;
+    min-height: 26px; padding: 0 var(--s2);
+    background: var(--c); color: var(--violet-deep);
+    font-size: var(--t-small); font-weight: 700; line-height: 1;
+    clip-path: polygon(0 4px, 4px 4px, 4px 0, calc(100% - 4px) 0, calc(100% - 4px) 4px, 100% 4px, 100% calc(100% - 4px), calc(100% - 4px) calc(100% - 4px), calc(100% - 4px) 100%, 4px 100%, 4px calc(100% - 4px), 0 calc(100% - 4px));
+  }
+  .card { --corners: polygon(0 var(--notch), var(--notch) var(--notch), var(--notch) 0, calc(100% - var(--notch)) 0, calc(100% - var(--notch)) var(--notch), 100% var(--notch), 100% calc(100% - var(--notch)), calc(100% - var(--notch)) calc(100% - var(--notch)), calc(100% - var(--notch)) 100%, var(--notch) 100%, var(--notch) calc(100% - var(--notch)), 0 calc(100% - var(--notch))); }
+  .card { max-width: 620px; padding: var(--s3) var(--s4) var(--s3); }
+  .card p { font-size: var(--t-quote); font-weight: 500; line-height: 1.5; }
+  .card .nof { margin-left: auto; color: var(--ink-soft); font-size: var(--t-small); font-variant-numeric: tabular-nums; }
+  @media (max-width: 599px) { .card { padding: var(--s3); } }
+  .actions { display: flex; flex-wrap: wrap; gap: var(--s1) var(--s4); margin-top: var(--s2); }
+
+  /* ---------- Text actions: the seam ---------- */
+  /* A 4px line in two tones, a capsule's seam. Hover and focus part it in two hard steps into two 2px lines with a 3px gap. */
+  .u {
+    position: relative;
+    display: inline-block;
+    min-height: var(--hit);
+    padding: 10px 0 15px;
+    border: 0; background: none;
+    color: var(--milk);
+    font: 600 var(--t-body)/1.4 var(--font-text);
+    text-decoration: none;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .u::before, .u::after { content: ""; position: absolute; left: 0; right: 0; height: 2px; }
+  .u::before { bottom: 12px; background: var(--milk); }
+  .u::after { bottom: 10px; background: var(--haze); }
+  @keyframes seam-top { 0% { transform: none; } 50%, 100% { transform: translateY(-1px); } }
+  @keyframes seam-bot { 0% { transform: translateY(1px); } 50%, 100% { transform: translateY(2px); } }
+  .u:focus-visible::before, .u.is-tap::before { animation: seam-top var(--d-seam) steps(1, end) both; }
+  .u:focus-visible::after, .u.is-tap::after { animation: seam-bot var(--d-seam) steps(1, end) both; }
+  @media (hover: hover) {
+    .u:hover::before { animation: seam-top var(--d-seam) steps(1, end) both; }
+    .u:hover::after { animation: seam-bot var(--d-seam) steps(1, end) both; }
+  }
+  .u .sr { position: absolute; }
+
+  /* ---------- The machine ---------- */
+  .machine { width: max-content; max-width: 100%; }
+  .mwrap { position: relative; display: block; }
+  .mc { display: block; width: 336px; height: 424px; max-width: 100%; image-rendering: pixelated; }
+  /* The crank is a real button laid over the drawn hub (hub box x10-44, y67-101 of the 84x106 drawing). */
+  .crank {
+    position: absolute; left: 11.9%; top: 63.21%; width: 40.48%; height: 32.08%;
+    margin: 0; padding: 0; border: 0; background: transparent;
+    cursor: grab; touch-action: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .crank:active { cursor: grabbing; }
+  .crank:focus-visible { outline: 2px solid var(--coin); outline-offset: 2px; }
+  .hint { margin: var(--s2) 0 0; max-width: 44ch; color: var(--haze); font-size: var(--t-small); line-height: 1.45; }
+  @media (min-width: 900px) and (max-height: 700px) {
+    .hint, .count { position: absolute; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+  }
+  .count { margin: var(--s1) 0 0; color: var(--haze); font-size: var(--t-small); font-variant-numeric: tabular-nums; }
+
+  /* ---------- Buttons: a coin slot at the right end ---------- */
+  .btn {
+    position: relative;
+    display: inline-block;
+    padding: 0 0 var(--flap); border: 0; background: none;
+    color: inherit;
+    font: 700 var(--t-body)/1.2 var(--font-text);
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+  }
+  .coin {
+    position: absolute; z-index: 0; right: 16px; top: -20px; width: 16px; height: 16px;
+    background: var(--coin);
+    clip-path: polygon(5px 0, 11px 0, 11px 2px, 13px 2px, 13px 4px, 16px 4px, 16px 12px, 13px 12px, 13px 14px, 11px 14px, 11px 16px, 5px 16px, 5px 14px, 3px 14px, 3px 12px, 0 12px, 0 4px, 3px 4px, 3px 2px, 5px 2px);
+    visibility: hidden;
+    pointer-events: none;
+  }
+  /* Three hard steps, then it is behind the face. The slot stays lit for as long as the button is hot. */
+  @keyframes coin-drop { 0% { transform: none; } 33.3% { transform: translateY(8px); } 66.6% { transform: translateY(16px); } 100% { transform: translateY(24px); } }
+  .btn:focus-visible .coin, .btn.is-hot .coin { visibility: visible; animation: coin-drop var(--d-coin) steps(1, end) both; }
+  @media (hover: hover) { .btn:hover .coin { visibility: visible; animation: coin-drop var(--d-coin) steps(1, end) both; } }
+  .face {
+    position: relative; z-index: 1; display: block;
+    background: var(--coin); color: var(--violet-deep);
+    clip-path: var(--corners);
+  }
+  .inner { display: flex; align-items: stretch; min-height: var(--tap); }
+  .label { display: flex; align-items: center; padding: 0 var(--s3); }
+  .slot { flex: none; display: grid; place-items: center; width: 48px; background: var(--violet-deep); }
+  .slot::after { content: ""; width: 24px; height: 4px; background: var(--violet-lite); }
+  .btn:focus-visible .slot::after, .btn.is-hot .slot::after { background: var(--coin); }
+  @media (hover: hover) { .btn:hover .slot::after { background: var(--coin); } }
+  /* The return flap: a 4px panel hinged at its top edge, shown open or shut. */
+  .flap { position: absolute; left: 8px; right: 8px; bottom: 0; height: var(--flap); background: var(--violet-deep); }
+  .flap::after { content: ""; position: absolute; inset: 0; background: var(--violet-hi); transform-origin: 50% 0; }
+  .btn.is-down .flap::after, .btn:active .flap::after { transform: scaleY(.25); }
+  .btn.is-down .face, .btn:active .face { background: var(--violet-deep); color: var(--coin); box-shadow: inset 0 0 0 2px var(--coin); }
+  .btn.is-down .slot, .btn:active .slot { background: var(--coin); }
+  .btn.is-down .slot::after, .btn:active .slot::after { background: var(--violet-deep); }
+  .btn:focus-visible { outline: 2px solid var(--coin); outline-offset: 3px; }
+
+  /* ---------- All nine: each slip between the halves of its capsule ---------- */
+  .block { margin-top: var(--s8); }
+  .block > p { margin: var(--s2) 0 0; max-width: 56ch; }
+  .nine { list-style: none; margin: var(--s5) 0 0; padding: 0; display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--s7) var(--s5); }
+  @media (min-width: 900px) { .nine { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  .nine li { position: relative; --o: 3; }
+  .cap { position: relative; z-index: 2; display: block; height: 28px; }
+  /* Closed, the halves overlap only the slip's padding. --o is the step (0 to 3), six pixels each. */
+  .cap-top {
+    background: linear-gradient(var(--c) 0 calc(100% - 4px), var(--violet-deep) 0);
+    clip-path: polygon(0 100%, 0 12px, 4px 12px, 4px 8px, 8px 8px, 8px 4px, 12px 4px, 12px 0, calc(100% - 12px) 0, calc(100% - 12px) 4px, calc(100% - 8px) 4px, calc(100% - 8px) 8px, calc(100% - 4px) 8px, calc(100% - 4px) 12px, 100% 12px, 100% 100%);
+    transform: translateY(calc(var(--o) * -6px));
+  }
+  .cap-bot {
+    background: linear-gradient(var(--violet-deep) 0 4px, var(--cd) 0);
+    clip-path: polygon(0 0, 0 calc(100% - 12px), 4px calc(100% - 12px), 4px calc(100% - 8px), 8px calc(100% - 8px), 8px calc(100% - 4px), 12px calc(100% - 4px), 12px 100%, calc(100% - 12px) 100%, calc(100% - 12px) calc(100% - 4px), calc(100% - 8px) calc(100% - 4px), calc(100% - 8px) calc(100% - 8px), calc(100% - 4px) calc(100% - 8px), calc(100% - 4px) calc(100% - 12px), 100% calc(100% - 12px), 100% 0);
+    transform: translateY(calc(var(--o) * 6px));
+  }
+  .nine .slip { position: relative; z-index: 1; margin: -8px 0; padding: calc(var(--s3) + 4px) var(--s3); }
+  .nine .slip p { font-size: var(--t-body); }
+
+  /* ---------- Start a subscription ---------- */
+  .start { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--s5) var(--s6); }
+  @media (min-width: 900px) { .start { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); } }
+  .swap { max-width: 600px; scroll-margin-top: var(--s4); }
+  .swap > [hidden] { display: none; }
+  .note { margin: var(--s2) 0 0; color: var(--haze); max-width: 52ch; }
+  .facts { display: grid; gap: var(--s1); margin: var(--s3) 0 var(--s2); max-width: 46ch; }
+  .facts > div { display: grid; grid-template-columns: 7em minmax(0, 1fr); gap: var(--s2); }
+  .facts dt { font-weight: 700; }
+  .facts dd { margin: 0; font-variant-numeric: tabular-nums; }
+  .legend, .lbl { display: block; padding: 0; font-weight: 700; }
+
+  /* Field: its top border is a lid. On focus the lid lifts 4px in two steps, and the label chip sits in the gap. */
+  .fld { position: relative; margin-top: var(--s3); }
+  .fld input {
+    display: block; width: 100%; height: var(--tap);
+    padding: 0 var(--s2);
+    border: 2px solid var(--haze); border-top-color: transparent; border-radius: 0;
+    background: var(--violet); color: var(--milk);
+    font: inherit;
+    appearance: none;
+  }
+  .fld .lid { position: absolute; left: 0; right: 0; top: 0; height: 2px; background: var(--haze); transition: transform var(--d-lid) steps(2, end); pointer-events: none; }
+  .fld .lbl { position: absolute; z-index: 2; left: 10px; top: -12px; padding: 0 6px; background: var(--violet); color: var(--haze); font-size: var(--t-small); line-height: 22px; }
+  .fld:hover input { border-color: var(--milk); border-top-color: transparent; }
+  .fld:hover .lid { background: var(--milk); }
+  .fld:focus-within .lid { transform: translateY(-4px); }
+  .fld input:focus { border-color: var(--coin); border-top-color: transparent; outline: 2px solid var(--coin); outline-offset: 7px; }
+  .fld:focus-within .lid { background: var(--coin); }
+  .fld:focus-within .lbl { color: var(--coin); }
+  .fld input:focus:not(:focus-visible) { outline: none; }
+  /* Invalid: the lid drops shut, everything takes the fault colour. */
+  .fld.is-bad input, .fld.is-bad:hover input { border-color: var(--fault); border-top-color: transparent; }
+  .fld.is-bad .lid, .fld.is-bad:focus-within .lid, .fld.is-bad:hover .lid { background: var(--fault); transform: none; }
+  .fld.is-bad .lbl, .fld.is-bad:focus-within .lbl { color: var(--fault); }
+  .err { min-height: calc(var(--t-small) * 1.45 * 2); margin: var(--s1) 0 0; color: var(--fault); font-size: var(--t-small); line-height: 1.45; font-weight: 600; }
+
+  .series { margin: var(--s2) 0 0; padding: 0; border: 0; min-width: 0; }
+  .tiles { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--s2); margin-top: var(--s2); }
+  @media (min-width: 600px) { .tiles { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+  .tile { position: relative; display: block; min-height: var(--tap); cursor: pointer; }
+  .tile input { position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; opacity: 0; cursor: pointer; }
+  .tile-in {
+    display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 0 var(--s2); align-items: center;
+    height: 100%; padding: var(--s2) var(--s2) calc(var(--s2) + 4px);
+    border: 2px solid var(--haze); background: var(--violet);
+  }
+  .tile:hover .tile-in { border-color: var(--milk); }
+  .tile input:checked + .tile-in { border-color: var(--milk); background: var(--violet-deep); box-shadow: inset 0 -4px 0 var(--c); }
+  .tile:has(input:focus-visible) { outline: 2px solid var(--coin); outline-offset: 3px; }
+  .mini {
+    display: block; width: 20px; height: 20px;
+    background: linear-gradient(var(--c) 0 9px, var(--violet-deep) 9px 11px, var(--cd) 11px);
+    clip-path: polygon(6px 0, calc(100% - 6px) 0, calc(100% - 6px) 2px, calc(100% - 2px) 2px, calc(100% - 2px) 6px, 100% 6px, 100% calc(100% - 6px), calc(100% - 2px) calc(100% - 6px), calc(100% - 2px) calc(100% - 2px), calc(100% - 6px) calc(100% - 2px), calc(100% - 6px) 100%, 6px 100%, 6px calc(100% - 2px), 2px calc(100% - 2px), 2px calc(100% - 6px), 0 calc(100% - 6px), 0 6px, 2px 6px, 2px 2px, 6px 2px);
+  }
+  .tile b { font-weight: 700; }
+  .tile small { grid-column: 1 / -1; margin-top: var(--s1); color: var(--haze); font-size: var(--t-small); line-height: 1.4; }
+
+  .gift { position: relative; display: flex; align-items: flex-start; gap: var(--s2); min-height: var(--hit); margin-top: var(--s2); padding: 10px 0; cursor: pointer; }
+  .gift input { position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; opacity: 0; cursor: pointer; }
+  .box { position: relative; flex: none; width: var(--s3); height: var(--s3); border: 2px solid var(--haze); background: var(--violet); }
+  .gift:hover .box { border-color: var(--milk); }
+  .gift input:checked + .box { border-color: var(--coin); background: var(--coin); }
+  .gift input:checked + .box::after {
+    content: ""; position: absolute; inset: 2px; background: var(--violet-deep);
+    clip-path: polygon(0 55%, 18% 55%, 18% 70%, 36% 70%, 36% 85%, 50% 85%, 50% 70%, 64% 70%, 64% 55%, 80% 55%, 80% 35%, 100% 35%, 100% 15%, 85% 15%, 85% 35%, 70% 35%, 70% 50%, 56% 50%, 56% 65%, 40% 65%, 40% 50%, 22% 50%, 22% 38%, 0 38%);
+  }
+  .gift:has(input:focus-visible) .box { outline: 2px solid var(--coin); outline-offset: 3px; }
+  .gift span:last-child { padding-top: 0; }
+  .btn-row { margin-top: var(--s3); display: flex; flex-wrap: wrap; align-items: center; gap: var(--s2) var(--s4); }
+  .btn-row .btn { margin-top: 14px; }
+
+  /* ---------- Success: your capsule ---------- */
+  .done h3:focus { outline: none; }
+  .done p { margin: var(--s2) 0 0; max-width: 46ch; }
+  .done b { font-weight: 700; overflow-wrap: anywhere; }
+  .scene { position: relative; width: min(100%, 360px); height: 168px; margin: var(--s3) 0 var(--s2); }
+  .scene .pocket { position: absolute; left: 0; right: 0; bottom: 0; height: 56px; background: var(--violet-deep); }
+  .scene .lip { position: absolute; z-index: 3; left: 0; right: 0; bottom: 0; height: 16px; background: var(--violet-hi); border-top: 4px solid var(--haze); }
+  .scene .scap {
+    position: absolute; z-index: 2; left: 40px; bottom: 8px; width: 56px; height: 56px;
+    background: linear-gradient(var(--c) 0 24px, var(--violet-deep) 24px 32px, var(--cd) 32px);
+    clip-path: polygon(12px 0, calc(100% - 12px) 0, calc(100% - 12px) 4px, calc(100% - 8px) 4px, calc(100% - 8px) 8px, calc(100% - 4px) 8px, calc(100% - 4px) 12px, 100% 12px, 100% calc(100% - 12px), calc(100% - 4px) calc(100% - 12px), calc(100% - 4px) calc(100% - 8px), calc(100% - 8px) calc(100% - 8px), calc(100% - 8px) calc(100% - 4px), calc(100% - 12px) calc(100% - 4px), calc(100% - 12px) 100%, 12px 100%, 12px calc(100% - 4px), 8px calc(100% - 4px), 8px calc(100% - 8px), 4px calc(100% - 8px), 4px calc(100% - 12px), 0 calc(100% - 12px), 0 12px, 4px 12px, 4px 8px, 8px 8px, 8px 4px, 12px 4px);
+  }
+  .scene .paper {
+    position: absolute; z-index: 1; right: 16px; bottom: 12px; width: 196px; height: 104px; padding: 10px 12px;
+    background: var(--milk); color: var(--violet-deep);
+    font-size: var(--t-small); line-height: 1.4; font-weight: 600; overflow-wrap: anywhere;
+    clip-path: polygon(0 4px, 4px 4px, 4px 0, calc(100% - 4px) 0, calc(100% - 4px) 4px, 100% 4px, 100% 100%, 0 100%);
+  }
+  .paper span { display: block; color: var(--ink-soft); font-weight: 500; }
+
+  /* ---------- Dialog: what is in a capsule ---------- */
+  .demo {
+    width: min(560px, 100% - 2 * var(--s3)); max-width: none;
+    margin: auto; padding: 0; border: 0; background: none; color: var(--milk);
+    max-height: calc(100dvh - 2 * var(--s3));
+    overflow-y: auto; overscroll-behavior: contain;
+    --notch: var(--cell);
+  }
+  .demo::backdrop { background: var(--scrim); }
+  .dlg-rim { padding: 2px; background: var(--haze); clip-path: var(--corners); }
+  .dlg { padding: var(--s4); background: var(--violet-deep); clip-path: var(--corners); }
+  .dlg-head { display: flex; justify-content: space-between; align-items: baseline; gap: var(--s3); }
+  .dlg h2 { margin: 0; font: 700 var(--t-h3)/1.15 var(--font-text); letter-spacing: -.01em; }
+  .dlg-intro { margin: var(--s2) 0 var(--s2); max-width: 46ch; color: var(--haze); }
+  .parts { margin: 0; }
+  .parts > div { display: grid; grid-template-columns: 6.5em minmax(0, 1fr); gap: var(--s2); padding: var(--s2) 0; border-top: 2px solid var(--violet-mid); }
+  .parts dt { font-weight: 700; }
+  .parts dd { margin: 0; font-variant-numeric: tabular-nums; }
+  .parts dd span { display: block; color: var(--haze); font-size: var(--t-small); }
+
+  @media (max-width: 599px) {
+    .block { margin-top: var(--s7); }
+    .dlg { padding: var(--s3); }
+    .parts > div { grid-template-columns: 5.5em minmax(0, 1fr); }
+    .facts > div { grid-template-columns: 6em minmax(0, 1fr); }
+    .btn-row .btn { display: block; width: 100%; }
+    .btn-row .label { justify-content: center; flex: 1; }
+    .btn-row .btn .inner { width: 100%; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { transition-duration: 0s !important; animation-duration: 0s !important; animation-delay: 0s !important; }
+  }
+</style>
+</head>
+<body>
+
+<section class="club" id="club" aria-labelledby="club-title">
+  <div class="wrap">
+    <div class="hero">
+      <div class="copy">
+        <h2 class="h2" id="club-title">What comes back after the capsule arrives</h2>
+        <p class="lede">Capsule Club is three people in Nagoya posting one pixel-creature figure, a sticker and a card on the first working day of every month. Three series so far: Pond, Attic and Rooftop. These are nine subscribers, in their own words.</p>
+      </div>
+
+      <div class="machine" id="machine" role="group" aria-label="Capsule machine">
+        <div class="mwrap">
+          <canvas class="mc" id="mc" width="84" height="106" aria-hidden="true"></canvas>
+          <button class="crank" id="crank" type="button" aria-label="Crank: turn for another subscriber" aria-describedby="crank-help"></button>
+        </div>
+        <p class="hint" id="crank-help">Drag the crank around its hub, or press Enter on it for a full turn. Arrow keys click it a quarter at a time.</p>
+        <p class="count" id="count">24 capsules in the dome</p>
+        <p class="vh" id="crank-status" role="status"></p>
+      </div>
+
+      <div class="stage">
+        <figure class="slip card s-pond" id="card" aria-live="polite" aria-atomic="true">
+          <blockquote><p id="card-quote">I line the figures up on the shelf above my monitor in the order they arrived. The frog from my third capsule lost a foot in the post. I sent the studio a photo on a Tuesday and a new frog arrived nine days later.</p></blockquote>
+          <figcaption>
+            <span class="who" id="card-who">Mireille Dubois</span>
+            <span class="meta" id="card-meta">Lyon, 19 months</span>
+            <span class="chip" id="card-chip">Started with Pond</span>
+            <span class="nof" id="card-nof">1 of 9</span>
+          </figcaption>
+        </figure>
+        <div class="actions">
+          <button class="u" id="again-btn" type="button">Turn the crank for another</button>
+          <a class="u" href="#all-nine">Read all nine</a>
+        </div>
+      </div>
+    </div>
+
+    <section class="block" id="all-nine" aria-labelledby="nine-title">
+      <h3 id="nine-title">All nine, in one list</h3>
+      <p>Every subscriber the machine can give you, each inside the capsule they started with. No cranking needed.</p>
+      <ol class="nine">
+        <li class="s-pond" data-series="pond">
+          <span class="cap cap-top" aria-hidden="true"></span>
+          <figure class="slip"><blockquote><p>I line the figures up on the shelf above my monitor in the order they arrived. The frog from my third capsule lost a foot in the post. I sent the studio a photo on a Tuesday and a new frog arrived nine days later.</p></blockquote>
+            <figcaption><span class="who">Mireille Dubois</span><span class="meta">Lyon, 19 months</span><span class="chip">Started with Pond</span></figcaption></figure>
+          <span class="cap cap-bot" aria-hidden="true"></span>
+        </li>
+        <li class="s-attic" data-series="attic">
+          <span class="cap cap-top" aria-hidden="true"></span>
+          <figure class="slip"><blockquote><p>I signed up to give a year to my brother, then kept a subscription of my own. His moth now guards the router. One capsule came with a cracked seam, and the studio posted a spare before I had finished writing the email.</p></blockquote>
+            <figcaption><span class="who">Tomás Herrera</span><span class="meta">Valencia, 14 months</span><span class="chip">Started with Attic</span></figcaption></figure>
+          <span class="cap cap-bot" aria-hidden="true"></span>
+        </li>
+        <li class="s-rooftop" data-series="rooftop">
+          <span class="cap cap-top" aria-hidden="true"></span>
+          <figure class="slip"><blockquote><p>My daughter is seven and opens the capsule at the kitchen table on the first Saturday. The halves are stiff for her, so we loosen them with a rubber band. She keeps the stickers in a biscuit tin and trades the cards at school.</p></blockquote>
+            <figcaption><span class="who">Priya Nair</span><span class="meta">Leeds, 6 months</span><span class="chip">Started with Rooftop</span></figcaption></figure>
+          <span class="cap cap-bot" aria-hidden="true"></span>
+        </li>
+        <li class="s-pond" data-series="pond">
+          <span class="cap cap-top" aria-hidden="true"></span>
+          <figure class="slip"><blockquote><p>I paint tiny bases for mine with leftover model paint. In month eleven the parcel went to my old flat. The studio could only change my address from the next month, so my old neighbour posted it on.</p></blockquote>
+            <figcaption><span class="who">Jonas Lindqvist</span><span class="meta">Gothenburg, 21 months</span><span class="chip">Started with Pond</span></figcaption></figure>
+          <span class="cap cap-bot" aria-hidden="true"></span>
+        </li>
+        <li class="s-attic" data-series="attic">
+          <span class="cap cap-top" aria-hidden="true"></span>
+          <figure class="slip"><blockquote><p>I send a second subscription to my mother in Sendai each year. She puts the figures in her flower pots. She finds the cards too small to read, so I photograph the artist's note and send it back to her enlarged.</p></blockquote>
+            <figcaption><span class="who">Aiko Mori</span><span class="meta">Osaka, 11 months</span><span class="chip">Started with Attic</span></figcaption></figure>
+          <span class="cap cap-bot" aria-hidden="true"></span>
+        </li>
+        <li class="s-pond" data-series="pond">
+          <span class="cap cap-top" aria-hidden="true"></span>
+          <figure class="slip"><blockquote><p>The first capsule took three weeks to reach Canada and I thought it was lost. Now the studio emails a tracking number the day they post, and my last seven arrived within eleven days. The newt lives on my desk lamp.</p></blockquote>
+            <figcaption><span class="who">Dara Cohen</span><span class="meta">Toronto, 8 months</span><span class="chip">Started with Pond</span></figcaption></figure>
+          <span class="cap cap-bot" aria-hidden="true"></span>
+        </li>
+        <li class="s-attic" data-series="attic">
+          <span class="cap cap-top" aria-hidden="true"></span>
+          <figure class="slip"><blockquote><p>The stickers go on my laptop lid and the figures sit on a shelf above the keyboard. Month nine's capsule arrived empty. I sent a photo, and the studio posted two figures the following month without asking me to fill in a form.</p></blockquote>
+            <figcaption><span class="who">Wei Zhang</span><span class="meta">Singapore, 13 months</span><span class="chip">Started with Attic</span></figcaption></figure>
+          <span class="cap cap-bot" aria-hidden="true"></span>
+        </li>
+        <li class="s-rooftop" data-series="rooftop">
+          <span class="cap cap-top" aria-hidden="true"></span>
+          <figure class="slip"><blockquote><p>I gave three months to a colleague as a leaving present and then bought the rest for myself. The lime Rooftop creatures look best in daylight, so the pigeon lives on my kitchen windowsill, next to the basil.</p></blockquote>
+            <figcaption><span class="who">Elena Rossi</span><span class="meta">Turin, 4 months</span><span class="chip">Started with Rooftop</span></figcaption></figure>
+          <span class="cap cap-bot" aria-hidden="true"></span>
+        </li>
+        <li class="s-pond" data-series="pond">
+          <span class="cap cap-top" aria-hidden="true"></span>
+          <figure class="slip"><blockquote><p>I have every figure since the first month, and my partner has started taking them off the shelf to play. One arrived scratched. The studio told me to keep it and sent a new one, so the scratched one went to a neighbour's kid.</p></blockquote>
+            <figcaption><span class="who">Sam Whitfield</span><span class="meta">Bristol, 22 months</span><span class="chip">Started with Pond</span></figcaption></figure>
+          <span class="cap cap-bot" aria-hidden="true"></span>
+        </li>
+      </ol>
+    </section>
+
+    <section class="block start" id="start" aria-labelledby="start-title">
+      <div>
+        <h3 id="start-title">Start a subscription</h3>
+        <p class="note">One capsule a month, posted on the first working day, in series order from the one you pick.</p>
+        <dl class="facts">
+          <div><dt>Price</dt><dd>11 euro a month, postage included</dd></div>
+          <div><dt>Posted to</dt><dd>38 countries from Nagoya</dd></div>
+          <div><dt>Stop or skip</dt><dd>Before the 25th, no questions</dd></div>
+          <div><dt>Series</dt><dd>Pond 8, Attic 8, Rooftop 6 so far</dd></div>
+        </dl>
+        <button class="u" id="open-box" type="button" aria-haspopup="dialog" aria-controls="box">What is in a capsule</button>
+      </div>
+
+      <div class="swap" id="swap">
+        <form id="start-form" novalidate aria-labelledby="start-title">
+          <div class="fld" id="email-fld">
+            <input id="email" name="email" type="email" autocomplete="email" spellcheck="false" aria-describedby="email-err">
+            <span class="lid" aria-hidden="true"></span>
+            <label class="lbl" for="email">Email address</label>
+          </div>
+          <p class="err" id="email-err" aria-live="polite"></p>
+          <fieldset class="series" id="series" role="radiogroup" aria-describedby="series-err">
+            <legend class="legend">Start with which series</legend>
+            <div class="tiles">
+              <label class="tile s-pond"><input type="radio" name="series" value="pond"><span class="tile-in"><i class="mini" aria-hidden="true"></i><b>Pond</b><small>8 figures, February to September 2025. Frog, newt, carp, reed mouse.</small></span></label>
+              <label class="tile s-attic"><input type="radio" name="series" value="attic"><span class="tile-in"><i class="mini" aria-hidden="true"></i><b>Attic</b><small>8 figures, October 2025 to May 2026. Moth, dust bunny, clock beetle, spider.</small></span></label>
+              <label class="tile s-rooftop"><input type="radio" name="series" value="rooftop"><span class="tile-in"><i class="mini" aria-hidden="true"></i><b>Rooftop</b><small>6 figures so far, from June 2026. Pigeon, crow, cat, antenna snail.</small></span></label>
+            </div>
+          </fieldset>
+          <p class="err" id="series-err" aria-live="polite"></p>
+          <label class="gift"><input type="checkbox" name="gift"><span class="box" aria-hidden="true"></span><span>This is a gift. Leave the name off the card so I can write it.</span></label>
+          <div class="btn-row">
+            <button class="btn" type="submit"><span class="coin" aria-hidden="true"></span><span class="face"><span class="inner"><span class="label">Start my subscription</span><span class="slot" aria-hidden="true"></span></span></span><span class="flap" aria-hidden="true"></span></button>
+          </div>
+        </form>
+
+        <div class="done" id="done" hidden>
+          <div class="scene s-pond" id="scene" aria-hidden="true">
+            <div class="pocket"></div>
+            <div class="paper" id="scene-paper"><span>First capsule for</span><b id="scene-mail">mari@example.com</b></div>
+            <div class="scap" id="scene-cap"></div>
+            <div class="lip"></div>
+          </div>
+          <h3 id="done-title" tabindex="-1">Your Pond capsule is booked.</h3>
+          <p>Your first capsule ships on <b id="done-date">Tuesday 1 December 2026</b>, the first working day of next month. We will write to <b id="done-mail">mari@example.com</b> when it is posted.</p>
+          <p id="done-gift" hidden>Because it is a gift, the card inside has no name on it. The space is yours.</p>
+          <button class="u" id="change" type="button">Change this</button>
+        </div>
+      </div>
+    </section>
+  </div>
+</section>
+
+<dialog class="demo" id="box" aria-labelledby="box-title" data-lenis-prevent>
+  <div class="dlg-rim"><div class="dlg">
+    <div class="dlg-head">
+      <h2 id="box-title">What is in a capsule</h2>
+      <button class="u" id="box-close" type="button">Close</button>
+    </div>
+    <p class="dlg-intro">Each month's capsule travels in a flat mailer that fits through a letterbox. Five things come out of it.</p>
+    <dl class="parts">
+      <div><dt>Figure</dt><dd>40 mm tall, soft PVC<span>One pixel creature drawn by a guest artist, painted in two colours.</span></dd></div>
+      <div><dt>Sticker</dt><dd>50 by 50 mm, waterproof vinyl<span>The same creature, flat. One per capsule.</span></dd></div>
+      <div><dt>Card</dt><dd>62 by 88 mm, 350 gsm paper<span>The artist's note on the back, and a blank corner for your own.</span></dd></div>
+      <div><dt>Capsule</dt><dd>55 mm across, recycled polypropylene<span>Two halves that pull apart. Keep it for the next figure.</span></dd></div>
+      <div><dt>Mailer</dt><dd>120 by 120 by 60 mm, recycled card<span>130 g with everything inside.</span></dd></div>
+    </dl>
+  </div></div>
+</dialog>
+
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.15.0/dist/gsap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.15.0/dist/ScrollTrigger.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/lenis@1.3.26/dist/lenis.min.js"></script>
+<script>
+(() => {
+  const root = document.documentElement;
+  const $ = (s, el = document) => el.querySelector(s);
+  const $$ = (s, el = document) => [...el.querySelectorAll(s)];
+  const lib = !!(window.gsap && window.ScrollTrigger && window.Lenis);
+  if (lib) root.classList.add('js'); // CDN blocked: no class, everything is visible and every flow still works
+  const read = (n) => getComputedStyle(root).getPropertyValue(n).trim();
+  const dur = (n) => parseFloat(read('--d-' + n)) * 1000;
+  const T = Object.fromEntries(['click', 'pile', 'twitch', 'settle', 'chute', 'lift', 'hold', 'tap', 'tumble', 'drop', 'idle'].map((k) => [k, dur(k)]));
+
+  /* ---------- Data: the nine testimonials are the list in the page; the card and the machine read them from it ---------- */
+  const SERIES = { pond: 'Pond', attic: 'Attic', rooftop: 'Rooftop' };
+  const TESTI = $$('.nine > li').map((li) => ({
+    series: li.dataset.series,
+    quote: $('blockquote p', li).textContent,
+    who: $('.who', li).textContent,
+    meta: $('.meta', li).textContent
+  }));
+  const N = TESTI.length;
+
+  const sec = $('#club'), card = $('#card'), mc = $('#mc'), g = mc.getContext('2d'), crank = $('#crank');
+  const countEl = $('#count'), statusEl = $('#crank-status'), againBtn = $('#again-btn');
+  let fx = null, lenis = null; // fx: hooks set by the motion branch; null means instant
+
+  /* ---------- The queue: the nine come round in shuffled cycles, never repeating inside a cycle ---------- */
+  const queue = [];
+  let seed = 11;
+  const rnd = () => { seed = (seed * 1664525 + 1013904223) >>> 0; return seed / 4294967296; };
+  const swapAt = (a, i, j) => { const t = a[i]; a[i] = a[j]; a[j] = t; };
+  const cycle = () => {
+    const a = Array.from({ length: N }, (_, i) => i);
+    for (let i = N - 1; i > 0; i--) swapAt(a, i, Math.floor(rnd() * (i + 1)));
+    if (!queue.length) swapAt(a, 0, a.indexOf(0)); // the first card is the first in the list
+    else if (a[0] === queue[queue.length - 1]) swapAt(a, 0, 1); // no repeat across the seam
+    queue.push(...a);
+  };
+  const ensure = (n) => { while (queue.length < n) cycle(); };
+
+  /* ---------- The pile: 24 capsules on a 6 x 5 grid inside the dome ---------- */
+  const COLS = 6, ROWS = 5, EXIT = 5; // row 0 is the bottom row; the chute is under column 5
+  const MASK = [[0, 1, 2, 3, 4, 5], [0, 1, 2, 3, 4, 5], [0, 1, 2, 3, 4, 5], [1, 2, 3, 4], [2, 3]];
+  const TOTAL = MASK.reduce((a, r) => a + r.length, 0);
+  let grid = [], caps = [], qpos = 0, shown = ROWS;
+  const freshGrid = () => { const m = Array.from({ length: ROWS }, () => Array(COLS).fill(-1)); let id = 0; MASK.forEach((cs, r) => cs.forEach((c) => { m[r][c] = id++; })); return m; };
+  const clone = (m) => m.map((r) => r.slice());
+  // One step of settling: a column above a gap drops one cell, or the bottom row rolls toward the chute. Returns false at rest.
+  const stepSettle = (m) => {
+    let moved = false;
+    for (let r = 1; r < ROWS; r++) for (let c = 0; c < COLS; c++) if (m[r][c] >= 0 && m[r - 1][c] < 0) { m[r - 1][c] = m[r][c]; m[r][c] = -1; moved = true; }
+    if (moved) return true;
+    if (m[0][EXIT] < 0) for (let c = EXIT - 1; c >= 0; c--) if (m[0][c] >= 0 && m[0][c + 1] < 0) { m[0][c + 1] = m[0][c]; m[0][c] = -1; moved = true; }
+    return moved;
+  };
+  const drainOrder = (m0) => {
+    const m = clone(m0), out = [];
+    for (;;) {
+      while (stepSettle(m)) { /* settle fully */ }
+      const id = m[0][EXIT];
+      if (id < 0) return out;
+      out.push(id); m[0][EXIT] = -1;
+    }
+  };
+  // A fresh dome: the order in which capsules will leave is simulated first, so each capsule carries the series of the card it brings.
+  const fillPile = () => {
+    grid = freshGrid();
+    ensure(qpos + TOTAL);
+    caps = [];
+    drainOrder(grid).forEach((id, k) => { caps[id] = queue[qpos + k]; });
+    qpos += TOTAL;
+  };
+  const left = () => grid.reduce((a, r) => a + r.filter((v) => v >= 0).length, 0);
+
+  /* ---------- The drawing: an 84 x 104 canvas of flat pixels, scaled by a whole number ---------- */
+  const W = 84, H = 106, CAP = 9, PITCH = 10, HUB = [27, 84];
+  const EXX = 63, ROW0 = 51, REST = 91; // the chute's column, the bottom row's top edge, and the tray's resting row
+  const col = {};
+  const palette = () => {
+    ['violet', 'violet-deep', 'violet-mid', 'violet-lite', 'violet-hi', 'milk', 'haze', 'coin', 'pond', 'pond-deep', 'attic', 'attic-deep', 'rooftop', 'rooftop-deep'].forEach((n) => { col[n] = read('--' + n); });
+  };
+  const R = (x, y, w, h, c) => { g.fillStyle = c; g.fillRect(x, y, w, h); };
+  const disc = (cx, cy, r, c) => { for (let y = -r; y <= r; y++) { const hw = Math.floor(Math.sqrt(r * r + r - y * y)); R(cx - hw, cy + y, 2 * hw + 1, 1, c); } };
+  const SPAN = [[2, 6], [1, 7], [0, 8], [0, 8], [0, 8], [0, 8], [0, 8], [1, 7], [2, 6]]; // a stepped octagon, nine pixels across
+  // One capsule at (x, y): light top half, a seam row, dark bottom half. lift raises the top half off an opened capsule.
+  const capsule = (x, y, s, lift = 0) => {
+    const c = col[s], cd = col[s + '-deep'];
+    SPAN.forEach(([a, b], r) => {
+      if (r < 4) R(x + a, y + r - lift, b - a + 1, 1, c);
+      else R(x + a, y + r, b - a + 1, 1, r === 4 ? col['violet-deep'] : cd);
+    });
+    if (lift < 4) { R(x + 2, y + 1 - lift, 2, 1, col.milk); R(x + 1, y + 2 - lift, 1, 1, col.milk); }
+  };
+  const cellXY = (r, c) => [13 + c * PITCH, ROW0 - r * PITCH];
+  const st = { pos: 0, trav: null, tray: null, lit: false };
+  const DIRS = [[0, -1], [1, 0], [0, 1], [-1, 0]]; // the four detents: up, right, down, left
+
+  const seriesOf = (ti) => TESTI[ti].series;
+
+  function render() {
+    g.clearRect(0, 0, W, H);
+    // The body: painted face, light left edge, shadow right edge, stepped corners, feet.
+    R(4, 64, 76, 40, col['violet-lite']); R(4, 64, 2, 40, col['violet-hi']); R(74, 64, 6, 40, col['violet-deep']);
+    g.clearRect(4, 102, 2, 2); g.clearRect(78, 102, 2, 2);
+    R(10, 104, 10, 2, col['violet-deep']); R(64, 104, 10, 2, col['violet-deep']);
+    [['pond', 9], ['attic', 14], ['rooftop', 19]].forEach(([s, x]) => R(x, 67, 3, 3, col[s])); // a mark for each series
+    // The dome: a stepped half-ellipse of glass.
+    const hw = (y) => { const d = y - 3; return d < 20 ? Math.round(34 * Math.sqrt(1 - Math.pow((20 - d - .5) / 20, 2))) : 34; };
+    for (let y = 3; y <= 59; y++) R(42 - hw(y), y, 2 * hw(y), 1, col['violet-hi']);
+    for (let y = 4; y <= 59; y++) { const w = hw(y - 1) - 1; R(42 - w, y, 2 * w, 1, col['violet-mid']); }
+    R(15, 16, 3, 14, col['violet-hi']); R(15, 33, 3, 3, col['violet-hi']);
+    // The rim, the chute down the right side and the tray's pocket.
+    R(6, 60, 72, 5, col['violet-deep']); R(6, 60, 72, 1, col['violet-hi']);
+    R(60, 59, 14, 32, col['violet-hi']); R(61, 59, 12, 32, col['violet-deep']);
+    R(46, 90, 32, 11, col['violet-deep']);
+    R(40, 100, 40, 4, col['violet-hi']); R(40, 100, 40, 1, col.haze);
+    // The coin slot.
+    R(45, 71, 10, 17, col['violet-hi']); R(46, 72, 8, 15, col['violet-deep']); R(49, 74, 2, 11, st.lit ? col.coin : col['violet-mid']);
+    // The pile.
+    for (let r = 0; r < ROWS; r++) for (let c = 0; c < COLS; c++) {
+      const id = grid[r][c];
+      if (id >= 0 && r < shown) { const [x, y] = cellXY(r, c); capsule(x, y, seriesOf(caps[id])); }
+    }
+    if (st.trav) capsule(EXX, st.trav.y, st.trav.s);
+    if (st.tray) capsule(EXX, REST, st.tray.s, st.tray.lift);
+    // The crank: a hub, four pegs, a handle at one of four detents.
+    disc(HUB[0], HUB[1], 11, col['violet-deep']); disc(HUB[0], HUB[1], 8, col['violet-mid']); disc(HUB[0], HUB[1], 3, col['violet-deep']);
+    DIRS.forEach(([dx, dy], i) => { if (i !== st.pos) R(HUB[0] + dx * 12 - 1, HUB[1] + dy * 12 - 1, 3, 3, col['violet-deep']); });
+    const [dx, dy] = DIRS[st.pos], kx = HUB[0] + dx * 12, ky = HUB[1] + dy * 12;
+    if (dx === 0) R(HUB[0] - 1, dy < 0 ? ky : HUB[1], 3, 12, col.coin); else R(dx < 0 ? kx : HUB[0], HUB[1] - 1, 12, 3, col.coin);
+    R(kx - 3, ky - 2, 7, 5, col.coin); R(kx - 2, ky - 3, 5, 7, col.coin); R(kx - 2, ky - 2, 2, 1, col.milk);
+  }
+
+  // Fit: the drawing is scaled by a whole number so every pixel stays square.
+  function fit() {
+    const hero = $('.hero'), wide = innerWidth >= 900;
+    let s = Math.floor((wide ? Math.min(hero.clientWidth * .5, 800) : hero.clientWidth) / W);
+    if (wide) s = Math.min(s, Math.floor((innerHeight - 64) / H));
+    s = Math.max(3, Math.min(9, s));
+    mc.style.width = W * s + 'px'; mc.style.height = H * s + 'px';
+  }
+
+  /* ---------- The card ---------- */
+  const show = (ti, nth) => {
+    const t = TESTI[ti];
+    $('#card-quote').textContent = t.quote;
+    $('#card-who').textContent = t.who;
+    $('#card-meta').textContent = t.meta;
+    $('#card-chip').textContent = 'Started with ' + SERIES[t.series];
+    $('#card-nof').textContent = (ti + 1) + ' of ' + N;
+    card.classList.remove('s-pond', 's-attic', 's-rooftop');
+    card.classList.add('s-' + t.series);
+  };
+  const updateCount = () => { const n = left(); countEl.textContent = n + (n === 1 ? ' capsule' : ' capsules') + ' in the dome'; };
+
+  /* ---------- Turning the crank: four clicks make a turn, the fourth lets a capsule go ---------- */
+  let count = 0, busy = false, tl = null, idleT = 0, cur = 0;
+  // A plan is a list of [ms, function]: played on a GSAP timeline with motion, run at once without.
+  const run = (plan, onEnd) => {
+    busy = true;
+    plan.sort((a, b) => a[0] - b[0]);
+    const end = () => { busy = false; tl = null; onEnd && onEnd(); };
+    if (fx) {
+      tl = gsap.timeline({ onComplete: end });
+      plan.forEach(([t, fn]) => tl.call(fn, null, t / 1000));
+      tl.call(() => {}, null, plan[plan.length - 1][0] / 1000 + .001);
+    } else { plan.forEach(([, fn]) => fn()); end(); }
+  };
+  // The capsule's way out: leave the dome, the pile settles, the capsule goes down the chute cell by cell, the lid lifts in three steps, the card cuts.
+  const releasePlan = (t0) => {
+    const P = [], after = clone(grid);
+    after[0][EXIT] = -1;
+    let K = 0; while (stepSettle(after)) K++;
+    P.push([t0, () => { const id = grid[0][EXIT]; st.trav = { s: seriesOf(caps[id]), y: ROW0, ti: caps[id] }; grid[0][EXIT] = -1; st.tray = null; st.lit = true; render(); updateCount(); }]);
+    for (let k = 1; k <= K; k++) P.push([t0 + k * T.settle, () => { stepSettle(grid); render(); }]);
+    for (let i = 1; i <= 4; i++) P.push([t0 + i * T.chute, () => {
+      if (i < 4) st.trav.y = ROW0 + PITCH * i;
+      else { st.tray = { s: st.trav.s, ti: st.trav.ti, lift: 0 }; st.trav = null; }
+      render();
+    }]);
+    const tL = t0 + 4 * T.chute;
+    [3, 6, 9].forEach((lift, j) => P.push([tL + (j + 1) * T.lift, () => {
+      st.tray.lift = lift; render();
+      if (j === 2) { cur = st.tray.ti; show(cur); st.lit = false; if (!left()) { fillPile(); updateCount(); } render(); }
+    }]));
+    return P;
+  };
+  // One full turn from wherever the crank rests: the clicks still to play, 120 ms apart, then the release.
+  const turn = () => {
+    if (busy) return;
+    clearTimeout(idleT);
+    const rem = 4 - count, P = [];
+    for (let i = 1; i <= rem; i++) {
+      const last = i === rem, t = (i - 1) * T.click;
+      P.push([t, () => { count = last ? 0 : count + 1; st.pos = count % 4; render(); }]);
+    }
+    P.push(...releasePlan((rem - 1) * T.click));
+    run(P);
+  };
+  // One quarter click, by drag or arrow key.
+  const click = (dir) => {
+    if (busy) return;
+    clearTimeout(idleT);
+    const n = Math.max(0, Math.min(4, count + dir));
+    if (n === count) return;
+    count = n; st.pos = count % 4; render();
+    statusEl.textContent = count ? 'Click ' + count + ' of 4' : 'Crank at rest';
+    if (count === 4) { count = 0; st.pos = 0; render(); run(releasePlan(0)); }
+  };
+  const restLater = () => {
+    clearTimeout(idleT);
+    if (count > 0 && !busy) idleT = setTimeout(() => { if (!busy) { count = 0; st.pos = 0; render(); } }, T.idle);
+  };
+
+  // Pointer: drag the handle around its hub; the pointer's quadrant decides each click. A tap or click without a drag is a full turn.
+  let drag = null, suppress = false;
+  const quad = (e) => {
+    const r = crank.getBoundingClientRect(), dx = e.clientX - (r.left + r.width / 2), dy = e.clientY - (r.top + r.height / 2);
+    return ((Math.round(Math.atan2(dx, -dy) * 180 / Math.PI / 90) % 4) + 4) % 4;
+  };
+  crank.addEventListener('pointerdown', (e) => {
+    suppress = false;
+    if (busy || (e.pointerType === 'mouse' && e.button !== 0)) return;
+    clearTimeout(idleT);
+    try { crank.setPointerCapture(e.pointerId); } catch (_) { /* not capturable */ }
+    drag = { id: e.pointerId, q: quad(e) };
+  });
+  crank.addEventListener('pointermove', (e) => {
+    if (!drag || e.pointerId !== drag.id || busy) return;
+    const q = quad(e), d = (q - drag.q + 4) % 4;
+    if (!d) return;
+    drag.q = q; suppress = true;
+    if (d === 3) click(-1); else { click(1); if (d === 2) click(1); }
+  });
+  const endDrag = (e) => { if (!drag || e.pointerId !== drag.id) return; drag = null; restLater(); };
+  crank.addEventListener('pointerup', endDrag);
+  crank.addEventListener('pointercancel', endDrag);
+  crank.addEventListener('click', () => { if (suppress) { suppress = false; return; } turn(); });
+  crank.addEventListener('keydown', (e) => {
+    const k = { ArrowRight: 1, ArrowDown: 1, ArrowLeft: -1, ArrowUp: -1 }[e.key];
+    if (!k) return;
+    e.preventDefault(); click(k); restLater();
+  });
+  againBtn.addEventListener('click', turn);
+
+  // First paint: the card is subscriber one, its capsule lies open in the tray, and the dome is full.
+  palette();
+  ensure(1);
+  cur = queue[0]; qpos = 1;
+  fillPile();
+  st.tray = { s: seriesOf(cur), ti: cur, lift: 9 };
+  show(cur);
+  fit(); render(); updateCount();
+  new ResizeObserver(() => { fit(); }).observe($('.hero'));
+
+  /* ---------- Buttons and links: presses held long enough to be seen (plain JS, works without the libraries) ---------- */
+  $$('.btn').forEach((b) => {
+    let t = 0, since = 0;
+    const down = () => { clearTimeout(t); since = performance.now(); b.classList.add('is-down'); };
+    const up = () => { const wait = Math.max(0, T.hold - (performance.now() - since)); clearTimeout(t); t = setTimeout(() => b.classList.remove('is-down'), wait); };
+    b.addEventListener('pointerdown', (e) => { down(); if (e.pointerType === 'touch') { b.classList.add('is-hot'); setTimeout(() => b.classList.remove('is-hot'), 600); } });
+    ['pointerup', 'pointerleave', 'pointercancel'].forEach((ev) => b.addEventListener(ev, () => { if (b.classList.contains('is-down')) up(); }));
+    b.addEventListener('keydown', (e) => { if ((e.key === 'Enter' || e.key === ' ') && !e.repeat) down(); });
+    b.addEventListener('keyup', (e) => { if (e.key === 'Enter' || e.key === ' ') up(); });
+    b.addEventListener('blur', () => { if (b.classList.contains('is-down')) up(); });
+  });
+  $$('.u').forEach((u) => {
+    u.addEventListener('pointerdown', (e) => {
+      if (e.pointerType !== 'touch') return;
+      u.classList.add('is-tap'); setTimeout(() => u.classList.remove('is-tap'), T.tap);
+    });
+  });
+
+  /* ---------- The form (plain JS) ---------- */
+  const form = $('#start-form'), email = $('#email'), fld = $('#email-fld'), err = $('#email-err'), serr = $('#series-err'), sfs = $('#series');
+  const done = $('#done'), doneTitle = $('#done-title');
+  const checkEmail = () => {
+    const v = email.value.trim();
+    if (!v) return 'Enter your email address, like aiko@example.com.';
+    if (!/^[^\s@]+@[^\s@.]+(\.[^\s@.]+)+$/.test(v)) return 'This address needs an @ and a domain, like aiko@example.com.';
+    return '';
+  };
+  const checkSeries = () => (form.elements.series.value ? '' : 'Choose the series to start with: Pond, Attic or Rooftop.');
+  const showEmail = (msg) => {
+    err.textContent = msg;
+    fld.classList.toggle('is-bad', !!msg);
+    if (msg) email.setAttribute('aria-invalid', 'true'); else email.removeAttribute('aria-invalid');
+  };
+  const showSeries = (msg) => {
+    serr.textContent = msg;
+    if (msg) sfs.setAttribute('aria-invalid', 'true'); else sfs.removeAttribute('aria-invalid');
+  };
+  // The first working day of next month, computed from today.
+  const shipDate = (from = new Date()) => {
+    const d = new Date(from.getFullYear(), from.getMonth() + 1, 1);
+    while (d.getDay() === 0 || d.getDay() === 6) d.setDate(d.getDate() + 1);
+    return d;
+  };
+  const swap = (toDone) => {
+    form.hidden = toDone; done.hidden = !toDone;
+    if (toDone) { doneTitle.focus(); fx?.success(); } else email.focus();
+  };
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const m1 = checkEmail(), m2 = checkSeries();
+    showEmail(m1); showSeries(m2);
+    if (m1) { email.focus(); return; }
+    if (m2) { $('input[name=series]', form).focus(); return; }
+    const s = form.elements.series.value, v = email.value.trim();
+    $('#done-title').textContent = 'Your ' + SERIES[s] + ' capsule is booked.';
+    $('#done-date').textContent = shipDate().toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+    $('#done-mail').textContent = v; $('#scene-mail').textContent = v;
+    $('#done-gift').hidden = !form.elements.gift.checked;
+    const scene = $('#scene');
+    scene.classList.remove('s-pond', 's-attic', 's-rooftop'); scene.classList.add('s-' + s);
+    swap(true);
+  });
+  email.addEventListener('input', () => { if (email.hasAttribute('aria-invalid') && !checkEmail()) showEmail(''); });
+  form.addEventListener('change', (e) => { if (e.target.name === 'series' && sfs.hasAttribute('aria-invalid')) showSeries(''); });
+  $('#change').addEventListener('click', () => swap(false));
+
+  /* ---------- The dialog (plain JS) ---------- */
+  const dlg = $('#box'), openBtn = $('#open-box'), closeBtn = $('#box-close');
+  let closing = false, downOn = null;
+  const settle = () => { closing = false; fx?.dialogReset(); };
+  openBtn.addEventListener('click', () => {
+    if (dlg.open) return;
+    settle();
+    dlg.showModal();
+    lenis?.stop();
+    fx?.dialogIn();
+  });
+  const closeDialog = () => {
+    if (!dlg.open || closing) return;
+    closing = true;
+    const end = () => { closing = false; dlg.close(); openBtn.focus(); };
+    if (fx) fx.dialogOut(end); else end();
+  };
+  closeBtn.addEventListener('click', closeDialog);
+  dlg.addEventListener('cancel', (e) => { e.preventDefault(); closeDialog(); });
+  dlg.addEventListener('pointerdown', (e) => { downOn = e.target; });
+  dlg.addEventListener('click', (e) => { if (e.target === dlg && downOn === dlg) closeDialog(); });
+  dlg.addEventListener('close', () => { settle(); lenis?.start(); });
+
+  if (!lib) return;
+
+  /* ---------- Motion ---------- */
+  gsap.registerPlugin(ScrollTrigger);
+  const fontsReady = Promise.race([
+    Promise.all([document.fonts.ready, document.fonts.load('700 100px "Handjet"')]).then(() => 'fonts', () => 'fonts'),
+    new Promise((r) => setTimeout(() => r('timeout'), 1500))
+  ]);
+  const visible = new Promise((r) => {
+    if (document.visibilityState === 'visible') return r();
+    const f = () => { if (document.visibilityState === 'visible') { document.removeEventListener('visibilitychange', f); r(); } };
+    document.addEventListener('visibilitychange', f);
+  });
+  let played = false;
+
+  const mm = gsap.matchMedia();
+  mm.add({
+    motion: '(prefers-reduced-motion: no-preference)',
+    reduce: '(prefers-reduced-motion: reduce)'
+  }, (ctx) => {
+    const { motion } = ctx.conditions;
+    let dead = false;
+    const items = $$('.nine > li');
+
+    if (!motion) {
+      // Reduced motion: final states, native scroll. The dome is full, every capsule is open, a turn is instant.
+      root.classList.add('go');
+      shown = ROWS; render();
+      return () => { dead = true; };
+    }
+
+    root.classList.add('fx');
+    fx = {
+      // Dialog: dispensed. It tumbles in from the left a quarter turn per frame (270, 180, 90, upright) and leaves in two.
+      dialogReset() { gsap.killTweensOf(dlg); gsap.set(dlg, { clearProps: 'transform' }); },
+      dialogIn() {
+        const w = innerWidth, f = [[-.45, 270], [-.3, 180], [-.15, 90], [0, 0]], t = gsap.timeline();
+        f.forEach(([x, r], i) => t.set(dlg, { x: x * w, rotation: r }, i * T.tumble / 1000));
+        t.set(dlg, { clearProps: 'transform' }, f.length * T.tumble / 1000);
+      },
+      dialogOut(end) {
+        const w = innerWidth, t = gsap.timeline({ onComplete: () => { gsap.set(dlg, { clearProps: 'transform' }); end(); } });
+        t.set(dlg, { x: -.25 * w, rotation: 90 }, 0).set(dlg, { x: -.9 * w, rotation: 180 }, T.tumble / 1000).call(() => {}, null, 2 * T.tumble / 1000);
+      },
+      // Success: the capsule drops into the tray in three steps and bounces twice, 3 px then 1 px.
+      success() {
+        const cap = $('#scene-cap'), y = [-72, -48, -24, 0, -3, 0, -1, 0], t = gsap.timeline();
+        gsap.killTweensOf(cap);
+        y.forEach((v, i) => t.set(cap, { y: v }, i * T.drop / 1000));
+      }
+    };
+
+    // Lenis on GSAP's clock. Touch keeps native scrolling.
+    lenis = new Lenis({ lerp: .1, smoothWheel: true, autoRaf: false, anchors: true });
+    lenis.on('scroll', ScrollTrigger.update);
+    const tick = (t) => lenis.raf(t * 1000);
+    gsap.ticker.add(tick);
+    gsap.ticker.lagSmoothing(0);
+
+    // Scroll: capsules open as they pass. Each slip's two halves part in steps of 6 px as it travels up the screen.
+    const triggers = items.map((li) => ScrollTrigger.create({
+      trigger: li, start: 'top 94%', end: 'center 44%',
+      onUpdate: (self) => li.style.setProperty('--o', Math.min(3, Math.floor(self.progress * 4))),
+      onRefresh: (self) => li.style.setProperty('--o', Math.min(3, Math.floor(self.progress * 4)))
+    }));
+
+    // Load: the capsules drop into the dome one row at a time, bottom row first, then the crank twitches one detent and back.
+    shown = 0; render();
+    Promise.all([fontsReady, visible]).then(() => {
+      if (dead) return;
+      root.classList.add('go');
+      ScrollTrigger.refresh();
+      if (played) { shown = ROWS; render(); return; }
+      played = true;
+      const L = gsap.timeline();
+      for (let r = 0; r < ROWS; r++) L.call(() => { shown = r + 1; render(); }, null, r * T.pile / 1000);
+      const tw = (ROWS * T.pile + 60) / 1000;
+      L.call(() => { st.pos = 1; render(); }, null, tw).call(() => { st.pos = 0; render(); }, null, tw + T.twitch / 1000);
+    });
+
+    return () => {
+      dead = true;
+      fx = null;
+      tl && tl.kill(); tl = null; busy = false;
+      triggers.forEach((s) => s.kill());
+      items.forEach((li) => li.style.removeProperty('--o'));
+      gsap.ticker.remove(tick);
+      gsap.ticker.lagSmoothing(500, 33);
+      lenis.destroy(); lenis = null;
+      gsap.killTweensOf(dlg); gsap.set(dlg, { clearProps: 'transform' });
+      root.classList.remove('fx');
+      shown = ROWS; render();
+    };
+  });
+})();
+</script>
+</body>
+</html>
