@@ -107,4 +107,57 @@ Preloaders with a counter, curtains, fade with slide, parallax, horizontal scrol
 
 ## Series two (added in this repository)
 
-Effects are added here batch by batch as designs are accepted.
+Effects are added here batch by batch as designs are accepted, as built. The art direction behind them is in `research/series-two.md`.
+
+### Grounds and subjects added
+
+| Design | Ground | Name | Subject |
+|---|---|---|---|
+| `crud-memory-card` | `#27323E` | gunmetal slate | the house memory card of a retro game bar |
+| `nav-game-museum` | `#0F4638` | verdigris | a museum of arcade and home video games |
+| `faq-handheld-clinic` | `#2F3210` | olive drab | a mail-in repair clinic for handheld consoles |
+| `contact-hackerspace` | `#3B1014` | oxblood | a hackerspace at the end of a harbour pier |
+
+### `crud-memory-card`
+- **Signature:** a 15-block memory card; each save sits in one to three blocks in its game's hue, with a two-frame identicon generated from the player tag and link pips between adjacent blocks.
+- **Pointer:** inspecting a block frames every block of that save and plays the icons' two frames while hover or focus lasts (touch: 1.2 s after a tap; keyboard: grid arrows).
+- **Scroll:** a 15-pip block gauge docks to the top edge in two hard frames once the card has scrolled away.
+- **Load:** card check: blocks are read from socket to content one at a time under a steady access light.
+- **Button:** sticker whose corner peels back in three stepped frames; pressed flat with the face inverted.
+- **Link:** a 6x6 glyph that alternates two frames while hovered; the underline cuts from 1 to 2 px.
+- **Field:** a write-protect tab that slides shut in two steps as soon as the value is valid for its type.
+- **Dialog:** the card turns over: a five-frame horizontal flip (scaleX 1, .5, 0, .5, 1) from card back to form.
+- **Success:** writing: blocks fill in eight raster rows each, with "Saving. Do not close this tab."; delete erases them from the bottom, with Undo.
+
+### `nav-game-museum`
+- **Signature:** the floor plan is the menu: a visitor marker walks the shortest tile path (breadth-first search) to the door of the room pointed at, leaving footprints, and the room's floor lights in its hue.
+- **Pointer:** pointing, focusing or tapping a room sends the marker (touch: first tap walks and shows the note, the Go link navigates).
+- **Scroll:** a you-are-here marker steps cell by cell along a minimap strip in the header; the header's second row is cut away after 80 px.
+- **Load:** room links arrive as full-height swatches of their hue that collapse to small markers.
+- **Button:** admission ticket whose stub tears off along the perforation in two steps; a square hole is punched on press.
+- **Link:** a map pin drops onto the start of the link and the underline swaps to a dotted route.
+- **Field:** a doorway opens in the field's left wall in two steps; the label plate cuts to above the field; search lights matching rooms.
+- **Dialog:** swing gate: hinged on its left edge, four stepped angles.
+- **Success:** a date stamp inked onto the ticket in two frames (hollow outline, then solid).
+
+### `faq-handheld-clinic`
+- **Signature:** ordered (4x4 Bayer) dithering as the only way anything appears: answers, headline lines, dialog panel and a four-shade diagnostic screen all step through threshold levels.
+- **Pointer:** pressing the LCD: a dithered dark pool under the pointer that recovers in three steps (keyboard: a contrast wheel slider that presses a pool at the centre).
+- **Scroll:** the diagnostic screen cross-dissolves to the test pattern of the fault group in view and the contrast wheel turns one notch; on phones a swatch by each heading fills through the levels.
+- **Load:** the screen powers on through the dither levels, then the headline lines dither in.
+- **Button:** membrane key: a frame steps inward in three rings; bottomed out (solid darker face) on press.
+- **Link:** underline that steps from a 50% checker to 75% to solid.
+- **Field:** contrast up: the field's ground steps one shade lighter through a 50% dither frame; a row of missing pixels marks an error.
+- **Dialog:** the panel arrives through dither levels over a flat scrim.
+- **Success:** screen test: four shade bars, then a pixel tick.
+
+### `contact-hackerspace`
+- **Signature:** a harbour radar that pings instead of sweeping: stepped rings expand from a point and the blips they cross light in their kind's hue, then decay in three steps.
+- **Pointer:** the pointer emits pings (at most one every 0.7 s, a click at once); touch taps; keyboard focus on a blip or legend button pings from it; a readout names the nearest place, distance and bearing.
+- **Scroll:** the chart cuts between three ranges (2 km, 500 m, 100 m), each its own drawing, as the three parts of the copy pass.
+- **Load:** first ping: the chart exists only where the ring has passed.
+- **Button:** echo: two rectangles cut in outside the button; they collapse inward and the face inverts on press.
+- **Link:** the underline becomes the Morse code of the link's first letter.
+- **Field:** a strip of pixel noise under the field that settles to a flat line when the value is valid.
+- **Dialog:** clock wipe: a clip-path polygon sweeps clockwise in eight steps.
+- **Success:** the visitor's blip joins the chart and the door pings it.
