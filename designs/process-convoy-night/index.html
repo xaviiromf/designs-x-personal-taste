@@ -761,7 +761,7 @@
       if (c) {   // the constellation: thin lines in the wing's hue once the stars are in place, stars on top
         if (c.lines) { g.fillStyle = C[c.wing]; for (const [x, y] of c.ink) g.fillRect(x, y, 1, 1); }
         g.fillStyle = C.starlight;
-        for (const p of c.pts) g.fillRect(p.x, p.y, 1, 1);
+        for (const p of c.pts) g.fillRect(p.x, p.y, c.lines ? 2 : 1, c.lines ? 2 : 1);   // in place, each one burns at the brightest class
       }
     }
     // Whole-pixel fit: W x H viewport pixels shown at S css pixels each. Returns true when the size changed.
@@ -891,7 +891,13 @@
   let travel = (i) => { goal = i; if (i !== cur) arrive(i); };   // the motion branch replaces this with the jump
   // Where a step is read: 38% of the way down the space under the sticky viewport (phones) or the window (desktop).
   const readLine = () => { const top = narrow.matches ? Math.max(0, dock.getBoundingClientRect().bottom) : 0; return top + (innerHeight - top) * .38; };
-  const pick = () => { const line = readLine(); let i = 0; stepEls.forEach((el, j) => { if (el.getBoundingClientRect().top <= line) i = j; }); return i; };
+  // With smooth scrolling the step is read where the scroll is heading (see fromScroll in the motion branch).
+  const pick = () => {
+    const line = readLine() + (lenis ? lenis.targetScroll - scrollY : 0);
+    let i = 0;
+    stepEls.forEach((el, j) => { if (el.getBoundingClientRect().top <= line) i = j; });
+    return i;
+  };
   let raf = 0;
   const follow = () => {
     if (raf) return;
@@ -1078,7 +1084,7 @@
       return () => {};
     }
     const s = view.s, off = [], calls = new Set();
-    let dead = false, st = null, busy = false, lastWant = 0;
+    let dead = false, st = null, busy = false, lastWant = 0, lastWheel = 0;
     const on = (el, type, fn, opt) => { el.addEventListener(type, fn, opt); off.push(() => el.removeEventListener(type, fn, opt)); };
     const later = (t, fn) => { const c = gsap.delayedCall(t, () => { calls.delete(c); fn(); }); calls.add(c); return c; };
 
@@ -1105,6 +1111,7 @@
     const io = new IntersectionObserver(([e]) => { inView = e.isIntersecting; inView ? poke() : stopDrift(); });
     io.observe(viewBox);
     on(window, 'scroll', poke, { passive: true });
+    on(window, 'wheel', () => { lastWheel = performance.now(); }, { passive: true });
     on(sec, 'pointermove', poke); on(sec, 'touchstart', poke, { passive: true });
     on(document, 'focusin', poke); on(document, 'keydown', poke);
 
@@ -1114,10 +1121,13 @@
     const jump = () => {
       busy = true;
       let k = 0, held = 0;
+      const first = goal;
       s.dir = goal > cur ? 1 : -1;
       const stretch = () => { s.streak = LEN[k]; view.render(); later(F, ++k < LEN.length ? stretch : land); };
       const land = () => {
-        if (performance.now() - lastWant < 110 && held++ < 8) return later(F, land);
+        // Hold at full stretch while the destination has just changed, or has already moved on and the wheel is still turning.
+        const now = performance.now();
+        if ((now - lastWant < 110 || (goal !== first && now - lastWheel < 150)) && held++ < 10) return later(F, land);
         s.dir = goal >= cur ? 1 : -1;
         arrive(goal);   // renders the new field with the streaks still at full length
         later(F, () => { s.streak = LEN[2]; view.render(); });
@@ -1134,7 +1144,13 @@
 
     /* Scroll chooses the step. Pinned: five equal parts of the pinned distance. Otherwise follow() reads each
        step's own block. The stage is pinned only when the whole text column fits the window with any step open. */
-    const fromScroll = (p) => { if (performance.now() >= lockUntil) travel(Math.min(stepEls.length - 1, Math.floor(p * stepEls.length))); };
+    // The step is read at the position the smooth scroll is heading for, not where it is on the way there:
+    // a flick of the wheel names its destination at once, and the convoy jumps straight to it.
+    const fromScroll = () => {
+      if (!st || performance.now() < lockUntil) return;
+      const p = clamp(0, .999, (lenis.targetScroll - st.start) / Math.max(1, st.end - st.start));
+      travel(Math.floor(p * stepEls.length));
+    };
     const fits = () => {
       root.classList.add('pin');
       const ok = stepEls.every((_, i) => { paintList(i); return text.scrollHeight <= text.clientHeight + 1; });
@@ -1144,7 +1160,7 @@
     const setPin = () => {
       const pin = wide && tall && fits();
       root.classList.toggle('pin', pin);
-      if (pin && !st) st = ScrollTrigger.create({ trigger: run, start: 'top top', end: 'bottom bottom', onUpdate: (self) => fromScroll(self.progress), onRefresh: (self) => fromScroll(self.progress) });
+      if (pin && !st) st = ScrollTrigger.create({ trigger: run, start: 'top top', end: 'bottom bottom', onUpdate: fromScroll, onRefresh: fromScroll });
       if (!pin && st) { st.kill(); st = null; }
       refit();
       ScrollTrigger.refresh();
@@ -1232,7 +1248,7 @@
       gsap.set(cuts, { visibility: 'hidden' });
       root.classList.add('go');
       const show = (sel) => () => gsap.set(cuts.filter((el) => el.matches(sel)), { clearProps: 'visibility' });
-      const tl = gsap.timeline({ onComplete: () => { played = true; poke(); st ? fromScroll(st.progress) : follow(); } });
+      const tl = gsap.timeline({ onComplete: () => { played = true; poke(); st ? fromScroll() : follow(); } });
       // Five frames collapse the streaks to stars; then the ships, the headline, the steps and the HUD cut in, once each.
       [16, 8, 4, 2, 0].forEach((len, k) => tl.call(() => { s.streak = len; view.render(); }, null, (k + 1) * LOADF));
       tl.call(() => { s.ships = true; view.render(); }, null, 6 * LOADF)
