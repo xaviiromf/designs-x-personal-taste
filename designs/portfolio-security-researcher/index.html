@@ -40,8 +40,10 @@
     /* Space: the grid. 16px cells; every step is a quarter, half or whole cell. */
     --cell: 16px;
     --s1: 4px; --s2: 8px; --s3: 16px; --s4: 24px;
-    --s5: 32px; --s6: 48px; --s7: 64px; --s8: 96px;
-    --max-w: 1280px;        /* 80 cells */
+    --s5: 32px; --s6: 48px; --s7: 64px; --s8: 96px; --s9: 128px;
+    --lane: 64px;           /* open grid between blocks: the trace's lanes */
+    --max-w: 1184px;        /* 74 cells; the rest is open gutter */
+    --slab: 1008px;         /* widest a full-row block gets, so a lane stays open beside it */
     --notch: 4px;           /* stepped corner on buttons */
     --gap: 4px;             /* how far a packet moves: the open gap and the sent jump */
     --line: 3px;            /* the trace line */
@@ -64,7 +66,7 @@
     --d-copied: 2.4s;       /* "Copied" stays on the button */
   }
   @media (max-width: 599px) {
-    :root { --t-body: 16px; --t-lede: 18px; --t-h3: 22px; --t-h4: 18px; --t-ep: 24px; }
+    :root { --t-body: 16px; --t-lede: 18px; --t-h3: 22px; --t-h4: 18px; --t-ep: 24px; --lane: 48px; --s9: 96px; }
   }
 
   /* Lenis rules, inlined from lenis@1.3.26/dist/lenis.css */
@@ -214,9 +216,9 @@
   .btn.is-sent .pk:nth-child(3) .pk-push { transition-delay: calc(2 * var(--d-sent)); }
 
   /* ---------- Top ---------- */
-  .top { display: grid; gap: var(--s7); margin-top: var(--s6); }
+  .top { display: grid; gap: var(--lane); margin-top: var(--s6); }
   @media (min-width: 1100px) {
-    .top { grid-template-columns: minmax(0, 6fr) minmax(0, 5fr); align-items: start; margin-top: var(--s5); }
+    .top { grid-template-columns: minmax(0, 6fr) minmax(0, 5fr); column-gap: var(--s8); align-items: start; margin-top: var(--s5); }
   }
   .h2 {
     width: fit-content; max-width: 100%;
@@ -276,7 +278,7 @@
   .gl { fill: var(--moss-hi); }
 
   /* ---------- Chart B: days from report to fix ---------- */
-  .fixes { margin-top: var(--s8); }
+  .fixes { max-width: var(--slab); margin: var(--s9) 0 0 auto; }   /* set right, so the band under the intro stays open */
   .legend { display: flex; flex-wrap: wrap; gap: var(--s1) var(--s4); margin: var(--s3) 0 0; padding: 0; list-style: none; color: var(--lichen); font-size: var(--t-small); }
   .legend li { display: inline-flex; align-items: center; gap: var(--s2); min-height: 28px; }
   .legend i { width: 10px; height: 10px; background: var(--sev); }
@@ -286,9 +288,9 @@
   .howto { margin: var(--s2) 0 0; color: var(--lichen); font-size: var(--t-small); }
 
   /* ---------- Write-ups ---------- */
-  .writeups { margin-top: var(--s8); }
+  .writeups { margin-top: var(--s9); }
   .wus-head { width: fit-content; max-width: 100%; }
-  .wus { display: grid; gap: var(--s6); margin: var(--s5) 0 0; padding: 0; list-style: none; }
+  .wus { display: grid; gap: var(--lane); margin: var(--s5) 0 0; padding: 0; list-style: none; }
   .wu {
     position: relative;
     display: grid; gap: var(--s4) var(--s6);
@@ -297,6 +299,8 @@
   }
   .wu::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 6px; background: var(--sev); }   /* row mark */
   @media (min-width: 860px) { .wu { grid-template-columns: minmax(0, 1fr) minmax(0, 21rem); } }
+  .wu { max-width: var(--slab); }
+  .wu:nth-child(even) { margin-left: auto; }   /* staggered rows leave a lane that zigzags down the list */
   .meta { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s2) var(--s3); margin: 0; }
   .chip {
     display: inline-flex; align-items: center;
@@ -331,7 +335,7 @@
   .wu-side .btn { margin-top: var(--s4); }
 
   /* ---------- Contact ---------- */
-  .contact { display: grid; gap: var(--s6); margin-top: var(--s8); }
+  .contact { display: grid; gap: var(--lane); margin-top: var(--s9); }
   @media (min-width: 1000px) { .contact { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); align-items: start; } }
   .intro-c { margin: var(--s2) 0 0; max-width: 46ch; }
   .cl { display: grid; margin: var(--s4) 0 0; padding: 0; list-style: none; }
@@ -1162,7 +1166,33 @@
   const trace = (() => {
     const cv = $('.trace'), g = cv.getContext('2d'), M = 160;
     let C = 16, O = 8, W = 0, H = 0, dpr = 1, col = '', LEN = 48;
-    const st = { head: null, trail: [], way: [], follow: null, axis: '', sx: 0, sy: 0, reached: null };
+    const st = { head: null, trail: [], way: [], follow: null, axis: '', sx: 0, sy: 0, slide: null, avoid: false, reached: null };
+    // Blocks are obstacles: the head never enters one, it hugs its outline (the block's rectangle pushed out to the grid).
+    const BLOCKS = '.h2, .lede, .panel, .wus-head, .wu, .foot';
+    let obs = [], obsT = -1e9;
+    const obstacles = () => {
+      const now = performance.now();
+      if (now - obsT > 300) {
+        obsT = now; obs = $$(BLOCKS).filter((el) => el.getClientRects().length).map((el) => snap(el));
+        // Blocks closer than two cells merge into one, so every outline is a clear lane the head can run.
+        for (let i = 0; i < obs.length; i++) for (let j = i + 1; j < obs.length; j++) {
+          const a = obs[i], b = obs[j];
+          if (a.L <= b.R + 1 && b.L <= a.R + 1 && a.T <= b.B + 1 && b.T <= a.B + 1) {
+            obs[i] = { L: Math.min(a.L, b.L), T: Math.min(a.T, b.T), R: Math.max(a.R, b.R), B: Math.max(a.B, b.B) };
+            obs.splice(j, 1); i = -1; break;
+          }
+        }
+      }
+      return obs;
+    };
+    const inside = (c, r, q) => c > q.L && c < q.R && r > q.T && r < q.B;
+    const blockAt = (c, r) => obstacles().find((q) => inside(c, r, q));
+    // A cell inside a block moves to the nearest cell on that block's outline.
+    const toEdge = ([c, r]) => {
+      const q = blockAt(c, r); if (!q) return [c, r];
+      const d = [c - q.L, q.R - c, r - q.T, q.B - r], k = d.indexOf(Math.min(...d));
+      return k === 0 ? [q.L, r] : k === 1 ? [q.R, r] : k === 2 ? [c, q.T] : [c, q.B];
+    };
     function size() {
       C = parseFloat(read('--cell')) || 16; O = C / 2; LEN = parseInt(read('--trace-len'), 10) || 48; col = read('--trace');
       dpr = Math.min(2, window.devicePixelRatio || 1);
@@ -1183,7 +1213,7 @@
         const [a, b] = t[i - 1], [c, d] = t[i];
         g.fillRect(Math.min(a, c) * C + O - o, Math.min(b, d) * C + O - o, Math.abs(c - a) * C + L, Math.abs(d - b) * C + L);
       }
-      if (st.head) g.fillRect(st.head[0] * C + O - 3, st.head[1] * C + O - 3, 7, 7);
+      if (st.head) g.fillRect(st.head[0] * C + O - 4, st.head[1] * C + O - 4, 9, 9); // the head: a 9px square, bigger than the line
     }
     const clear = () => { g.setTransform(1, 0, 0, 1, 0, 0); g.clearRect(0, 0, cv.width, cv.height); };
     // One cell at a time toward the next waypoint (or the pointer): one axis at a time, the longer axis first,
@@ -1200,7 +1230,24 @@
         }
         if ((st.axis === 'x' && Math.sign(dx) !== st.sx) || (st.axis === 'y' && Math.sign(dy) !== st.sy)) st.axis = '';
         if (!st.axis) { st.axis = Math.abs(dx) >= Math.abs(dy) ? 'x' : 'y'; st.sx = Math.sign(dx); st.sy = Math.sign(dy); }
-        st.head = st.axis === 'x' ? [hx + st.sx, hy] : [hx, hy + st.sy];
+        let mv = st.axis === 'x' ? [st.sx, 0] : [0, st.sy];
+        // Wall-following: a step into a block turns to the other axis toward the target, or slides along the
+        // block's edge toward its nearer corner until the way ahead is clear. A head already inside may leave.
+        const shut = (m) => !!blockAt(hx + m[0], hy + m[1]) && !blockAt(hx, hy);
+        if (st.avoid && shut(mv)) {
+          const alt = st.axis === 'x' ? (dy ? [0, Math.sign(dy)] : null) : (dx ? [Math.sign(dx), 0] : null);
+          if (alt && !shut(alt)) mv = alt;
+          else {
+            if (!st.slide) {
+              const q = blockAt(hx + mv[0], hy + mv[1]);
+              st.slide = st.axis === 'x' ? [0, Math.abs(hy - q.T) + Math.abs(t[1] - q.T) <= Math.abs(q.B - hy) + Math.abs(t[1] - q.B) ? -1 : 1]
+                : [Math.abs(hx - q.L) + Math.abs(t[0] - q.L) <= Math.abs(q.R - hx) + Math.abs(t[0] - q.R) ? -1 : 1, 0];
+            }
+            mv = st.slide;
+            if (shut(mv)) { st.slide = [-mv[0], -mv[1]]; mv = st.slide; if (shut(mv)) break; } // a corner pocket: slide the other way
+          }
+        } else st.slide = null;
+        st.head = [hx + mv[0], hy + mv[1]];
         st.trail.push(st.head);
         if (st.trail.length > LEN + 1) st.trail.shift(); // the tail is lost in whole cells
         moved++;
@@ -1227,7 +1274,7 @@
       advance(1e4);
       draw();
     }
-    return { st, size, draw, clear, advance, shrink, snap, around, opening, cells, still, get cell() { return C; }, get len() { return LEN; } };
+    return { st, size, draw, clear, advance, shrink, snap, around, opening, cells, still, toEdge, blockAt, obstacles, get cell() { return C; }, get len() { return LEN; } };
   })();
 
   /* ---------- Self-test (location.hash === '#selftest') ---------- */
@@ -1344,7 +1391,8 @@
       const r = sec.getBoundingClientRect(), top = -r.top / C(), bot = (innerHeight - r.top) / C();
       if (!S.head || S.head[1] < top - 2 || S.head[1] > bot + 2) { S.head = [-1, row]; S.trail = [S.head]; S.axis = ''; }
     };
-    const goTo = (cell) => { if (busy) return; hold = false; S.way = []; rate = 0; enter(cell[1]); S.follow = cell; wake(); };
+    // A target inside a block becomes the nearest cell on its outline, so the line hugs what is being pointed at.
+    const goTo = (cell) => { if (busy) return; hold = false; S.way = []; rate = 0; cell = trace.toEdge(cell); enter(cell[1]); S.follow = cell; wake(); };
     // Pointer: the head follows the pointer's cell.
     if (fine) {
       on(document, 'pointermove', (e) => { if (e.pointerType === 'touch') return; kb = false; ptr = [e.clientX, e.clientY]; goTo(cellAt(...ptr)); });
@@ -1372,7 +1420,9 @@
         const q = trace.snap(el);
         enter(q.T);
         S.follow = null; rate = 0; hold = false;
-        S.way = trace.around(q);
+        // A control inside a block: the head runs to the block's outline beside the control and parks there.
+        // A control in open grid: once around it, parked at its top-left.
+        S.way = trace.blockAt(q.L + 1, q.T + 1) ? [trace.toEdge([q.L + 1, q.T + 1])] : trace.around(q);
         wake();
       });
     });
@@ -1425,14 +1475,14 @@
       if (dead) return;
       ScrollTrigger.refresh();
       trace.size();
-      if (played || window.scrollY > innerHeight) { played = true; root.classList.add('go'); return; }
+      if (played || window.scrollY > innerHeight) { played = true; S.avoid = true; root.classList.add('go'); return; }
       played = true; busy = true;
       const o = trace.opening(), total = trace.cells(o.start, o.way), n = o.way.length;
       S.head = o.start; S.trail = [o.start]; S.way = o.way.slice(); S.follow = null; S.axis = '';
       rate = total / T.load; // the whole run, under 1.2s
       S.reached = (left) => {
         if (left === n - 3) root.classList.add('go'); // at the button's top-left corner: the lede and buttons cut in
-        if (left === 0) { busy = false; rate = 0; S.reached = null; hold = true; }
+        if (left === 0) { busy = false; rate = 0; S.reached = null; hold = true; S.avoid = true; }
       };
       lastMove = performance.now();
       wake();
@@ -1442,7 +1492,7 @@
       dead = true;
       off.forEach((f) => f());
       sleep(); trace.clear();
-      S.reached = null; busy = false; rate = 0;
+      S.reached = null; busy = false; rate = 0; S.avoid = false;
       gsap.ticker.remove(tick);
       gsap.ticker.lagSmoothing(500, 33);
       lenis.destroy(); lenis = null;

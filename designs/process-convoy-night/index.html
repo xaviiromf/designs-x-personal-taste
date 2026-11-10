@@ -68,6 +68,7 @@
     --d-cell: .06s;          /* one cell of the airlock's pressure bar */
     --d-con: .5s;            /* stars stepping into, and out of, a constellation */
     --d-hold: 2s;            /* how long the constellation holds */
+    --d-hop: .6s;            /* the scroll that follows a press on a route node, as long as one jump */
     --d-idle: 20s;           /* the field stops drifting after this long without input */
     --drift-rate: 6;         /* viewport pixels the field drifts per second */
   }
@@ -891,9 +892,11 @@
   let travel = (i) => { goal = i; if (i !== cur) arrive(i); };   // the motion branch replaces this with the jump
   // Where a step is read: 38% of the way down the space under the sticky viewport (phones) or the window (desktop).
   const readLine = () => { const top = narrow.matches ? Math.max(0, dock.getBoundingClientRect().bottom) : 0; return top + (innerHeight - top) * .38; };
-  // With smooth scrolling the step is read where the scroll is heading (see fromScroll in the motion branch).
+  // With smooth scrolling the step is read where the scroll is heading (see fromScroll in the motion branch);
+  // a native scroll (touch, the scrollbar, a script) is read where it is.
+  const heading = () => lenis && lenis.isScrolling === 'smooth' ? lenis.targetScroll : scrollY;
   const pick = () => {
-    const line = readLine() + (lenis ? lenis.targetScroll - scrollY : 0);
+    const line = readLine() + heading() - scrollY;
     let i = 0;
     stepEls.forEach((el, j) => { if (el.getBoundingClientRect().top <= line) i = j; });
     return i;
@@ -911,13 +914,15 @@
     if (root.classList.contains('pin')) { const r = run.getBoundingClientRect(); return scrollY + r.top + (r.height - innerHeight) * (i + .5) / stepEls.length; }
     return Math.max(0, Math.round(scrollY + stepEls[i].getBoundingClientRect().top - readLine() + 24));
   };
+  const HOP = num('--d-hop');
   const scrollToY = (y, done) => {
-    if (lenis) return lenis.scrollTo(y, { duration: .6, force: true, onComplete: done });
+    if (lenis) return lenis.scrollTo(y, { duration: HOP, force: true, onComplete: done });
     window.scrollTo({ top: y, behavior: reduced.matches ? 'auto' : 'smooth' });
-    if (done) setTimeout(done, reduced.matches ? 0 : 600);
+    if (done) setTimeout(done, reduced.matches ? 0 : HOP * 1000);
   };
-  // A route node jumps straight to its step: one cut (or one jump), however many steps lie between.
-  const nav = (i) => { lockUntil = performance.now() + 900; travel(i); scrollToY(stepY(i)); setTimeout(follow, 950); };
+  // A route node jumps straight to its step: one cut (or one jump), however many steps lie between. Scroll
+  // positions on the way there are ignored until the scroll has arrived.
+  const nav = (i) => { lockUntil = performance.now() + HOP * 1000 + 300; travel(i); scrollToY(stepY(i)); setTimeout(follow, HOP * 1000 + 350); };
   nodes.forEach((n, i) => n.addEventListener('click', () => nav(i)));
   // Keyboard: tabbing into a chip of a step that is folded away (pinned layout) opens that step at once.
   $('.steps').addEventListener('focusin', (e) => {
@@ -1148,7 +1153,7 @@
     // a flick of the wheel names its destination at once, and the convoy jumps straight to it.
     const fromScroll = () => {
       if (!st || performance.now() < lockUntil) return;
-      const p = clamp(0, .999, (lenis.targetScroll - st.start) / Math.max(1, st.end - st.start));
+      const p = clamp(0, .999, (heading() - st.start) / Math.max(1, st.end - st.start));
       travel(Math.floor(p * stepEls.length));
     };
     const fits = () => {
@@ -1224,9 +1229,9 @@
         const r = viewBox.getBoundingClientRect();
         if (!narrow.matches || (r.top >= 0 && r.bottom <= innerHeight)) return start();
         // Phones: the viewport scrolled away with the steps. Bring it back under the top edge first.
-        lockUntil = performance.now() + 900;
+        lockUntil = performance.now() + HOP * 1000 + 300;
         scrollToY(Math.round(scrollY + zone.getBoundingClientRect().bottom - dock.offsetHeight - 1), start);
-        later(.9, start);
+        later(HOP + .3, start);   // in case the scroll is interrupted
       },
       successEnd() { conStop(); }
     };
