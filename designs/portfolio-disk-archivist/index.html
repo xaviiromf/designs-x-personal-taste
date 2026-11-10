@@ -107,6 +107,10 @@
     max-width: 9em;
   }
   .lede { margin-top: var(--s3); max-width: 46ch; font-size: var(--t-lede); line-height: var(--lh-lede); }
+  .facts { display: grid; margin: var(--s5) 0 0; max-width: 46ch; border-top: 2px solid var(--pencil); }
+  .facts > div { display: grid; grid-template-columns: 7.5em minmax(0, 1fr); gap: var(--s2); padding: var(--s1) 0; border-bottom: 1px solid var(--pencil); }
+  .facts dt { color: var(--pencil); }
+  .facts dd { margin: 0; }
   .actions { display: flex; flex-wrap: wrap; gap: var(--s2) var(--s3); margin-top: var(--s4); }
   @media (min-width: 1100px) {
     .top { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); align-items: start; }
@@ -320,10 +324,10 @@
   .fld.is-bad :is(input, select, textarea) { border-color: var(--label); border-style: dashed; }
   .caret { position: absolute; right: var(--s2); top: 50%; width: 12px; height: 8px; margin-top: -4px; fill: var(--pencil); pointer-events: none; shape-rendering: crispEdges; }
   /* Four checksum pips at the field's right end: the field reads what is typed. */
-  .pips { position: absolute; right: var(--s2); top: 50%; display: flex; gap: 3px; margin-top: -3px; pointer-events: none; }
+  .pips { position: absolute; right: var(--s2); top: 50%; display: flex; gap: 3px; margin-top: -4px; pointer-events: none; }
   .fld select ~ .pips { right: 36px; }
   .fld textarea ~ .pips { top: 18px; }
-  .pips i { width: 6px; height: 6px; border: 1px solid var(--pencil); }
+  .pips i { width: 8px; height: 8px; border: 1px solid var(--pencil); }
   .pips i.on { border-color: var(--label); background: var(--label); }
   .err { display: flex; gap: var(--s2); align-items: flex-start; min-height: calc(var(--t-small) * 1.45 * 2); margin-top: var(--s1); font-size: var(--t-small); line-height: 1.45; font-weight: 500; }
   .hatch { flex: none; width: 24px; height: 12px; margin-top: 4px; background: repeating-linear-gradient(-45deg, var(--label) 0 2px, transparent 2px 5px); }
@@ -399,6 +403,12 @@
           <a class="btn btn-head" href="#enquiry"><span class="b-face"><span class="b-in"><span class="b-label">Ask about your disks</span><span class="b-win" aria-hidden="true"><svg viewBox="0 0 8 8"><rect x="2" y="0" width="4" height="1"/><rect x="1" y="1" width="2" height="1"/><rect x="5" y="1" width="2" height="2"/><rect x="4" y="3" width="2" height="1"/><rect x="3" y="4" width="2" height="1"/><rect x="3" y="6" width="2" height="2"/></svg><span class="b-plate"></span></span></span></span><span class="b-led" aria-hidden="true"></span></a>
           <a class="btn btn-line" href="#chart-b"><span class="b-face"><span class="b-in"><span class="b-label">See how often it works</span><span class="b-win" aria-hidden="true"><svg viewBox="0 0 8 8"><rect x="0" y="4" width="2" height="3"/><rect x="3" y="1" width="2" height="6"/><rect x="6" y="3" width="2" height="4"/><rect x="0" y="7" width="8" height="1"/></svg><span class="b-plate"></span></span></span></span><span class="b-led" aria-hidden="true"></span></a>
         </div>
+        <dl class="facts">
+          <div><dt>Workshop</dt><dd>Hamburg-Ottensen, since 2017</dd></div>
+          <div><dt>Formats</dt><dd>3.5 and 5.25 inch disks, data cassettes, cartridge saves</dd></div>
+          <div><dt>Clients</dt><dd>Museums, game studios, schools and families</dd></div>
+          <div><dt>Turnaround</dt><dd>Usually six weeks, by insured post both ways</dd></div>
+        </dl>
       </div>
 
       <div class="panel" id="chart-a" role="region" aria-labelledby="a-title">
@@ -785,7 +795,7 @@
         g.fillStyle = colr['--head'];
         const [wx, wy] = xy(w), [rx, ry] = xy(r);
         g.fillRect(wx, wy, b, b);
-        frame(rx, ry, b, lw);
+        frame(rx, ry, b, cell >= 14 ? 3 : 2);
         headRow = Math.floor(w / COLS);
       }
       // The pointed or kept block: a head outline in the gap around it.
