@@ -115,6 +115,8 @@
 
   /* ---------- The stall ---------- */
   .stall { position: relative; overflow: clip; background: var(--rust); color: var(--card); }
+  /* Text sets its own paper colour (zero specificity), so each half's lamps decide it rather than an inherited value. */
+  :where(.stall) :where(h2, h3, p, li, dt, dd, th, td, caption, label) { color: var(--card); }
   .wrap { max-width: calc(var(--max-w) + 2 * var(--gut)); margin: 0 auto; padding: var(--s4) var(--gut) var(--s7); }
 
   .head { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--s2) var(--s4); align-items: end; }
@@ -392,7 +394,7 @@
   .tablewrap { min-width: 0; }
   table.stock { width: 100%; border-collapse: separate; border-spacing: 0; font-variant-numeric: tabular-nums; }
   .stock caption { text-align: left; padding: 0 0 var(--s1); color: var(--twine); font-size: var(--t-small); }
-  .stock th, .stock td { padding: 0 var(--s2) 0 0; border-bottom: 1px solid var(--rust-slat); text-align: left; vertical-align: middle; font-weight: 400; }
+  .stock th, .stock td { padding: 0 var(--s3) 0 0; border-bottom: 1px solid var(--rust-slat); text-align: left; vertical-align: middle; font-weight: 400; }
   .stock thead th { border-bottom: 2px solid var(--twine); color: var(--twine); font-weight: 600; font-size: var(--t-small); height: var(--hit); white-space: nowrap; }
   .stock .num { text-align: right; }
   .stock td { height: 48px; }
