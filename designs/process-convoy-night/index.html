@@ -224,7 +224,7 @@
   /* ---------- Route strip: five nodes joined by segments; the convoy marker sits on the current one ---------- */
   .route ol { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); }
   .route li { position: relative; }
-  .route li + li::before { content: ""; position: absolute; left: -50%; right: 50%; top: 21px; height: 2px; background: var(--drift); }
+  .route li + li::before { content: ""; position: absolute; left: calc(-50% + 10px); right: calc(50% + 10px); top: 21px; height: 2px; background: var(--drift); }   /* the segment from the previous node, between the two dots */
   .node {
     position: relative;
     display: flex; flex-direction: column; align-items: center; gap: 6px;
@@ -288,9 +288,10 @@
       display: flex; flex-direction: column; justify-content: center; gap: var(--s2);
       height: 100vh; height: 100svh;
       padding-block: var(--s4);
+      container-type: inline-size;
     }
     .dock { position: static; margin: 0; padding: 0; background: none; border: 0; }
-    .view { height: auto; aspect-ratio: 4 / 3; max-height: calc(100vh - var(--side-rest)); max-height: calc(100svh - var(--side-rest)); }
+    .view { height: min(75cqw, 100vh - var(--side-rest)); height: min(75cqw, 100svh - var(--side-rest)); }   /* 4:3, or as tall as the window allows */
     .route { margin-top: var(--s2); }
     .legend { margin-top: 0; }
     .join { grid-column: 1; grid-row: 2; display: flex; flex-direction: column; justify-content: center; min-height: 100vh; min-height: 100svh; padding-block: var(--s6); }
@@ -332,6 +333,7 @@
   }
   .port input:hover { border-color: var(--starlight); }
   .port input:focus { border-color: var(--beacon); }
+  .port input:focus-visible { outline: none; }   /* the beacon border and the two closed clamps are the focus ring here */
   .clamp { position: absolute; top: 0; bottom: 0; width: var(--clamp); background: var(--drift); transition: transform var(--d-clamp) steps(2, start); pointer-events: none; }
   .clamp-l { left: calc(-1 * (var(--clamp) + var(--clamp-gap))); }
   .clamp-r { right: calc(-1 * (var(--clamp) + var(--clamp-gap))); }
@@ -432,8 +434,9 @@
   @media (max-width: 599px) {
     .lock-in { padding: var(--s4) var(--s3); }
     .lock h2 { font-size: 36px; }
-    .wings li { grid-template-columns: minmax(0, 1fr); row-gap: 2px; }
-    .does { padding-top: 0; }
+    .wings { gap: var(--s3); }
+    .wings li { display: block; }
+    .wings .chip { margin-right: var(--s2); vertical-align: middle; }
     .step-body { padding-left: 0; }
     .step-body > p { margin-top: var(--s3); }
     .node { font-size: 12px; }
@@ -587,7 +590,7 @@
             <div><dt>Headset</dt><dd id="done-set">Yes</dd></div>
             <div><dt>Email</dt><dd id="done-mail">sam@example.com</dd></div>
           </dl>
-          <p class="done-sky">We will email the voice channel on Thursday. Look at the viewport: the stars spell <b id="done-init">K7</b> for you.</p>
+          <p class="done-sky">We will email the voice channel on Thursday. Watch the viewport: for a moment its stars line up to spell <b id="done-init">K7</b>.</p>
           <button class="u" id="again" type="button">Change these details</button>
         </div>
       </div>
@@ -637,7 +640,7 @@
   // three ships fly in the formation, in units of [8.5% of the viewport's width, 15% of its height] from the centre.
   const WINGS = {
     scout: { name: 'Scouts', calls: ['Wren', 'Kite', 'Lark'], job: 'fly one jump ahead and call each gate clear',
-      art: ['##......', '.####...', '..######', '.####...', '##......'], at: [[3.2, -1], [4.2, 0], [3.2, 1]] },
+      art: ['##......', '.####...', '..######', '.####...', '##......'], at: [[3.1, -1], [4, 0], [3.1, 1]] },
     hauler: { name: 'Haulers', calls: ['Mule', 'Dray', 'Oxen'], job: 'carry the cargo in one column',
       art: ['.##.##.##...', '.##.##.##.#.', '###########.', '############', '###########.', '.##.##.##.#.', '.##.##.##...'], at: [[-1.6, 0], [0, 0], [1.6, 0]] },
     escort: { name: 'Escorts', calls: ['Pike', 'Flint', 'Bolt'], job: 'keep the lane clear on both flanks and behind',
@@ -682,8 +685,8 @@
     }
     // The formation, and the vanishing point the convoy flies towards (the body sits on it).
     function layout() {
-      const ux = Math.round(W * .085), uy = Math.round(H * .15), cx = Math.round(W * .36), cy = Math.round(H * .6);
-      vp = [Math.round(W * .88), cy];
+      const ux = Math.round(W * .085), uy = Math.round(H * .15), cx = Math.round(W * .33), cy = Math.round(H * .6);
+      vp = [Math.round(W * .87), cy];
       far = Math.hypot(vp[0], Math.max(cy, H - cy));
       spots = [];
       for (const [wing, d] of Object.entries(WINGS)) d.at.forEach(([ax, ay], k) => {
@@ -1042,7 +1045,227 @@
 
   if (!lib) return;
 
-/*MOTION*/
+  /* ---------- Motion ---------- */
+  gsap.registerPlugin(ScrollTrigger);
+  const F = num('--frame'), LOADF = num('--d-load'), CELL = num('--d-cell'), BRK = num('--d-break'), HOLD = num('--d-hold');
+  const IDLE = num('--d-idle') * 1000, DRIFT = 1000 / num('--drift-rate'), CONF = Math.round(num('--d-con') * 60);
+  const LEN = [2, 4, 8, 16, 32];   // the streak doubles each frame for five frames
+  const fontsReady = Promise.race([
+    Promise.all([document.fonts.ready, document.fonts.load('700 100px "Handjet"')]).then(() => 'fonts', () => 'fonts'),
+    new Promise((r) => setTimeout(() => r('timeout'), 1500))
+  ]);
+  // Start the opening only on a visible page: with lagSmoothing(0) a timeline started in a background tab would
+  // jump to its end on return.
+  const visible = new Promise((r) => {
+    if (document.visibilityState === 'visible') return r();
+    const f = () => { if (document.visibilityState === 'visible') { document.removeEventListener('visibilitychange', f); r(); } };
+    document.addEventListener('visibilitychange', f);
+  });
+  const cut = travel;
+  let played = false, keep = null; // keep: where the visitor was when a breakpoint rebuilt the branch
+
+  const mm = gsap.matchMedia();
+  mm.add({
+    motion: '(prefers-reduced-motion: no-preference)',
+    reduce: '(prefers-reduced-motion: reduce)',
+    wide: '(min-width: 960px)',
+    tall: '(min-height: 560px)'
+  }, (ctx) => {
+    const { motion, wide, tall } = ctx.conditions;
+    if (!motion) {
+      // Reduced motion: native scroll, no pin, all five steps open. The flows above already cut instantly.
+      root.classList.add('go');
+      return () => {};
+    }
+    const s = view.s, off = [], calls = new Set();
+    let dead = false, st = null, busy = false, lastWant = 0;
+    const on = (el, type, fn, opt) => { el.addEventListener(type, fn, opt); off.push(() => el.removeEventListener(type, fn, opt)); };
+    const later = (t, fn) => { const c = gsap.delayedCall(t, () => { calls.delete(c); fn(); }); calls.add(c); return c; };
+
+    // Lenis on GSAP's clock. Touch keeps native scrolling.
+    lenis = new Lenis({ lerp: .1, smoothWheel: true, autoRaf: false, anchors: true });
+    lenis.on('scroll', ScrollTrigger.update);
+    const tick = (t) => lenis.raf(t * 1000);
+    gsap.ticker.add(tick);
+    gsap.ticker.lagSmoothing(0);
+
+    /* The field drifts by one pixel every sixth of a second, only while the viewport is on screen and for 20s
+       after the last scroll, pointer movement, touch, key or focus change. Then the loop removes itself. */
+    let drifting = false, inView = true, acc = 0, lastPoke = 0;
+    const stopDrift = () => { if (drifting) { drifting = false; gsap.ticker.remove(driftTick); } };
+    const driftTick = (t, dt) => {
+      if (performance.now() - lastPoke > IDLE) return stopDrift();
+      if (busy || s.con || s.streak) { acc = 0; return; }   // a jump or a constellation owns the field
+      acc += Math.min(dt, 250);
+      if (acc < DRIFT) return;
+      view.drift(Math.floor(acc / DRIFT)); acc %= DRIFT;
+      view.render();
+    };
+    const poke = () => { lastPoke = performance.now(); if (!drifting && inView && played) { drifting = true; acc = 0; gsap.ticker.add(driftTick); } };
+    const io = new IntersectionObserver(([e]) => { inView = e.isIntersecting; inView ? poke() : stopDrift(); });
+    io.observe(viewBox);
+    on(window, 'scroll', poke, { passive: true });
+    on(sec, 'pointermove', poke); on(sec, 'touchstart', poke, { passive: true });
+    on(document, 'focusin', poke); on(document, 'keydown', poke);
+
+    /* The jump. Five frames stretch every star into a streak; the cut swaps the system, moves the convoy marker,
+       relabels the HUD and opens the step; two frames collapse the streaks. While the visitor is still crossing
+       step boundaries the streaks hold, so a fast scroll across several steps is one jump to the last one. */
+    const jump = () => {
+      busy = true;
+      let k = 0, held = 0;
+      s.dir = goal > cur ? 1 : -1;
+      const stretch = () => { s.streak = LEN[k]; view.render(); later(F, ++k < LEN.length ? stretch : land); };
+      const land = () => {
+        if (performance.now() - lastWant < 110 && held++ < 8) return later(F, land);
+        s.dir = goal >= cur ? 1 : -1;
+        arrive(goal);   // renders the new field with the streaks still at full length
+        later(F, () => { s.streak = LEN[2]; view.render(); });
+        later(2 * F, () => { s.streak = 0; view.render(); busy = false; if (goal !== cur) jump(); });
+      };
+      stretch();
+    };
+    travel = (i) => {
+      if (i !== goal) lastWant = performance.now();
+      goal = i;
+      if (!played) { if (i !== cur) arrive(i); return; }   // before the opening has played, steps cut
+      if (!busy && i !== cur) jump();
+    };
+
+    /* Scroll chooses the step. Pinned: five equal parts of the pinned distance. Otherwise follow() reads each
+       step's own block. The stage is pinned only when the whole text column fits the window with any step open. */
+    const fromScroll = (p) => { if (performance.now() >= lockUntil) travel(Math.min(stepEls.length - 1, Math.floor(p * stepEls.length))); };
+    const fits = () => {
+      root.classList.add('pin');
+      const ok = stepEls.every((_, i) => { paintList(i); return text.scrollHeight <= text.clientHeight + 1; });
+      paintList(cur);
+      return ok;
+    };
+    const setPin = () => {
+      const pin = wide && tall && fits();
+      root.classList.toggle('pin', pin);
+      if (pin && !st) st = ScrollTrigger.create({ trigger: run, start: 'top top', end: 'bottom bottom', onUpdate: (self) => fromScroll(self.progress), onRefresh: (self) => fromScroll(self.progress) });
+      if (!pin && st) { st.kill(); st = null; }
+      refit();
+      ScrollTrigger.refresh();
+      follow();
+    };
+    setPin();
+    let resizeT = 0;
+    on(window, 'resize', () => { clearTimeout(resizeT); resizeT = setTimeout(() => { if (!dead) setPin(); }, 150); });
+
+    /* ---------- Hooks for the plain-JS flows ---------- */
+    let brk = null, dlgCalls = [], conOn = false, conAcc = 0, conT = 0;
+    const conStop = () => { if (conOn) { conOn = false; gsap.ticker.remove(conTick); } };
+    // The constellation's clock: sixty steps a second while stars are moving, nothing while they hold.
+    const conTick = (t, dt) => {
+      const c = s.con;
+      if (!c) return conStop();
+      if (c.phase === 'hold') {
+        if (t - conT < HOLD) return;
+        c.phase = 'out'; c.lines = false; view.aim(true, CONF);   // the lines cut out and the stars head home
+      }
+      conAcc += Math.min(dt, 50);
+      let n = Math.floor(conAcc / (1000 / 60)), arrived = false;
+      if (!n) return;
+      conAcc -= n * 1000 / 60;
+      while (n-- && !arrived) arrived = view.step();
+      if (arrived && c.phase === 'in') { c.phase = 'hold'; c.lines = true; conT = t; }
+      else if (arrived) { view.end(); conStop(); }
+      view.render();
+    };
+    fx = {
+      // Break formation: the wing moves ahead in two steps, and its callsigns appear on the second.
+      breakOut(w) {
+        brk?.kill();
+        if (!w) return setBreak(null, 0);
+        setBreak(w, BREAK / 2);
+        brk = later(BRK / 2, () => setBreak(w, BREAK));
+      },
+      // The airlock: frame and empty bar, four cells one at a time, then the content all at once.
+      dialogReset() { dlgCalls.forEach((c) => c.kill()); dlgCalls = []; },
+      dialogIn() {
+        dlg.classList.add('is-cycling'); bar.dataset.p = 0;
+        for (let n = 1; n <= 4; n++) dlgCalls.push(later(n * CELL, () => { bar.dataset.p = n; }));
+        dlgCalls.push(later(5 * CELL, () => dlg.classList.remove('is-cycling')));
+      },
+      dialogOut(end) {   // content out first, then the bar empties in two steps
+        fx.dialogReset();
+        dlg.classList.add('is-cycling'); bar.dataset.p = 4;
+        dlgCalls.push(later(CELL, () => { bar.dataset.p = 2; }), later(2 * CELL, () => { bar.dataset.p = 0; }), later(3 * CELL, end));
+      },
+      // The constellation: stars step out of the field to the initials, hold with lines in the wing's hue, step back.
+      success(text, wing) {
+        let started = false;
+        const start = () => {
+          if (started || dead || done.hidden) return;
+          started = true;
+          if (!view.plan(text, wing)) return;
+          s.con.phase = 'in'; view.aim(false, CONF);
+          poke();
+          if (!conOn) { conOn = true; conAcc = 0; gsap.ticker.add(conTick); }
+        };
+        const r = viewBox.getBoundingClientRect();
+        if (!narrow.matches || (r.top >= 0 && r.bottom <= innerHeight)) return start();
+        // Phones: the viewport scrolled away with the steps. Bring it back under the top edge first.
+        lockUntil = performance.now() + 900;
+        scrollToY(Math.round(scrollY + zone.getBoundingClientRect().bottom - dock.offsetHeight - 1), start);
+        later(.9, start);
+      },
+      successEnd() { conStop(); }
+    };
+
+    /* ---------- Load: dropping out of a jump ---------- */
+    // The viewport opens with every star at full stretch and no ships; it holds like that until the fonts are in.
+    const cuts = $$('.cut'), r0 = viewBox.getBoundingClientRect();
+    const opening = !played && r0.top < innerHeight - 40 && r0.bottom > 40;
+    if (opening) { Object.assign(s, { streak: LEN[4], dir: 1, ships: false }); view.render(); }
+    Promise.all([fontsReady, visible]).then(([how]) => ctx.add(() => {
+      if (dead) return;
+      setPin();
+      if (how === 'timeout') document.fonts.ready.then(() => { if (!dead) setPin(); });
+      if (keep) {   // a breakpoint or a rotation rebuilt this branch: put the visitor back at the same step
+        if (keep.y > 0) { window.scrollTo(0, keep.join ? scrollY + join.getBoundingClientRect().top : stepY(keep.step)); ScrollTrigger.update(); }
+        keep = null;
+      }
+      if (!opening) { played = true; root.classList.add('go'); poke(); return; }
+      gsap.set(cuts, { visibility: 'hidden' });
+      root.classList.add('go');
+      const show = (sel) => () => gsap.set(cuts.filter((el) => el.matches(sel)), { clearProps: 'visibility' });
+      const tl = gsap.timeline({ onComplete: () => { played = true; poke(); st ? fromScroll(st.progress) : follow(); } });
+      // Five frames collapse the streaks to stars; then the ships, the headline, the steps and the HUD cut in, once each.
+      [16, 8, 4, 2, 0].forEach((len, k) => tl.call(() => { s.streak = len; view.render(); }, null, (k + 1) * LOADF));
+      tl.call(() => { s.ships = true; view.render(); }, null, 6 * LOADF)
+        .call(show('.h2, .lede'), null, 7 * LOADF)
+        .call(show('.steps'), null, 8 * LOADF)
+        .call(show('.hud, .route, .legend'), null, 9 * LOADF);
+    }));
+
+    return () => {
+      dead = true;
+      keep = { y: scrollY, step: cur, join: join.getBoundingClientRect().top < innerHeight * .5 };
+      off.forEach((f) => f());
+      calls.forEach((c) => c.kill());
+      clearTimeout(resizeT);
+      io.disconnect(); stopDrift(); conStop();
+      st?.kill();
+      gsap.ticker.remove(tick);
+      gsap.ticker.lagSmoothing(500, 33);
+      lenis.destroy(); lenis = null;
+      fx = null; travel = cut;
+      gsap.set(cuts, { clearProps: 'visibility' });
+      root.classList.remove('pin');
+      root.classList.add('go');
+      played = true;
+      // Leave the viewport as a still: stars, ships in formation, the step the visitor was heading for.
+      Object.assign(s, { streak: 0, ships: true });
+      view.end();
+      if (goal !== cur) arrive(goal);
+      setBreak(shown, shown ? BREAK : 0);
+      dlg.classList.remove('is-cycling'); bar.dataset.p = 4;
+      refit();
+    };
+  });
 })();
 </script>
 </body>

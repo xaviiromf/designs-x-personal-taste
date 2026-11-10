@@ -113,7 +113,7 @@
       linear-gradient(90deg, var(--moss-hi) 0 1px, transparent 0),
       linear-gradient(var(--moss-hi) 0 1px, transparent 0);
     background-size: var(--cell) var(--cell);
-    background-position: -1px -1px, 0 0, 0 0;
+    background-position: calc(var(--cell) / 2 - 1px) calc(var(--cell) / 2 - 1px), calc(var(--cell) / 2) 0, 0 calc(var(--cell) / 2);   /* lines half a cell off the block edges */
   }
   /* The trace: a viewport-tall canvas parked in section coordinates, so a resting drawing scrolls with the page. */
   .trace { position: absolute; left: 0; top: 0; z-index: 0; display: block; pointer-events: none; }
@@ -186,9 +186,10 @@
   .pk + .pk { position: absolute; inset: 0; }
   .pk-push, .pk-cut { display: block; height: 100%; }
   .pk-push { transition: transform 0s linear 0s; }
-  .pk:nth-child(1) .pk-cut { clip-path: inset(0 66.667% 0 0); }
-  .pk:nth-child(2) .pk-cut { clip-path: inset(0 33.333% 0 33.333%); }
-  .pk:nth-child(3) .pk-cut { clip-path: inset(0 0 0 66.667%); }
+  /* --a and --b are the two cut lines in whole pixels (set by the script), so no seam shows at rest */
+  .pk:nth-child(1) .pk-cut { clip-path: inset(0 calc(100% - var(--a, 33.333%)) 0 0); }
+  .pk:nth-child(2) .pk-cut { clip-path: inset(0 calc(100% - var(--b, 66.667%)) 0 var(--a, 33.333%)); }
+  .pk:nth-child(3) .pk-cut { clip-path: inset(0 0 0 var(--b, 66.667%)); }
   .pk-face { display: block; height: 100%; padding: var(--bw); background: var(--rim); clip-path: var(--corners); }
   .pk-in {
     display: flex; align-items: center; justify-content: center;
@@ -836,6 +837,7 @@
           s += `<rect x="${x0 - 2}" y="${top + H - r * cs - 2}" width="${2 * cs + 4}" height="${r * cs + 4}" style="fill:none;stroke:var(--trace);stroke-width:2"/>`;
         }
         btns[i].style.left = ax + i * yw + 'px'; btns[i].style.width = yw + 'px';
+        btns[i].textContent = yw < 48 ? "'" + String(c.y).slice(2) : c.y; // the aria-label keeps the full year
       });
       svg.setAttribute('width', W); svg.setAttribute('height', top + H + LB);
       svg.innerHTML = s;
@@ -888,9 +890,9 @@
     const RANGE = [[0, 7], [8, 30], [31, 90], [91, 240]];
     function draw() {
       const W = box.clientWidth; if (!W) return;
-      const lab = W < 600 ? 44 : 112, qw = Math.floor((W - lab) / Q), per = qw >= 30 ? 3 : qw >= 18 ? 2 : 1;
-      const step = Math.max(5, Math.min(10, Math.floor((qw - 2) / per))), z = step - 2, pad = 6;
-      const rows = piles.map((b) => Math.max(1, ...b.map((p) => Math.ceil(p.length / per))));
+      const lab = W < 600 ? 44 : 112, qw = Math.floor((W - lab) / Q), per = qw >= 44 ? 3 : qw >= 20 ? 2 : 1;
+      const step = Math.max(6, Math.min(14, Math.floor((qw - 4) / per))), z = step - 2, pad = 8;
+      const rows = piles.map((b) => Math.max(2, ...b.map((p) => Math.ceil(p.length / per))));
       const bh = rows.map((r) => r * step + 2 * pad);
       // Bands from the bottom: 0 to 7 days sits on the axis, still open is the top band, set apart by a gap.
       const GAP = 12, yb = []; let y = 4;
@@ -1123,6 +1125,11 @@
   dlg.addEventListener('close', () => { settle(); lenis?.start(); opener?.focus(); });
 
   $$('.btn').forEach(packetize);
+  const cuts = new ResizeObserver((es) => es.forEach(({ target: b }) => {
+    const w = b.offsetWidth; if (!w) return;
+    b.style.setProperty('--a', Math.round(w / 3) + 'px'); b.style.setProperty('--b', Math.round(w * 2 / 3) + 'px');
+  }));
+  $$('.btn').forEach((b) => cuts.observe(b));
 
   /* ---------- Presses that are always seen (plain JS; CSS steps them, reduced motion makes them instant) ---------- */
   // Packets: pointerdown (or Enter/Space) sends the three segments; they stay for at least --d-hold, then return together.
@@ -1154,10 +1161,10 @@
   /* ---------- The trace: a head that runs the grid lines (engine is plain JS; the loop runs in the motion layer) ---------- */
   const trace = (() => {
     const cv = $('.trace'), g = cv.getContext('2d'), M = 160;
-    let C = 16, W = 0, H = 0, dpr = 1, col = '', LEN = 48;
+    let C = 16, O = 8, W = 0, H = 0, dpr = 1, col = '', LEN = 48;
     const st = { head: null, trail: [], way: [], follow: null, axis: '', sx: 0, sy: 0, reached: null };
     function size() {
-      C = parseFloat(read('--cell')) || 16; LEN = parseInt(read('--trace-len'), 10) || 48; col = read('--trace');
+      C = parseFloat(read('--cell')) || 16; O = C / 2; LEN = parseInt(read('--trace-len'), 10) || 48; col = read('--trace');
       dpr = Math.min(2, window.devicePixelRatio || 1);
       W = sec.clientWidth; H = window.innerHeight + 2 * M;
       cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr);
@@ -1174,9 +1181,9 @@
       // Each cell is a solid bar on a grid line; overlapping bars make the corners square joints.
       for (let i = 1; i < t.length; i++) {
         const [a, b] = t[i - 1], [c, d] = t[i];
-        g.fillRect(Math.min(a, c) * C - o, Math.min(b, d) * C - o, Math.abs(c - a) * C + L, Math.abs(d - b) * C + L);
+        g.fillRect(Math.min(a, c) * C + O - o, Math.min(b, d) * C + O - o, Math.abs(c - a) * C + L, Math.abs(d - b) * C + L);
       }
-      if (st.head) g.fillRect(st.head[0] * C - 3, st.head[1] * C - 3, 7, 7);
+      if (st.head) g.fillRect(st.head[0] * C + O - 3, st.head[1] * C + O - 3, 7, 7);
     }
     const clear = () => { g.setTransform(1, 0, 0, 1, 0, 0); g.clearRect(0, 0, cv.width, cv.height); };
     // One cell at a time toward the next waypoint (or the pointer): one axis at a time, the longer axis first,
@@ -1201,7 +1208,7 @@
       return moved;
     }
     const shrink = (n) => { while (n-- > 0 && st.trail.length > 1) st.trail.shift(); };
-    const local = (el) => { const a = el.getBoundingClientRect(), r = sec.getBoundingClientRect(); return { l: a.left - r.left, t: a.top - r.top, r: a.right - r.left, b: a.bottom - r.top }; };
+    const local = (el) => { const a = el.getBoundingClientRect(), r = sec.getBoundingClientRect(); return { l: a.left - r.left - O, t: a.top - r.top - O, r: a.right - r.left - O, b: a.bottom - r.top - O }; }; // in grid-line coordinates
     // A control's rectangle on the grid, pushed out to the nearest lines clear of it.
     const snap = (el, pad = 6) => { const q = local(el); return { L: Math.floor((q.l - pad) / C), T: Math.floor((q.t - pad) / C), R: Math.ceil((q.r + pad) / C), B: Math.ceil((q.b + pad) / C) }; };
     const around = (q) => [[q.L, q.T], [q.L, q.B], [q.R, q.B], [q.R, q.T], [q.L, q.T]];
@@ -1303,7 +1310,7 @@
 
     /* ---------- The trace loop: runs only while the head moves or the line is still retracting ---------- */
     const S = trace.st;
-    let awake = false, inView = true, acc = 0, racc = 0, lastMove = 0, rate = 0, busy = false, ptr = null, kb = false;
+    let awake = false, inView = true, acc = 0, racc = 0, lastMove = 0, rate = 0, busy = false, ptr = null, kb = false, hold = false; // hold: the opening loop stays drawn until the first input
     trace.size(); trace.clear();
     S.head = null; S.trail = []; S.way = []; S.follow = null;
     const frame = () => {
@@ -1316,6 +1323,7 @@
       const moved = n ? trace.advance(n) : 0;
       if (moved) { lastMove = now; racc = 0; }
       const parked = !dist && !S.way.length;
+      if (parked && hold) { trace.draw(); sleep(); return; }
       if (parked && now - lastMove > T.park * 1000) { racc += dt * BASE; const k = Math.floor(racc); racc -= k; trace.shrink(k); }
       trace.draw();
       if (parked && S.trail.length <= 1 && now - lastMove > T.park * 1000) sleep();
@@ -1330,13 +1338,13 @@
     off.push(() => ro.disconnect());
 
     const C = () => trace.cell;
-    const cellAt = (x, y) => { const r = sec.getBoundingClientRect(); return [Math.max(0, Math.min(Math.round(sec.clientWidth / C()), Math.round((x - r.left) / C()))), Math.max(0, Math.round((y - r.top) / C()))]; };
+    const cellAt = (x, y) => { const r = sec.getBoundingClientRect(); return [Math.max(0, Math.min(Math.round(sec.clientWidth / C()), Math.round((x - r.left - C() / 2) / C()))), Math.max(0, Math.round((y - r.top - C() / 2) / C()))]; };
     // A head that is off screen comes back in from the left edge, on the row it is heading for.
     const enter = (row) => {
       const r = sec.getBoundingClientRect(), top = -r.top / C(), bot = (innerHeight - r.top) / C();
       if (!S.head || S.head[1] < top - 2 || S.head[1] > bot + 2) { S.head = [-1, row]; S.trail = [S.head]; S.axis = ''; }
     };
-    const goTo = (cell) => { if (busy) return; S.way = []; rate = 0; enter(cell[1]); S.follow = cell; wake(); };
+    const goTo = (cell) => { if (busy) return; hold = false; S.way = []; rate = 0; enter(cell[1]); S.follow = cell; wake(); };
     // Pointer: the head follows the pointer's cell.
     if (fine) {
       on(document, 'pointermove', (e) => { if (e.pointerType === 'touch') return; kb = false; ptr = [e.clientX, e.clientY]; goTo(cellAt(...ptr)); });
@@ -1363,7 +1371,7 @@
         if (dead || busy || document.activeElement !== el) return;
         const q = trace.snap(el);
         enter(q.T);
-        S.follow = null; rate = 0;
+        S.follow = null; rate = 0; hold = false;
         S.way = trace.around(q);
         wake();
       });
@@ -1424,7 +1432,7 @@
       rate = total / T.load; // the whole run, under 1.2s
       S.reached = (left) => {
         if (left === n - 3) root.classList.add('go'); // at the button's top-left corner: the lede and buttons cut in
-        if (left === 0) { busy = false; rate = 0; S.reached = null; }
+        if (left === 0) { busy = false; rate = 0; S.reached = null; hold = true; }
       };
       lastMove = performance.now();
       wake();
