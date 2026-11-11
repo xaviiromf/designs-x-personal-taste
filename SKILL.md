@@ -1,6 +1,6 @@
 ---
 name: designs-x-personal-taste
-description: Original retro gamer / cyberpunk front-end section designs (Handjet and Host Grotesk, dark grounds, flat pixel geometry, stepped motion), each a self-contained HTML file with design notes. Use when building or restyling a landing page or marketing section for a game, arcade, esports, demoscene or similar subject and you want a distinctive, non-templated starting point to adapt to the project's brand and stack.
+description: Original retro gamer / cyberpunk front-end section designs (Handjet and Host Grotesk, dark grounds, flat pixel geometry, stepped motion), each a self-contained HTML file with design notes. Also five large About me sections (a whole personal page for one person, set in Departure Mono with ten-hue palettes) that gather every kind of motion in the collection. Use when building or restyling a landing page or marketing section for a game, arcade, esports, demoscene or similar subject and you want a distinctive, non-templated starting point to adapt to the project's brand and stack.
 ---
 
 # Using designs-x-personal-taste
