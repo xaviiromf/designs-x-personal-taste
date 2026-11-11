@@ -25,7 +25,7 @@
     /* Ten tile hues. Each is one tile type in the editor and one kind of thing on this page. Hues sit on the well
        unless noted; contrast is against the well, then the ground. */
     --spawn: #FFE44D;       /* 1 the player: the start tile, the marker that walks and hops, the primary action, focus (8.24:1, 4.75:1) */
-    --spawn-hot: #FFF3A6;   /*   a tint of spawn: the primary button while pointed at (deep ink on it 11.9:1) */
+    --spawn-hot: #FFF3A6;   /*   a tint of spawn: the primary button while pointed at (deep ink on it 12.23:1) */
     --solid: #FFE8BD;       /* 2 solid ground tiles; chapter 1 (8.78:1) */
     --ladder: #3FE0FF;      /* 3 ladders; chapter 2 (6.67:1) */
     --water: #86A8FF;       /* 4 water; chapter 3 (4.54:1) */
@@ -92,6 +92,11 @@
   @media (min-width: 1024px) {
     :root { --t-h2: 66px; --gl: max(44px, (100% - var(--max-w)) / 2); --gr: max(77px, (100% - var(--max-w)) / 2); --strip: 0px; --step-px: 30px; --plot-h: 264px; --pip: 8px; --pip-row: 34px; }
   }
+  /* The curve grows with the window's height, in steps of 64px (4px per attempt), so it fills its screen. */
+  @media (min-width: 1024px) and (min-height: 700px) { :root { --plot-h: 320px; } }
+  @media (min-width: 1024px) and (min-height: 780px) { :root { --plot-h: 384px; --pip: 10px; --pip-row: 40px; } }
+  @media (min-width: 1024px) and (min-height: 860px) { :root { --plot-h: 448px; } }
+  @media (min-width: 1024px) and (min-height: 960px) { :root { --plot-h: 512px; } }
   @media (min-width: 1280px) { :root { --t-h2: 44px; --t-top: var(--t-body); --lh-top: var(--lh-body); } }
   @media (min-width: 1366px) { :root { --t-top: var(--t-lede); --lh-top: var(--lh-lede); } }
   @media (min-width: 1280px) and (min-height: 760px) { :root { --t-h2: 66px; } }
@@ -325,7 +330,7 @@
     .pin .story-pin { padding-top: var(--s3); }
     .pin .chapter { padding: var(--s2); }
     .pin .chapter h4 { margin-top: var(--s1); font-size: var(--t-body); line-height: var(--lh-small); }
-    .pin .chapter .txt { margin-top: var(--s1); font-size: var(--t-small); line-height: var(--lh-small); }
+    .pin .chapter .txt { margin-top: var(--s1); }
     .pin .story-stage, .pin .chapters { margin-top: var(--s2); }
   }
 

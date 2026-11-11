@@ -2,6 +2,8 @@
 
 A collection of original front-end sections in one style: retro gamer / cyberpunk. Every design shares two typefaces (Handjet for display, Host Grotesk for text), sits on a chosen dark ground, uses flat pixel geometry and stepped motion, and is made for a concrete, fictional subject from that world. Each one is a single self-contained HTML file with design notes, written for AI agents to reference and port.
 
+Five larger designs form an **About me** section: a whole personal front end for one fictional person each, set in Departure Mono, with ten-hue palettes (three vivid, two muted), gathering every kind of animation, pointer reactivity and scroll behaviour in the collection as new variations.
+
 The collection grew out of the "Arcade series" in [designs-x](https://github.com/xaviiromf/designs-x), whose seven designs are included here unchanged.
 
 - Browse: https://xaviiromf.github.io/designs-x-personal-taste/

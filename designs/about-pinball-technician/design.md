@@ -5,7 +5,7 @@ subject: "The personal front end of Marisol Vega, a fictional pinball and arcade
 aesthetic: "A backglass painted hot magenta. Wells of darker magenta hold a low-resolution playfield, amber score displays and a chart of lamps; eleven lamp hues each light one kind of thing; everything is set in one pixel monospace and moves in hard cuts on a clock."
 mode: dark
 fonts:
-  - "Departure Mono (pinned jsDelivr package @proj-airi/font-departure-mono@0.17.0, SIL Open Font License). The only family, one weight, on its 11px grid: 13.75px small, 16.5px body, 22px lede, 33px headings and score displays, 44/55/66px for the headline and the five-digit display, 88px for the initial on the spinner. Falls back to the system monospace."
+  - "Departure Mono (pinned jsDelivr package @proj-airi/font-departure-mono@0.17.0, SIL Open Font License). The only family, one weight, on its 11px grid: 13.75px small, 16.5px body, 22px lede, 33px headings and score displays, 44/55/66px for the headline and the five-digit display, 88px (110px from 1024px) for the initial on the spinner. Falls back to the system monospace."
 js: "Runs a fixed 30 fps pinball simulation the pointer leans and a click flips, rolls a ball along a fixed path through five drop targets as a pinned scene is scrolled, draws a lamp chart from DATA and contact links from CONTACT, drives a spinner toy, a lamp-matrix wordmark, bonus lamps, the enquiry form with its match-number confirmation and the tool-roll dialog; every flow also works with the libraries blocked."
 libraries: [GSAP 3.15 (ScrollTrigger), Lenis 1.3.26]
 tags: [about, personal, pinball, arcade, technician, canvas, simulation, pinned-scroll, chart, form, dialog, monospace, departure-mono, vivid, dark, gsap, lenis]
@@ -41,13 +41,13 @@ Deviations from the brief, and why:
 - **A five-pip tilt bob at the foot of the table shows which way it leans,** so the pointer's effect can be seen even when the ball is in the air.
 - **The ghost of the last pick is an outline in place plus its level carried across** as a dotted line to the picked column, because an outline three columns away was hard to compare by eye. The last pick's year button also keeps a dashed frame.
 - **The rotary selector is four radios,** not a `select`: all four positions are on the rail and the pointer jumps between them. It defaults to "Not sure", so it never needs an error.
-- **On phones the story lane scales by 1, 1.5 or 2** so the pinned frame (title, lane and index, one card) fits the window; under 610px of height, and with reduced motion, the scene is not pinned and all five cards are on the page.
+- **On phones the story lane scales by 1, 1.5 or 2** so the pinned frame (title, lane and index, one card with its text at body size) fits the window: `lane.fit()` gives the lane what is left after 396px for the bonus row, the title and the card; under 610px of height, and with reduced motion, the scene is not pinned and all five cards are on the page.
 - **The bonus lamps are neutral white.** The brief gave them no hue, and every hue already has a job.
 
 ## Do not touch
 
 - **The simulation's clock.** `table.step()` is one frame at 30 per second, run from `gsap.ticker` through an accumulator with three collision sub-steps per frame. Gravity, the lean, speeds and the lit time (`--d-lamp`, 9 frames) are all per frame. Do not tie it to the display's refresh rate, and do not smooth the drawing: positions are rounded to whole playfield pixels.
-- **Whole-number scales.** The three low-resolution canvases are drawn at 112 by 152, 96 by 176 and 154 by 140 pixels and shown at `--S`, `--LS` and `--CS` CSS pixels per pixel with `image-rendering: pixelated`. The script picks those from the window (2 to 4; the lane may use 1.5 on phones). Free scaling blurs every edge.
+- **Whole-number scales.** The three low-resolution canvases are drawn at 112 by 152, 96 by 176 and 154 by 140 pixels and shown at `--S`, `--LS` and `--CS` CSS pixels per pixel with `image-rendering: pixelated`. The script picks those from the window (2 to 4; the lane may use 1, 1.5 or 2 on phones). The chart's scale is also capped by the window's height (`floor((innerHeight - 154) / 140)`), so the whole backglass, its pick and its ghost fit one screen: 4 at 1440 by 900, 3 at 1366 by 650 and 1280 by 600. Free scaling blurs every edge.
 - **The first screen budget.** At 1366 by 650 and 1280 by 600 the display (66px), the table (456px at scale 3) and the one-line hint must fit under `--top-pad`. `table.fit()` subtracts 88px plus the padding; if you add anything above the table, subtract it there too.
 - **Hues keep their jobs.** `--score` only on score displays; `--coil`, `--switch`, `--rubber` only in the chart and its legend, and only on a well; the five bumper hues only for bumper or chapter n; `--start` only for the primary action, focus and the ball's highlight; `--fault` only for form errors. Text is `--white` or `--blush`, and `--blush` never sits on `--plate` (3.29:1).
 - **Stepped corners live on inner spans** (`.nt` on `.sock`, `.face`, `.inner`), never on the `a` or `button`, so the 2px yellow focus outline is never clipped. The start button's lamp ring and bat and the rollover's wire and lamp are inside the button, so the outline wraps them too.
@@ -130,7 +130,7 @@ House rule: hard cuts on a clock. Nothing eases. GSAP is used for timing (`timel
 | `--score` | Amber: every character on a score display (6.35:1 on well) |
 | `--fault` | Coral: form errors (4.62:1 on ground) |
 | `--font` | Departure Mono, then the system monospace |
-| `--t-small` ... `--t-display`, `--t-plate` | Type scale on the 11px grid: 13.75, 16.5, 22, 33, 44/55/66 (by breakpoint), 88 |
+| `--t-small` ... `--t-display`, `--t-plate` | Type scale on the 11px grid: 13.75 (labels, captions, table heads, hints only), 16.5 (every running paragraph and every figure in the table), 22, 33 (section headings), 44/55/66 (by breakpoint), 88/110 (the spinner's initial, by breakpoint) |
 | `--lh-small` ... `--lh-display` | Line heights in multiples of 5.5px: 22, 27.5, 33, 38.5, display plus 11 |
 | `--cell`, `--s1` ... `--s8` | The 11px cell and the spacing scale, 5.5 to 132 |
 | `--notch`, `--tap`, `--hit` | Stepped corner (4px), button and field height (48px), minimum target (44px) |

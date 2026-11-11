@@ -42,7 +42,7 @@
     --t-lede: 22px;
     --t-h3: 33px;
     --t-display: 44px;      /* 44, 55 or 66: always a multiple of 11 */
-    --t-plate: 88px;        /* the initial on the spinner */
+    --t-plate: 88px;        /* the initial on the spinner: 88, or 110 from 1024px */
     --lh-small: 22px;       /* line heights are multiples of 5.5px */
     --lh-body: 27.5px;
     --lh-lede: 33px;
@@ -85,7 +85,7 @@
     --idle: 20s;            /* without input, the ball is parked on the plunger */
   }
   @media (min-width: 600px) { :root { --gutter: 22px; } }
-  @media (min-width: 1024px) { :root { --gutter: 88px; } }
+  @media (min-width: 1024px) { :root { --gutter: 88px; --t-plate: 110px; } }
   @media (min-width: 1100px) { :root { --t-display: 55px; } }
   @media (min-width: 1400px) { :root { --t-display: 66px; } }
 
@@ -338,7 +338,6 @@
     .pin .idx { grid-area: idx; }
     .pin .chapters { grid-area: ch; margin: 0; max-width: none; }
     .pin .card { padding-block: var(--s2); }
-    .pin .card p:last-child { font-size: var(--t-small); line-height: var(--lh-small); }
   }
   .idx li { display: flex; align-items: center; gap: var(--s2); color: var(--blush); font-size: var(--t-small); line-height: var(--lh-small); }
   .idx li::before { content: ""; flex: none; width: var(--s3); height: var(--cell); border: 2px solid var(--hue); }   /* a lamp for the target: hollow until it is down */
@@ -378,10 +377,12 @@
   .tbl-wrap { margin-top: var(--s2); }
   summary.u { list-style: none; }
   summary.u::-webkit-details-marker { display: none; }
-  .tbl { margin-top: var(--s2); border-collapse: collapse; font-size: var(--t-small); line-height: var(--lh-small); }
+  .tbl { margin-top: var(--s2); border-collapse: collapse; }
+  .tbl caption, .tbl thead th { font-size: var(--t-small); line-height: var(--lh-small); }   /* the figures are body size; only the caption and the heads are small */
   .tbl caption { text-align: left; color: var(--blush); padding-bottom: var(--s2); }
   .tbl th, .tbl td { padding: var(--s1) var(--s3) var(--s1) 0; text-align: right; font-weight: 400; border-top: 2px solid var(--plate); }
   .tbl th:first-child { text-align: left; }
+  .tbl tr > :last-child { padding-right: 0; }
   .tbl thead th { border-top: 0; color: var(--blush); vertical-align: bottom; }
   @media (min-width: 1200px) {
     .numbers-grid { grid-template-columns: minmax(0, 1fr) auto; column-gap: var(--s6); align-items: start; }
@@ -390,7 +391,7 @@
   @media (max-width: 599px) {
     .glass { padding: var(--s2); }
     .year .yc { display: none; }
-    .tbl th, .tbl td { padding-right: var(--s2); }
+    .tbl th, .tbl td { padding-right: var(--s1); }
   }
 
   /* ---------- The spinner ---------- */
@@ -422,6 +423,11 @@
   .spin-count { margin-top: var(--s2); color: var(--blush); font-size: var(--t-small); line-height: var(--lh-small); }
   .spin-fact { max-width: 44ch; min-height: calc(var(--lh-lede) * 4 + var(--s5)); padding: var(--s3); background: var(--well); font-size: var(--t-lede); line-height: var(--lh-lede); }
   @media (min-width: 900px) { .spin { grid-template-columns: auto minmax(0, 1fr); column-gap: var(--s6); } }
+  @media (min-width: 1024px) {   /* the toy at desk size: the same spinner on a 396 by 220 frame */
+    .spinner { width: 396px; height: 220px; }
+    .sp-axle { top: 109px; }
+    .sp-plate { left: 66px; top: 33px; width: 264px; height: 154px; }
+  }
   @media (max-width: 599px) { .spin-fact { font-size: var(--t-body); line-height: var(--lh-body); min-height: calc(var(--lh-body) * 5 + var(--s5)); } }
 
   /* ---------- Things I use ---------- */
@@ -1045,7 +1051,7 @@
     function still() { d = END; n = 5; st.fill(2); render(); mark(false); }
     function fit() {
       const pin = root.classList.contains('pin'), wide = innerWidth >= 1024;
-      const room = innerHeight - 341;   // phones, pinned: what the bonus row, the title and one card leave for the lane
+      const room = innerHeight - 396;   // phones, pinned: what the bonus row, the title and one card at body size leave for the lane
       root.style.setProperty('--LS', wide ? clamp(2, pin ? 4 : 3, Math.floor((innerHeight - 66) / H)) : !pin || room >= 2 * H ? 2 : room >= 1.5 * H ? 1.5 : 1);
     }
     return { set, settle, still, fit, render };
@@ -1109,7 +1115,8 @@
     cv.addEventListener('click', (e) => { const r = cv.getBoundingClientRect(); pick(clamp(0, N - 1, Math.floor((e.clientX - r.left) / r.width * N))); });
     function fit() {
       const glass = cv.closest('.glass'), room = (matchMedia('(min-width: 1200px)').matches ? $('.wrap').clientWidth * .56 : $('.wrap').clientWidth) - 2 * parseFloat(getComputedStyle(glass).paddingLeft);
-      root.style.setProperty('--CS', clamp(2, 4, Math.floor(room / W)));
+      // The whole backglass (legend, lamps, years, padding: 154px besides the canvas) fits one window, so a pick and its ghost are seen together.
+      root.style.setProperty('--CS', clamp(2, 4, Math.min(Math.floor(room / W), Math.floor((innerHeight - 154) / H))));
     }
     return { pick, fit, draw };
   })();

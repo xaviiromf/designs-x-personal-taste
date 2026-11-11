@@ -296,6 +296,33 @@ Effects are added here batch by batch as designs are accepted, as built. The art
 - **Success:** the rain stops and its bottom rows lock, row by row, into the message's fingerprint.
 - **Other:** radio buttons drawn as stepped pixel diamonds.
 
+## About me series
+
+Five designs in the `about` section, set in Departure Mono with ten hues or more each (three vivid, two muted). Unlike the rest of the collection, these designs revisit the families above on purpose: each one gathers every kind of effect as a variation and lists, in its own `design.md` under `## Lineage`, which family each variation descends from and what changed. A twenty-third design may borrow a family from here only by changing it as much again.
+
+| Design | Ground | Name | Palette | Subject |
+|---|---|---|---|---|
+| `about-vj-visualist` | `#1B22C4` | ultramarine | vivid | a live-visuals artist (VJ) |
+| `about-pinball-technician` | `#A3126E` | hot magenta | vivid | a pinball and arcade technician |
+| `about-level-designer` | `#B8300F` | vermilion | vivid | a freelance level designer |
+| `about-game-translator` | `#5A1626` | burgundy | muted | a game translator, Japanese into German and English |
+| `about-pixel-type-designer` | `#18275C` | navy | muted | a designer of bitmap typefaces |
+
+### `about-vj-visualist`
+Pointer engine: a feedback tunnel of stepped rectangles aimed by the pointer, ringed in the layer hues. Headline: three-colour registration offsets that close vertically. Load: a ten-bar test card that collapses into a legend. Pinned scene: a 16-step sequencer with a column playhead and five chapter lanes. Marker: a crossfader in eleven detents. Chart: LED columns with a falling peak cap. Toy: a 4x4 pad bank layering dithered 1-bit patterns. Buttons: blackout (stripes step across, then the face goes dark on press); a fader cap travelling its slot. Link: a tiny level meter. Field: a clip on a timeline as wide as the typed text. Choice: lit channel buttons and a blackout switch. Dialog: a video wall switching on in snake order. Success: an encore chase across the pads and the visitor's initials. Wordmark: NIA painted cell by cell through the ten hues.
+
+### `about-pinball-technician`
+Pointer engine: a small playfield simulation leaned by the pointer, flippers on click; lit bumpers put a fact on a score display. Headline: score reels. Load: a lamp test. Pinned scene: one long shot rolling a ball through five drop targets. Marker: bonus lamps and a ball counter. Chart: lamp columns on a backglass with a ghost of the last pick. Toy: a spinner that decelerates and marks its flips. Buttons: a start button whose ring blinks twice and a flipper that kicks on press; a wire rollover pressed flat. Link: a ball rolling a wireform and dropping off its end. Field: a two-digit credit display and a coin-slot lamp. Choice: a rotary selector and a rocker switch. Dialog: drop-target plates rising in turn. Success: the match. Wordmark: MARISOL in lamps lit under the pointer, with an attract sweep.
+
+### `about-level-designer`
+Pointer engine: a tile editor painted permanently by the pointer, with auto-tiling. Headline: collision boxes before the text. Load: the level scrolling in column by column. Pinned scene: five rooms walked by a marker along a breadth-first route, doors opening. Marker: a minimap with a camera rectangle. Chart: a stepped difficulty curve with a marker row. Toy: a layers panel, layers leaving and arriving through ordered dithering. Buttons: a hop with dust and a squash on press; a key travelling to a lock. Link: breadcrumbs hopped two dots at a time. Field: a hit box with handles and a size readout. Choice: tile swatches and a lever. Dialog: a room assembled in rings from its centre. Success: level clear, a flag and three collectibles. Wordmark: TOMÁS built from falling blocks, knocked up under the pointer.
+
+### `about-game-translator`
+Pointer engine: a dialogue box whose width in characters follows the pointer, reflowing the line and spilling what does not fit. Headline: German glosses over three words. Load: the box frame laid cell by cell, then its rows. Pinned scene: one string through five drafts in a string table. Marker: forty string blocks along the bottom edge. Chart: stacked rows of word blocks per year. Toy: a dialogue choice menu with jumping brackets. Buttons: an advance mark that bobs and a doubled frame on press; a ribbon bookmark that lengthens. Link: a tag carrying the word's translation. Field: a character budget drawn as cells. Choice: language tabs and a stamped checkbox. Dialog: a page laid over the previous one. Success: a name seal stamped in two frames. Wordmark: HARUKA sorted from alphabetical order by swaps.
+
+### `about-pixel-type-designer`
+Pointer engine: a glyph editor whose edits are used at once by a live specimen line. Headline: metric guides over each line. Load: proofing, ink row by row, then the specimen word by word. Pinned scene: five drafts of one letter with an onion skin of the earlier drafts. Marker: a size scale with a letter set at the marked size. Chart: a calendar of month blocks filled in steps and bands. Toy: a type tester in three invented bitmap faces with a character map. Buttons: a smeared bold on hover; anchor points cut in at the corners. Link: x-height and descender guides around the link. Field: a block caret and a measure in cells. Choice: a stepper and a two-pixel toggle. Dialog: a specimen sheet growing through three type sizes. Success: a proof slip with crop marks. Wordmark: ANSEL in pixels pushed one cell away from the pointer and walking home.
+
 ## State of the collection
 
-Twenty-two designs: the seven from the Arcade series and the fifteen of series two. Before adding a twenty-third, read every block above; its subject, its ground and each of its effects must be new.
+Twenty-seven designs: the seven from the Arcade series, the fifteen of series two and the five of the About me series. Before adding a twenty-third, read every block above; its subject, its ground and each of its effects must be new.
