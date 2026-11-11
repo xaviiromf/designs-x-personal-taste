@@ -764,7 +764,7 @@
         b.gutters = b.cols.filter((c) => c.entry <= c.top);
         b.gutterTop = b.gutters.length ? Math.max(...b.gutters.map((c) => c.top)) : deepest;
       });
-      drops.length = 0;
+      // typed drops survive a rebuild (the strip under the field grows as you type and resizes the section)
       if (lock) lock.rows = plan(lock.fp, lock.maxY);
       draw();
     }
@@ -798,7 +798,7 @@
     function drawDrops(b) {
       for (let j = drops.length - 1; j >= 0; j--) {
         const p = drops[j];
-        if (p.b !== b) continue;
+        if (p.bi !== b.i) continue;
         // plaintext is heavier than the rain: a typed character falls one cell for every two ticks, so with two
         // ticks a keystroke the last dozen characters stand as a descending diagonal
         const age = (b.T - p.t0) >> 1, r = p.r0 + age, x = p.c * cell;
@@ -850,6 +850,7 @@
     return {
       build, draw,
       set start(v) { START = v; },
+      get debug() { return { tile: [...glyphOf('e', true).getContext('2d').getImageData(1, 1, 1, 1).data], C, drops: drops.slice(-5), bands: bands.map((b) => [b.i, b.c0, b.c1, b.r0, b.r1, b.T, b.gutters && b.gutters.map(c=>c.c), b.gutterTop, b.deep]) }; },
       get ready() { return !!atlas && bands.length > 0; },
       tick(n, only) { for (const b of bands) if (only == null || b.i === only) b.T += n; },
       // Drop typed characters into the next columns of the email band, where it is open and on screen:
@@ -866,7 +867,7 @@
         if (!cols.length) return;
         for (const ch of chars) {
           const col = cols[b.next++ % cols.length];
-          drops.push({ b, c: col.c, r0: row(col), t0: b.T, ch, seed: hash(ch.codePointAt(0), b.next, 3) });
+          drops.push({ bi: b.i, c: col.c, r0: row(col), t0: b.T, ch, seed: hash(ch.codePointAt(0), b.next, 3) });
         }
       },
       lock(fp, maxY) { lock = { fp, maxY, rows: [], shown: 0 }; lock.rows = plan(fp, maxY); return lock.rows.length; },
@@ -884,6 +885,7 @@
     };
   })();
 
+  window.__rain = rain;
   rain.start = lib && !reduced.matches ? -12 : 0; // with motion, the load gives the last twelve ticks
   let built = false;
   const rebuild = () => { rain.build(); built = true; };

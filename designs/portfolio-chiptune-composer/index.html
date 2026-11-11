@@ -132,6 +132,7 @@
   }
   .lede { margin: 0; max-width: 56ch; font-size: var(--t-lede); line-height: var(--lh-lede); }
   .actions { display: flex; flex-wrap: wrap; gap: var(--s1) var(--s3); margin-top: var(--s2); }
+  #play { min-width: 11em; }   /* "Stop" is shorter than "Play the pattern": the button keeps its place */
 
   /* The order list. Desktop: a narrow column pinned to the left edge. Phones: a strip that sticks under the top. */
   .orders { font-variant-numeric: tabular-nums; }
@@ -164,6 +165,8 @@
     .folio { padding-top: var(--s3); }
     .intro { padding-bottom: var(--s3); }
     .orders { top: var(--s3); }
+    .lede { font-size: var(--t-body); }
+    .status { min-height: 48px; }
   }
   @media (max-width: 1023px) {
     .folio { padding-inline: var(--s4); }
@@ -481,7 +484,9 @@
   .clients b { color: var(--sheet); font-weight: 600; }
   @media (max-width: 699px) {
     .work thead { display: none; }
-    .work tbody tr { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); padding-bottom: var(--s2); border-bottom: 1px solid var(--beat); }
+    .work tbody tr { display: grid; grid-template-columns: repeat(3, auto); justify-content: start; column-gap: var(--s4); padding-bottom: var(--s2); border-bottom: 1px solid var(--beat); }
+    .work td { white-space: nowrap; }
+    .work td.g { white-space: normal; }
     .work tbody th { grid-column: 1 / -1; }
     .work tbody th, .work tbody td { border: 0; }
     .work td.g { grid-column: 1 / -1; }
@@ -496,7 +501,7 @@
   .links .k { color: var(--rest); }
   .links .u { overflow-wrap: anywhere; }
   .swap { min-width: 0; }
-  .enq { --g: 48px; --lab: 11em; background: var(--well); }
+  .enq { --g: 48px; --lab: 188px; background: var(--well); }
   .f-item:nth-child(4n + 1) .f-row { background: var(--beat); }
   .f-row {
     display: grid; grid-template-columns: var(--g) var(--lab) minmax(0, 1fr); align-items: center;
@@ -1130,7 +1135,7 @@
 
   /* ---------- The playhead's clock: a hard jump per row at the pattern's tempo. Plain timers, no library. ---------- */
   let stopRun = null;
-  function runPattern(trk, pat, bpm, passes, done) {
+  function runPattern(trk, pat, bpm, passes, done, onRow) {
     stopRun?.();
     const step = 60000 / bpm / 4, total = pat.length * passes, t0 = performance.now();
     let n = 0, timer = 0, live = true;
@@ -1139,7 +1144,7 @@
       if (!live) return;
       if (n >= total) return end(true);
       const r = n % pat.length;
-      trk.setPlay(r); trk.kickRow(r); audio.row(pat[r], trk.muted, step / 1000);
+      trk.setPlay(r); trk.kickRow(r); audio.row(pat[r], trk.muted, step / 1000); onRow?.(r);
       n++;
       timer = setTimeout(tick, Math.max(0, t0 + n * step - performance.now()));
     };
@@ -1195,7 +1200,7 @@
       setPlaying(false);
       if (natural) main.setPlay(0);
       if (!edit) showStatus(main.at);
-    });
+    }, (r) => { if (!edit) showStatus(r); });
   };
   playBtns.forEach((b) => b.addEventListener('click', () => (playing ? stop() : play())));
 
@@ -1459,7 +1464,7 @@
     // The fanfare: the playhead runs through the bar once. With reduced motion it rests on the last note instead.
     fan.rest();
     if (still()) { fan.setPlay(6); fan.kickRow(6); }
-    else { fan.setPlay(-1); runPattern(fan, FAN, DATA.fanfare.bpm, 1, () => {}); }
+    else { fan.setPlay(-1); runPattern(fan, FAN, DATA.fanfare.bpm, 1, () => fan.setPlay(6)); }   // it comes to rest on the last note
   });
   $('#again').addEventListener('click', () => {
     stopRun?.();
@@ -1570,6 +1575,7 @@
         if (playing || dlg.open) return;
         const n = cur.rows.length, r = Math.min(n - 1, Math.floor(self.progress * n));
         if (r === main.at) return;
+        if (hover) { hover = false; clearEdit(); }   // the row has moved from under a still pointer
         main.setPlay(r); main.kickRow(r);
         if (!edit) showStatus(r);
       }

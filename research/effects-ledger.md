@@ -123,6 +123,9 @@ Effects are added here batch by batch as designs are accepted, as built. The art
 | `testimonials-capsule-club` | `#4A148C` | electric violet | a monthly capsule-toy subscription |
 | `process-convoy-night` | `#0B3350` | petrol blue | a flight club's weekly convoy in a space-trading simulator |
 | `footer-cartridge-publisher` | `#3B2731` | dusty mauve | a publisher of new cartridges for old consoles |
+| `portfolio-disk-archivist` | `#2B3A34` | sage slate | a software-preservation archivist |
+| `nav-pirate-radio` | `#3D2C08` | tarnished brass | a community radio station that began as a pirate transmitter |
+| `faq-hint-hotline` | `#5A2C24` | bakelite | a volunteer hint line for old adventure games |
 
 ### `portfolio-isometric-artist`
 - **Signature:** commissions as an isometric city on a low-resolution canvas: one tower per year, one floor slab per commission in the hue of its kind, read against an axis.
@@ -234,3 +237,36 @@ Effects are added here batch by batch as designs are accepted, as built. The art
 - **Field:** a stepped notch cut into the field's corner; the end label takes the chosen line's hue.
 - **Dialog:** pulled out of its sleeve: the panel slides out from behind a fixed spine in four steps.
 - **Success:** an end label with the visitor's email on a ruled line, and one gust across the wordmark.
+
+### `portfolio-disk-archivist`
+- **Signature:** a block map with one square per medium that consolidates by outcome the way a disk optimiser works: a read cursor and a write cursor swap blocks until each outcome is one run and the map reads as a stacked bar.
+- **Pointer:** the read head: a marker in the margin jumps to the row under the pointer, the block is outlined and a readout names the medium (touch: tap; keyboard: arrows, Home and End).
+- **Scroll:** scroll progress is the fraction of swaps done, reversible.
+- **Load:** outcomes develop: hollow blocks first, then one outcome class at a time.
+- **Button:** a shutter plate slides aside in three steps to uncover a window; pushed into the drive on press, with a drive light.
+- **Link:** a head block jumps along sector ticks on the underline and parks at its end.
+- **Field:** four checksum pips recomputed from the field's text on every keystroke.
+- **Dialog:** magnified: 25%, 50%, then full size, in three hard frames.
+- **Success:** parity: a row of eight pips whose last pip toggles twice and settles to even parity.
+
+### `nav-pirate-radio`
+- **Signature:** the header is a tuner: a needle moves over an 87 to 108 MHz scale in 0.1 MHz detents and locks onto the station nearest within 0.3 MHz, with a lock lamp, a display plate and a five-bar signal meter.
+- **Pointer:** the needle follows the pointer along the dial in detents (touch: drag along the scale; keyboard: arrows tune station to station).
+- **Scroll:** scrolling tunes: the needle travels between stations through "between stations" and locks as each section arrives.
+- **Load:** band scan: the needle sweeps the band and each station name cuts in as it passes.
+- **Button:** a tuning eye: two blocks whose gap closes in three steps; fully closed, with the face inverted, on press.
+- **Link:** a broken underline whose gap closes from both sides.
+- **Field:** an antenna telescopes out of the field's corner in three thinning segments.
+- **Dialog:** the frame switches on a side at a time, clockwise, then the content.
+- **Success:** a paper slip drops onto a desk spike in three steps.
+
+### `faq-hint-hotline`
+- **Signature:** two-tone dialling: every key press lights the key, the tone bar of its row and the tone bar of its column; two digits open, scroll to and focus a question.
+- **Pointer:** hovering or focusing a key previews its row and column bars as outlines and what the key would do (touch: the press itself; keyboard: digit, star and hash keys).
+- **Scroll:** the cord: a pixel coil between the handset and the sticky keypad pays out loop by loop; the display follows the question being read.
+- **Load:** off the hook: the handset lifts off its cradle in two steps and the line lamp comes on.
+- **Button:** hook switches: two plungers on the top edge pop up; pushed below the edge, with the face inverted, on press.
+- **Link:** the double ring: the underline goes off, on, off, on and holds.
+- **Field:** patched through: a plug on a short cord seats in a jack socket at the field's edge.
+- **Dialog:** the line opens: from a 2 px line at mid-height to a third, two thirds and full height.
+- **Success:** the keypad dials the call-back number by itself, one key at a time.

@@ -6,7 +6,7 @@ aesthetic: An old bakelite desk telephone drawn in flat pixel geometry on its ow
 mode: dark
 fonts:
   - Handjet (Google Fonts, variable wght 100-900, ELSH 0-16, ELGR 1-2). Display only, at ELSH 2 and ELGR 1 so the modules are square tiles. The H2 at 700, the display digits, key legends, question numbers and branch numbers.
-  - Host Grotesk (Google Fonts, variable wght 300-800). Everything else: body at 400, buttons, questions and labels at 600, the display title at 500, with tabular-nums on frequencies, slots and numbers.
+  - "Host Grotesk (Google Fonts, variable wght 300-800). Everything else: body at 400, buttons, questions and labels at 600, the display title at 500, with tabular-nums on frequencies, slots and numbers."
 js: Plain JavaScript dials the FAQ (keypad, keyboard digits, display, accordion, scroll-following display, line lamp, form, dialog); GSAP and Lenis add the handset lift, the coiled cord that pays out with the scroll, and the stepped dialog frames.
 libraries: [GSAP 3.15 (ScrollTrigger), Lenis 1.3.26]
 tags: [faq, accordion, telephone, keypad, dtmf, pixel, sticky, canvas, dialog, form, dark, gsap, lenis]
@@ -16,7 +16,7 @@ use_when:
   - A brand with a physical object worth drawing large (a telephone, a radio, a till) whose controls can do the page's work.
 avoid_when:
   - Fewer than six questions. The keypad is then bigger than the content it navigates.
-  - Questions that have no stable order or change often: the two-digit numbers become wrong addresses.
+  - "Questions that have no stable order or change often: the two-digit numbers become wrong addresses."
   - Pages that already have a large sticky element on the left, or a bottom bar on phones.
 ---
 
