@@ -172,7 +172,7 @@
   .lede { max-width: 56ch; margin-top: var(--s3); font-size: var(--t-lede); line-height: var(--lh-lede); }
   .actions { display: flex; flex-wrap: wrap; align-items: flex-end; gap: var(--s2) var(--s3); margin-top: var(--s4); }
   .cab { width: max(calc(112px * var(--S)), 286px); max-width: 100%; }
-  .hint { margin-top: var(--s2); color: var(--blush); font-size: var(--t-small); line-height: var(--lh-small); }
+  .hint { margin-top: var(--s1); color: var(--blush); font-size: var(--t-small); line-height: var(--lh-small); }
   @media (min-width: 1024px) {
     .top { grid-template-columns: minmax(0, 1fr) auto; column-gap: var(--s5); align-items: start; }
   }
@@ -342,7 +342,8 @@
   .idx li::before { content: ""; flex: none; width: var(--s3); height: var(--cell); border: 2px solid var(--hue); }   /* a lamp for the target: hollow until it is down */
   .idx li.is-on { color: var(--white); }
   .idx li.is-on::before { background: var(--hue); }
-  .idx li.is-now::after { content: ""; width: var(--cell); height: 2px; background: var(--white); }
+  .idx li { white-space: nowrap; }
+  @media (min-width: 1024px) { .idx li.is-now::after { content: ""; width: var(--s3); height: 2px; background: var(--white); } }
   /* One card at a time. The others stay in the accessibility tree: they are clipped, not removed. */
   .pin .ch:not(.is-now) { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
   @media (min-width: 1024px) {
@@ -436,6 +437,7 @@
   .links li { display: grid; grid-template-columns: 11ch minmax(0, 1fr); align-items: center; column-gap: var(--s2); min-height: var(--hit); }
   .links .kind { color: var(--blush); }
   .links .u { overflow-wrap: anywhere; justify-self: start; margin: 0; }
+  @media (max-width: 599px) { .links li { grid-template-columns: minmax(0, 1fr); } .links .kind { margin-bottom: -11px; } }
   @media (min-width: 1024px) { .hello-grid { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); column-gap: var(--s6); } }
 
   .form { display: grid; grid-template-columns: minmax(0, 1fr); gap: 0 var(--s3); }
@@ -568,8 +570,8 @@
 
       <div class="cab">
         <div class="sd nt" id="sd" aria-hidden="true"><span class="sd-big" id="sd-big">Marisol Vega</span><span class="sd-sub" id="sd-sub">Hit a bumper to read a figure</span></div>
-        <button class="table" id="table" type="button" aria-describedby="table-hint"><canvas id="pf" width="112" height="152" aria-hidden="true"></canvas><span class="vh">Pinball table</span></button>
-        <p class="hint" id="table-hint" data-rv>Press the table to light the next bumper and read its figure.</p>
+        <button class="table" id="table" type="button"><canvas id="pf" width="112" height="152" aria-hidden="true"></canvas><span class="vh">Pinball table. Space or Enter fires the flippers; the left and right arrow keys lean the table.</span></button>
+        <p class="hint" id="table-hint" data-rv>Press the table for the next figure.</p>
         <ul class="vh" aria-label="The five bumpers">
           <li>11 seasons on the road since 2016</li>
           <li>459 machines back in play</li>
@@ -1125,7 +1127,7 @@
     function draw() {
       g.setTransform(dpr, 0, 0, dpr, 0, 0);
       g.clearRect(0, 0, cv.width, cv.height);
-      const gap = Math.max(1, Math.round(cell * .14)), sz = cell - gap, t = Math.max(1, Math.round(cell * .1)), dot = Math.max(2, Math.round(cell * .14));
+      const gap = Math.max(1, Math.round(cell * .14)), sz = cell - gap, t = Math.max(2, Math.round(cell * .1)), dot = cell < 12 ? 1 : Math.round(cell * .14);
       for (let r = -1; r <= ROWS; r++) for (let c = -1; c <= COLS; c++) {
         const x = (c + 1) * cell, y = (r + 1) * cell, i = r * COLS + c, on = r >= 0 && r < ROWS && c >= 0 && c < COLS && ink[i];
         if (!on) { px(g, C.plate, x + ((sz - dot) >> 1), y + ((sz - dot) >> 1), dot, dot); continue; }   // the rest of the matrix: unused sockets
@@ -1424,7 +1426,7 @@
     const io = new IntersectionObserver(([e]) => { inView = e.isIntersecting; inView ? input() : sleep(); });
     io.observe(tableBtn);
     off.push(() => io.disconnect());
-    hint.textContent = fine ? 'Move left or right to lean the table. Click it, or press Space on it, for the flippers.' : 'Tap the table for the flippers. Touch its left or right side to lean it.';
+    hint.textContent = fine ? 'Move to lean the table. Click to flip.' : 'Touch a side to lean it. Tap to flip.';
     // Pointer: gravity leans toward the pointer's side of the window, in five steps.
     if (fine) on($('.top'), 'pointermove', (e) => { if (e.pointerType === 'touch') return; table.lean(Math.floor(e.clientX / innerWidth * 5) - 2); input(); });
     // Touch: the side of the table that is touched. Keyboard: the arrow keys, with the table focused.
