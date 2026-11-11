@@ -275,6 +275,12 @@
     display: none;
   }
   .scale li.is-on .scale-a { display: block; }
+  /* The strip: the marked "a" sits in a slot of its own at the right end, on a baseline 10px above the bottom edge */
+  @media (max-width: 1099px) {
+    .scale ol { margin-right: var(--s7); }
+    .scale li { position: static; }
+    .scale-a { left: auto; right: var(--s3); line-height: 1; bottom: calc(10px - (.5 - (var(--m-asc) - var(--m-des)) / 2) * 1em); }
+  }
   .page { padding-bottom: calc(var(--s7) + var(--s5)); }
   @media (min-width: 1100px) {
     .scale {
@@ -887,7 +893,7 @@
     <div class="hello-grid">
       <div class="side">
         <ul class="contact" id="contact"></ul>
-        <button class="tl press-btn" type="button" data-colophon aria-haspopup="dialog" aria-controls="colophon"><span class="tl-t">Read the colophon and press notes</span></button>
+        <button class="tl press-btn" type="button" data-colophon aria-haspopup="dialog" aria-controls="colophon"><span class="tl-t">Colophon and press notes</span></button>
         <p>Studio: Kouter 9, 9000 Ghent, Belgium. Visits by appointment.</p>
       </div>
       <div class="swap">
@@ -1248,7 +1254,7 @@
   const renderSpec = () => {
     const w = specL.parentElement.clientWidth;
     if (!w) return;
-    paint(specL, SCH, SPECIMEN, { px: w < 420 ? 1 : 2, edits: true, hi: cur, words: specWords });
+    paint(specL, SCH, SPECIMEN, { px: 2, edits: true, hi: cur, words: specWords });
     paint(specS, SCH, SPECIMEN, { px: 1, edits: true, hi: cur, words: specWords });
   };
   let specRaf = 0;

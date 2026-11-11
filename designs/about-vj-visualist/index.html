@@ -1134,6 +1134,7 @@
       gap = w >= 600 ? 22 : 6;
       // Whole LED cells across the column too: 6px cells on an 8px pitch, the column ends on a cell.
       colW = Math.max(6, Math.floor(((w - gap * 9) / 10 + 2) / PITCH) * PITCH - 2);
+      gap = Math.max(gap, Math.floor((w - colW * 10) / 9)); // the spare width goes to the gaps, so the meter spans the content
       W = colW * 10 + gap * 9;
       const k = dpr();
       cv.width = W * k; cv.height = H * k;

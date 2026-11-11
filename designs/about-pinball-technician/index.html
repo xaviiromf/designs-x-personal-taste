@@ -37,12 +37,12 @@
 
     /* Type: Departure Mono, drawn on an 11px grid. One weight; emphasis is colour, inversion, size, position. */
     --font: "Departure Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
-    --t-mark: 11px;         /* decorative marks only */
     --t-small: 13.75px;
     --t-body: 16.5px;
     --t-lede: 22px;
     --t-h3: 33px;
     --t-display: 44px;      /* 44, 55 or 66: always a multiple of 11 */
+    --t-plate: 88px;        /* the initial on the spinner */
     --lh-small: 22px;       /* line heights are multiples of 5.5px */
     --lh-body: 27.5px;
     --lh-lede: 33px;
@@ -153,7 +153,7 @@
   .bonus-plate { color: var(--score); font-size: var(--t-small); line-height: var(--lh-small); white-space: nowrap; }
   @media (min-width: 1024px) {
     .bonus {
-      left: var(--s2); right: auto; top: 50%; transform: translateY(-50%);
+      left: var(--s2); right: auto; top: auto; bottom: var(--s3);
       flex-direction: column; align-items: flex-start; gap: var(--s3);
       height: auto; padding: 0; background: none;
     }
@@ -407,7 +407,7 @@
     position: absolute; left: 55px; top: 22px; width: 176px; height: 110px;
     display: grid; place-items: center;
     background: var(--plate); color: var(--white);
-    font-size: 88px; line-height: 88px;
+    font-size: var(--t-plate); line-height: var(--t-plate);
   }
   .sp-plate::after { content: ""; position: absolute; inset: 0; border: 4px solid var(--white); }
   .sp-b { display: none; }
@@ -1057,7 +1057,7 @@
     const tot = DATA.years.map((y) => y[1] + y[2] + y[3]), ROWS = Math.ceil(Math.max(...tot) / 2);
     const W = N * PITCH, H = TOP + ROWS * CELL + 4, base = H - 4;
     cv.width = W; cv.height = H;
-    cv.style.aspectRatio = `${W} / ${H}`;
+    cv.style.width = `calc(${W}px * var(--CS))`; cv.style.height = `calc(${H}px * var(--CS))`;
     const yearsEl = $('#years'), numN = $('#num-n'), numC = $('#num-c'), readout = $('#readout');
     let sel = N - 1, prev = -1;
     $('#legend').innerHTML = DATA.kinds.map((k) => `<li><i style="--k: var(--${k.key})"></i>${k.name}</li>`).join('');
@@ -1194,8 +1194,9 @@
     b.addEventListener('keydown', (e) => { if ((e.key === ' ' || e.key === 'Enter') && !e.repeat) down(); });
     ['pointerup', 'pointerleave', 'pointercancel', 'keyup', 'blur'].forEach((t) => b.addEventListener(t, up));
   });
-  // The wire under a link: the ball takes whole 4px steps, however long the link is. A touch rolls it once.
-  const wire = (e) => { const u = e.target.closest?.('.u'); if (!u) return; const n = Math.max(2, Math.floor((u.offsetWidth - 4) / 4)); u.style.setProperty('--n', n); u.style.setProperty('--tx', n * 4 + 'px'); };
+  // The wire under a link: the ball takes whole 4px steps, however long the link is, and its last step carries it past
+  // the end of the wire. A touch rolls it once.
+  const wire = (e) => { const u = e.target.closest?.('.u'); if (!u) return; const n = Math.max(2, Math.ceil(u.offsetWidth / 4)); u.style.setProperty('--n', n); u.style.setProperty('--tx', n * 4 + 'px'); };
   document.addEventListener('pointerover', wire); document.addEventListener('focusin', wire);
   document.addEventListener('pointerdown', (e) => {
     wire(e);
