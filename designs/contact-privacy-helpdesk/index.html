@@ -67,7 +67,7 @@
     --d-dlg-out: .12s;
     --d-load: .8s;        /* twelve load ticks */
     --d-cut: .2s;         /* between lane panels cutting in */
-    --d-type: .08s;       /* between the two ticks of a keystroke */
+    --d-type: .025s;      /* between the ticks of keystrokes: 40 a second, so typing never lags */
     --d-burst: .05s;      /* one tick of a lane burst: 20 a second */
     --d-touch: 1s;        /* a tapped lane rains this long */
     --d-quick: .04s;      /* the ten success ticks */
@@ -126,7 +126,7 @@
 
   .left {
     display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: minmax(0, 10fr) minmax(0, 11.5fr) minmax(0, 10fr);   /* the email lane is wider: it has a gutter on both sides */
     grid-template-rows: auto 1fr;
     padding-bottom: var(--rain-foot);
   }
@@ -163,6 +163,7 @@
     clip-path: var(--corners);
   }
   .lane .panel + .panel { margin-top: var(--s4); }
+  .lane[data-lane="1"] { padding-right: var(--strip); }
   /* The heading plate cuts to the inverse while its lane rains harder (hover, keyboard focus, a tap). */
   .plate {
     margin: 0 calc(-1 * var(--pad)) var(--s2);
@@ -278,6 +279,7 @@
   .swap > * { grid-area: 1 / 1; align-self: start; min-width: 0; }
   /* The confirmation stands where the submit button was, beside the rows of rain that lock. */
   .swap > .done { align-self: end; }
+  .msg-form .btn { margin-top: var(--s4); }   /* the shackle keeps clear of the error line above */
   .swap > .is-off { visibility: hidden; }
   .side h3 { margin: 0; font: 700 26px/1.15 var(--font-text); letter-spacing: -.01em; }
   .form-hint { margin-top: var(--s2); max-width: 46ch; color: var(--mist); font-size: var(--t-small); line-height: 1.5; }
@@ -326,21 +328,30 @@
     min-height: var(--hit);
     cursor: pointer;
   }
+  /* Radios are stepped pixel diamonds: a hollow ring of 2px squares at rest, a solid inner diamond when chosen.
+     The real input sits on top, transparent, so its focus outline is never clipped. */
   .radio input {
+    position: relative; z-index: 1;
     flex: none;
-    width: 20px; height: 20px; margin: 0;
-    border: 2px solid var(--mist); border-radius: 0;
-    background: var(--teal);
+    width: 22px; height: 22px; margin: 0;
+    border: 0; border-radius: 0;
+    background: none;
     appearance: none;
     cursor: pointer;
   }
-  .radio:hover input { border-color: var(--plain); }
-  .radio input:checked { border-color: var(--plain); background: linear-gradient(var(--plain), var(--plain)) center / 8px 8px no-repeat var(--teal); }
   .radio input:focus-visible { outline-offset: 2px; }
-  .radio input[aria-invalid="true"] { border-color: var(--fault); }
+  .dia { position: absolute; left: 0; top: calc(50% - 11px); width: 22px; height: 22px; color: var(--mist); pointer-events: none; }
+  .dia::before, .dia::after { content: ""; position: absolute; left: 10px; top: 10px; width: 2px; height: 2px; }
+  .dia::before { box-shadow: -10px 0px, -8px -2px, -8px 2px, -6px -4px, -6px 4px, -4px -6px, -4px 6px, -2px -8px, -2px 8px, 0px -10px, 0px 10px, 2px -8px, 2px 8px, 4px -6px, 4px 6px, 6px -4px, 6px 4px, 8px -2px, 8px 2px, 10px 0px; }
+  .dia::after { visibility: hidden; background: currentColor; box-shadow: -4px 0px, -2px -2px, -2px 0px, -2px 2px, 0px -4px, 0px -2px, 0px 2px, 0px 4px, 2px -2px, 2px 0px, 2px 2px, 4px 0px; }
+  .radio:hover .dia, .radio input:checked + .dia { color: var(--plain); }
+  .radio input:checked + .dia::after { visibility: visible; }
+  .radio input[aria-invalid="true"] + .dia { color: var(--fault); }
   .radio.is-risk { color: var(--urgent); font-weight: 600; }
-  .radio.is-risk input, .radio.is-risk:hover input { border-color: var(--urgent); }
-  .radio.is-risk input:checked { background: linear-gradient(var(--urgent), var(--urgent)) center / 8px 8px no-repeat var(--teal); }
+  .radio.is-risk .dia, .radio.is-risk input:checked + .dia { color: var(--urgent); }
+  /* Tablet and phone: one short row of wells beside the message field, where typed tiles and the lock show. */
+  .wire { display: none; height: calc(var(--cell) * 6); margin-top: var(--s1); }
+  @media (max-width: 1199px) { .wire { display: block; } }
   .risk-note { margin-top: var(--s1); padding: var(--s2); border: 2px solid var(--urgent); color: var(--urgent); font-weight: 600; font-size: var(--t-small); line-height: 1.45; }
   .risk-note .u { color: var(--urgent); padding-block: 8px; min-height: var(--hit); }
   .risk-note .u::before { border-color: var(--urgent); }
@@ -437,6 +448,7 @@
 
   /* ---------- Phones: the lanes stack, each with its own short band of rain ---------- */
   @media (max-width: 719px) {
+    .lane[data-lane="1"] { padding-right: 0; }
     .left { display: block; padding-bottom: var(--s3); }
     .intro { padding: var(--s5) 0 var(--s3); }
     .lanes { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--s3); margin-top: var(--s2); }
@@ -538,9 +550,9 @@
           <fieldset id="urgency">
             <legend class="legend">How soon do you need us?</legend>
             <div class="radios">
-              <label class="radio"><input type="radio" name="urgency" value="This week" required> This week</label>
-              <label class="radio"><input type="radio" name="urgency" value="Today" required> Today</label>
-              <label class="radio is-risk"><input type="radio" name="urgency" value="I am at risk right now" required> I am at risk right now</label>
+              <label class="radio"><input type="radio" name="urgency" value="This week" required><span class="dia" aria-hidden="true"></span> This week</label>
+              <label class="radio"><input type="radio" name="urgency" value="Today" required><span class="dia" aria-hidden="true"></span> Today</label>
+              <label class="radio is-risk"><input type="radio" name="urgency" value="I am at risk right now" required><span class="dia" aria-hidden="true"></span> I am at risk right now</label>
             </div>
             <p class="risk-note" id="risk-note" hidden>Do not wait for a reply here. <a class="u" href="https://signal.me/#p/+351910000451" target="_blank" rel="noopener">Message us on Signal now<span class="vh"> (opens in a new tab)</span></a></p>
             <p class="err" id="urgency-err" aria-live="polite"></p>
@@ -548,6 +560,7 @@
 
           <label class="lbl" for="message">Your message</label>
           <p class="help" id="message-help">20 to 1,000 characters. Leave out passwords and the names of people at risk.</p>
+          <div class="wire" aria-hidden="true"></div>
           <textarea class="ctl" id="message" name="message" rows="6" required aria-describedby="message-help message-count"></textarea>
           <p class="count" id="message-count">0 of 1,000 characters</p>
           <p class="cipher-cap" aria-hidden="true">What the desk would receive</p>
@@ -570,6 +583,7 @@
             <div><dt>Name</dt><dd id="done-alias">No name given</dd></div>
           </dl>
           <p>Fingerprint of your message, a sample made in this page (not a cryptographic hash):</p>
+          <div class="wire" aria-hidden="true"></div>
           <ul class="fp" id="done-fp" aria-label="Your message's fingerprint, ten groups of four characters"></ul>
           <button class="btn btn-line" id="again" type="button"><span class="shackle" aria-hidden="true"></span><span class="face"><span class="inner"><span class="label">Write another message</span><span class="hole" aria-hidden="true"><i></i></span></span></span></button>
         </div>
@@ -659,7 +673,7 @@
     const HEAD = 0, PLAIN = 4, TURN1 = 5, TURN2 = 6;
     let cell = 12, dpr = 1, W = 0, H = 0, S = 12, atlas = null, C = {}, atlasKey = '';
     let bands = [], covers = [], lock = null;
-    const kept = [0, 0, 0];   // tick counts survive a rebuild
+    const kept = [0, 0, 0, 0];   // tick counts survive a rebuild
     const drops = [], typed = new Map();
     let START = 0;
 
@@ -684,14 +698,17 @@
       });
     }
     // A typed character, drawn once in plaintext the first time it falls.
-    function glyphOf(ch) {
-      if (typed.has(ch)) return typed.get(ch);
+    // tile: a solid --plain cell with the character cut out in the well colour; else the character in --plain.
+    function glyphOf(ch, tile) {
+      const key = (tile ? 't' : 'g') + ch;
+      if (typed.has(key)) return typed.get(key);
       const c = document.createElement('canvas'); c.width = c.height = S;
       const a = c.getContext('2d');
-      a.fillStyle = C.plain; a.textAlign = 'center'; a.textBaseline = 'alphabetic';
+      if (tile) { a.fillStyle = C.plain; a.fillRect(0, 0, S, S); }
+      a.fillStyle = tile ? C.well : C.plain; a.textAlign = 'center'; a.textBaseline = 'alphabetic';
       a.font = `700 ${Math.round(S * 1.18)}px ${css('--font-display')}`;
-      a.fillText(ch, S / 2, Math.round(S * .86));
-      typed.set(ch, c);
+      if (ch.trim()) a.fillText(ch, S / 2, Math.round(S * .86));
+      typed.set(key, c);
       return c;
     }
 
@@ -716,17 +733,36 @@
         const r0 = Math.ceil(y0 / cell), r1 = Math.floor(y1 / cell);
         const rnd = prng(7919 * (i + 1)), cols = [];
         for (let c = c0; c <= c1; c++) {
-          const L = 6 + (rnd() * 10 | 0), P = L + 14 + (rnd() * 34 | 0);
+          // phones: a short strip, so denser columns keep the band readable as rain
+          const L = 6 + (rnd() * 10 | 0), P = L + (mode === 'strip' ? 4 + (rnd() * 14 | 0) : 14 + (rnd() * 34 | 0));
           cols.push({ c, L, P, ph: rnd() * P | 0, entry: r0 });
         }
         return { i, c0, c1, r0, r1, cols, T: bands.length ? kept[i] : START, next: 0, typeCols: [] };
       });
+      // Tablet and phone: a short wire of rain above the message field (and above the confirmation's
+      // fingerprint) carries the typed tiles and the lock, where the visitor can see them.
+      const wire = mode === 'full' ? null : $$('.wire').find((el) => el.offsetHeight && !el.closest('.is-off'));
+      if (wire) {
+        const r = wire.getBoundingClientRect(), rnd = prng(104729), cols = [];
+        const c0 = Math.ceil((r.left - d.left) / cell), c1 = Math.floor((r.right - d.left) / cell) - 1;
+        const r0 = Math.ceil((r.top - d.top) / cell), r1 = Math.floor((r.bottom - d.top) / cell);
+        for (let c = c0; c <= c1; c++) { const L = 3 + (rnd() * 4 | 0), P = L + 6 + (rnd() * 18 | 0); cols.push({ c, L, P, ph: rnd() * P | 0, entry: r0, top: r0 }); }
+        bands.push({ i: 3, wire: true, c0, c1, r0, r1, cols, T: kept[3] ?? START, next: 0, typeCols: cols });
+      }
       // Typed glyphs enter where the band opens below its panels: the first row of each column's last open run.
       const open = (c, r) => !covers.some(([a, t, b, u]) => a < (c + 1) * cell && b > c * cell && t < (r + 1) * cell && u > r * cell);
       bands.forEach((b) => {
-        b.cols.forEach((col) => { let r = b.r1 - 1; while (r > b.r0 && open(col.c, r - 1)) r--; col.entry = r; });
+        if (b.wire) return;
+        b.cols.forEach((col) => {
+          let r = b.r1 - 1; while (r > b.r0 && open(col.c, r - 1)) r--; col.entry = r;
+          let t = b.r0; while (t < b.r1 - 1 && !open(col.c, t)) t++; col.top = t;
+        });
         const deepest = Math.max(...b.cols.map((c) => c.entry));
+        b.deep = deepest;
         b.typeCols = b.cols.filter((c) => c.entry >= deepest - 1);
+        // gutters: columns open from their first open row to the bottom (beside the panels, never under them)
+        b.gutters = b.cols.filter((c) => c.entry <= c.top);
+        b.gutterTop = b.gutters.length ? Math.max(...b.gutters.map((c) => c.top)) : deepest;
       });
       drops.length = 0;
       if (lock) lock.rows = plan(lock.fp, lock.maxY);
@@ -751,16 +787,21 @@
             blit(hash(col.c, r, Math.floor(k / col.P)) % NG, d === 0 ? HEAD : d <= 2 ? 1 : d <= 6 ? 2 : 3, x, r * cell);
           }
         }
-        if (b.i === EMAIL) drawDrops(b);
+        drawDrops(b);
       }
       if (lock) drawLock();
     }
 
-    // A typed glyph: plaintext for two cells, then a new atlas glyph every two cells while its tone steps
-    // plain, turn-1, turn-2, cipher within six cells. It leaves a short cipher tail like any other head.
+    // A typed character: an inverse tile (solid --plain, the character cut out) for four cells, the
+    // character in --plain on the well for two, then a new atlas glyph every two cells while its tone steps
+    // turn-1, turn-2, cipher over the next six. It leaves a short cipher tail like any other head.
     function drawDrops(b) {
       for (let j = drops.length - 1; j >= 0; j--) {
-        const p = drops[j], age = b.T - p.t0, r = p.r0 + age, x = p.c * cell;
+        const p = drops[j];
+        if (p.b !== b) continue;
+        // plaintext is heavier than the rain: a typed character falls one cell for every two ticks, so with two
+        // ticks a keystroke the last dozen characters stand as a descending diagonal
+        const age = (b.T - p.t0) >> 1, r = p.r0 + age, x = p.c * cell;
         if (r - 6 >= b.r1) { drops.splice(j, 1); continue; }
         if (age < 0) continue;
         for (let k = Math.min(age, 6); k >= 1; k--) {
@@ -771,17 +812,19 @@
         }
         if (r >= b.r1) continue;
         knock(x, r * cell);
-        if (age < 2) { if (p.ch.trim()) g.drawImage(glyphOf(p.ch), 0, 0, S, S, x, r * cell, cell, cell); }
-        else blit(hash(p.seed, age >> 1, 11) % NG, age < 4 ? TURN1 : age < 6 ? TURN2 : HEAD, x, r * cell);
+        if (age < 6) g.drawImage(glyphOf(p.ch, age < 4), 0, 0, S, S, x, r * cell, cell, cell);
+        else blit(hash(p.seed, age >> 1, 11) % NG, age < 8 ? TURN1 : age < 10 ? TURN2 : HEAD, x, r * cell);
       }
     }
 
     // The message fingerprint locks into the bottom rows of the email band: groups of four with one empty
     // column between, centred, on every other row, the last group on the bottom row.
+    const target = () => bands.find((b) => b.wire) || bands[EMAIL];
     function plan(fp, maxY = Infinity) {
-      const b = bands[EMAIL];
+      const b = target();
       if (!b) return [];
-      const n = b.c1 - b.c0 + 1, per = Math.max(1, Math.min(5, Math.floor((n + 1) / 5)));
+      if (b.wire) maxY = Infinity;
+      const n = b.c1 - b.c0 + 1, per = Math.max(1, Math.min(10, Math.floor((n + 1) / 5)));
       const lines = Math.ceil(fp.length / per), width = per * 5 - 1, cs = b.c0 + Math.max(0, Math.floor((n - width) / 2));
       // Bottom rows of the band, or of the part of it on screen, but never above where the open field starts.
       const floor = Math.max(...b.cols.map((c) => c.entry)) + (lines - 1) * 2 + 1;
@@ -795,7 +838,7 @@
       return rows;
     }
     function drawLock() {
-      const b = bands[EMAIL];
+      const b = target();
       lock.rows.forEach((row, l) => {
         if (lock.rows.length - l > lock.shown) return; // rows lock from the bottom up
         g.fillStyle = C.well; // a clear row above and below, so the locked line reads as one plate
@@ -809,13 +852,21 @@
       set start(v) { START = v; },
       get ready() { return !!atlas && bands.length > 0; },
       tick(n, only) { for (const b of bands) if (only == null || b.i === only) b.T += n; },
-      // Drop typed characters at the top of the next open columns of the email band.
-      drop(chars) {
-        const b = bands[EMAIL];
-        if (!b || !b.typeCols.length) return;
+      // Drop typed characters into the next columns of the email band, where it is open and on screen:
+      // the open field under its panels if at least ten rows of it are in view, otherwise its gutters
+      // beside the panels, entering just inside the top of the viewport. On tablets and phones, the wire.
+      drop(chars, vt, vb) {
+        const b = target();
+        if (!b) return;
+        let cols = b.typeCols, row = (c) => c.entry;
+        if (!b.wire && !(b.deep >= vt && b.deep + 10 <= vb) && b.gutters.length) {
+          const r = Math.max(b.gutterTop, vt + 1);
+          cols = b.gutters; row = () => r;
+        }
+        if (!cols.length) return;
         for (const ch of chars) {
-          const col = b.typeCols[b.next++ % b.typeCols.length];
-          drops.push({ c: col.c, r0: col.entry, t0: b.T, ch, seed: hash(ch.codePointAt(0), b.next, 3) });
+          const col = cols[b.next++ % cols.length];
+          drops.push({ b, c: col.c, r0: row(col), t0: b.T, ch, seed: hash(ch.codePointAt(0), b.next, 3) });
         }
       },
       lock(fp, maxY) { lock = { fp, maxY, rows: [], shown: 0 }; lock.rows = plan(fp, maxY); return lock.rows.length; },
@@ -874,7 +925,8 @@
     if (add > 0 && built) {
       const end = msg.selectionEnd ?? v.length;
       const ins = [...v.slice(0, end)].slice(-add).slice(-24).map((ch) => (ch === '\n' || ch === '\t' ? ' ' : ch));
-      rain.drop(ins);
+      const top = desk.getBoundingClientRect().top, c = parseFloat(css('--cell')) || 12;
+      rain.drop(ins, Math.ceil(-top / c), Math.floor((innerHeight - top) / c));
       rain.draw(); // the plaintext glyph is seen at the top of its column before the first tick
       const n = Math.min(12, ins.length * 2);
       if (fx) fx.ticks(n, sec('--d-type'));
@@ -987,6 +1039,7 @@
     $('#done-fp').replaceChildren(...fp.map((g) => Object.assign(document.createElement('li'), { textContent: g })));
     $('#done-risk').hidden = val('urgency') !== 'I am at risk right now';
     swap(true);
+    if (built) rebuild(); // on tablets and phones the wire moves to the confirmation
     // The signature answers: ten quick ticks in every lane, then the email lane's bottom rows lock into the fingerprint.
     if (!built) return;
     const n = rain.lock(fp, window.innerHeight - desk.getBoundingClientRect().top);
@@ -999,6 +1052,7 @@
     fx?.release();
     rain.release(); rain.draw();
     swap(false);
+    if (built) rebuild();
   });
 
   if (!lib) return;

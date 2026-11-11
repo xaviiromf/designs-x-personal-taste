@@ -130,7 +130,7 @@
   }
   .b-face { display: block; padding: var(--rim-w); background: var(--rim); clip-path: var(--corners); }
   .b-in {
-    display: grid; grid-template-columns: auto minmax(64px, 1fr);
+    display: grid; grid-template-columns: 2fr 1fr;
     min-height: calc(var(--tap) - 2 * var(--rim-w));
     background: var(--face);
     clip-path: var(--corners);
@@ -755,7 +755,7 @@
     const g = cv.getContext('2d');
     const st = { ci: 0, col: null, order: [], k: 0, dev: 4, hover: -1, pin: -1, formats: new Set(Object.keys(DATA.formats)), cursors: true };
     let cell = 16, gap = 3, M = 14, dpr = 1, W = 0, H = 0, colr = {};
-    const hues = () => { colr = Object.fromEntries(['--case-lift', '--pencil', '--head', '--clean', '--repaired', '--partial', '--unreadable'].map((k) => [k, read(k)])); };
+    const hues = () => { colr = Object.fromEntries(['--case-deep', '--case-lift', '--pencil', '--head', '--clean', '--repaired', '--partial', '--unreadable'].map((k) => [k, read(k)])); };
     const HUE = ['--clean', '--repaired', '--partial', '--unreadable'];
 
     function size() {
@@ -801,9 +801,12 @@
       // The pointed or kept block: a head outline in the gap around it.
       const at = st.hover >= 0 ? st.hover : st.pin >= 0 ? posOf(st.pin) : -1;
       if (at >= 0) {
-        const [x, y] = xy(at), o = Math.max(1, Math.min(2, gap));
+        // 3px of --head through the gap (2px on phone-sized cells), with a ring of well inside so it reads on any hue.
+        const [x, y] = xy(at), t = cell >= 12 ? 3 : 2;
+        g.fillStyle = colr['--case-deep'];
+        frame(x, y, b, 1);
         g.fillStyle = colr['--head'];
-        frame(x - o, y - o, b + 2 * o, 2);
+        frame(x - t, y - t, b + 2 * t, t);
         headRow = Math.floor(at / COLS);
       }
       // The read head in the left margin, on whole rows.

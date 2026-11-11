@@ -481,8 +481,8 @@
   /* ---------- Success: the slip goes on the spike ---------- */
   .done p { margin: var(--s3) 0 0; max-width: 52ch; }
   .done q, .done b { font-weight: 600; overflow-wrap: anywhere; }
-  .desk { position: relative; height: 200px; margin: var(--s2) 0 0; }
-  .rod { position: absolute; left: 50%; top: 40px; width: 3px; height: 148px; margin-left: -1px; background: var(--felt); }
+  .desk { position: relative; height: 200px; margin: var(--s4) 0 0; }
+  .rod { position: absolute; left: 50%; top: 70px; width: 3px; height: 118px; margin-left: -1px; background: var(--felt); }
   .rod::before { content: ""; position: absolute; left: 1px; top: -6px; width: 1px; height: 6px; background: var(--felt); }
   .base { position: absolute; left: 50%; bottom: 0; width: 132px; height: 12px; margin-left: -66px; background: var(--felt); }
   .slip {
@@ -495,12 +495,13 @@
   .slip-old { background: var(--felt); }
   .slip-old.o1 { bottom: 12px; margin-left: -10px; }
   .slip-old.o2 { bottom: 18px; margin-left: 8px; }
-  .slip-old::after, .slip-new::after { content: ""; position: absolute; left: 50%; top: 9px; width: 9px; height: 9px; margin-left: -4px; background: var(--brass-deep); }
+  .slip-new::after { content: ""; position: absolute; left: 50%; top: 9px; width: 9px; height: 9px; margin-left: -4px; background: var(--brass-deep); }
   .slip-new { bottom: 24px; background: var(--brass-plate); box-shadow: inset 0 0 0 2px var(--ivory); text-align: center; line-height: 1.3; }
   .slip-new::before { content: ""; position: absolute; left: 50%; top: 9px; width: 3px; height: 9px; margin-left: -1px; background: var(--felt); z-index: 1; }
   .slip-new b, .slip-new span { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .slip-new span { color: var(--felt); font-size: var(--t-small); }
   .slip-wrap { position: absolute; inset: 0; }
+  .slip-wrap[data-step="0"] .slip-new::before { visibility: hidden; }   /* not pierced yet */
   .done .btn { margin-top: var(--s4); }
 
   /* ---------- Narrow screens: the compact dial ---------- */
@@ -1293,9 +1294,10 @@
       // Success: the slip drops onto the spike in three steps and rests on the two slips already there.
       spike() {
         slipCalls.forEach((c) => c.kill());
-        const ys = [-96, -64, -32, 0];
+        const ys = [-108, -72, -36, 0];
         slip.style.transform = `translateY(${ys[0]}px)`;
-        slipCalls = [1, 2, 3].map((k) => gsap.delayedCall(k * T.drop, () => { slip.style.transform = ys[k] ? `translateY(${ys[k]}px)` : ''; }));
+        slip.dataset.step = 0; // above the tip: the hole is empty
+        slipCalls = [1, 2, 3].map((k) => gsap.delayedCall(k * T.drop, () => { slip.style.transform = ys[k] ? `translateY(${ys[k]}px)` : ''; slip.dataset.step = k; }));
       }
     };
 

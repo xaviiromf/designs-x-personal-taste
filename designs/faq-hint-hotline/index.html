@@ -50,7 +50,7 @@
     --tap: 48px;               /* button and field height */
     --hit: 44px;               /* minimum target for text actions */
     --max-w: 1296px;
-    --u: 4px;                  /* one pixel of the handset drawing (88 x 28 of them) */
+    --u: 4px;                  /* one pixel of the handset drawing (82 x 28 of them) */
     --gutter: 40px;            /* the cord's lane, left of the telephone body */
     --bar: 12px;               /* tone bar thickness */
     --key-w: 76px;
@@ -77,7 +77,7 @@
       --key: 60px;
       --key-w: clamp(48px, calc((100vw - 2 * var(--s4) - var(--gutter) - 102px) / 3), 76px);
       --key-w: clamp(48px, round(down, (100vw - 2 * var(--s4) - var(--gutter) - 102px) / 3, 1px), 76px);
-      --u: min(4px, (100vw - 2 * var(--s4)) / 88);
+      --u: min(4px, (100vw - 2 * var(--s4) - var(--gutter)) / 82);
     }
   }
 
@@ -171,22 +171,21 @@
     padding: 0 var(--s4);
     background: var(--lift);
   }
-  /* A plunger: a dial-white head with its dark shaft under it, flush with the top edge at rest. */
+  /* A hook switch: a dark slot in the top edge with a dial-white plunger head in it, flush at rest. */
   .hook {
     position: absolute; top: 5px;
-    width: 12px; height: 5px;
-    background: var(--dial);
+    width: 18px; height: 9px;
+    background: var(--deepest);
     pointer-events: none;
   }
-  .hook::after { content: ""; position: absolute; left: 3px; top: 100%; width: 6px; height: 4px; background: var(--deepest); }
-  .hook-l { left: 18px; }
-  .hook-r { right: 18px; }
+  .hook::after { content: ""; position: absolute; left: 0; top: 0; width: 18px; height: 5px; background: var(--dial); }
+  .hook-l { left: 16px; }
+  .hook-r { right: 16px; }
   @keyframes hook-up { 0% { transform: translateY(-2px); } 100% { transform: translateY(-3px); } }
-  @media (hover: hover) { .btn:hover .hook { animation: hook-up var(--d-hook) steps(1, end) forwards; } }
-  .btn:focus-visible .hook { animation: hook-up var(--d-hook) steps(1, end) forwards; }
+  @media (hover: hover) { .btn:hover .hook::after { animation: hook-up var(--d-hook) steps(1, end) forwards; } }
+  .btn:focus-visible .hook::after { animation: hook-up var(--d-hook) steps(1, end) forwards; }
   /* Hung up: plungers pushed below the edge, the face inverted, for as long as it is held (140 ms at least). */
-  .btn.is-down .hook, .btn:active .hook { animation: none; transform: translateY(3px); background: var(--deepest); }
-  .btn.is-down .hook::after, .btn:active .hook::after { background: var(--bakelite); }
+  .btn.is-down .hook::after, .btn:active .hook::after { animation: none; transform: translateY(3px); background: var(--lift); }
   .btn.is-down .btn-r, .btn:active .btn-r { background: var(--dial); }
   .btn.is-down .btn-f, .btn:active .btn-f { background: var(--dial); color: var(--deepest); }
 
@@ -217,7 +216,7 @@
   .phone { position: relative; width: min(100%, calc(var(--gutter) + 102px + 3 * var(--key-w))); }
   .phone:focus { outline: none; } /* the Keypad link lands here; it is not a control */
   @media (max-width: 899px) { .phone { margin: var(--s6) auto 0; } }
-  .set { position: relative; width: calc(88 * var(--u)); height: calc(28 * var(--u)); }
+  .set { position: relative; width: calc(82 * var(--u)); height: calc(28 * var(--u)); margin-left: var(--gutter); }
   .set svg { position: absolute; left: 0; display: block; width: 100%; shape-rendering: crispEdges; overflow: visible; }
   .handset { top: 0; height: calc(16 * var(--u)); z-index: 1; }
   .cradle { top: calc(19 * var(--u)); height: calc(9 * var(--u)); z-index: 2; }
@@ -232,7 +231,7 @@
   @media (min-width: 900px) { .body { position: sticky; top: var(--stick, var(--s4)); } }
   .body > .plate { position: absolute; inset: 0; z-index: -1; background: var(--deep); --n: var(--notch-l); }
   .sock { position: absolute; left: -8px; top: calc(var(--sock) - 8px); width: 10px; height: 16px; background: var(--deepest); box-shadow: inset 0 0 0 2px var(--lift); }
-  .cord { position: absolute; right: 100%; bottom: calc(100% - var(--sock) - 2px); width: var(--gutter); height: 0; pointer-events: none; }
+  .cord { position: absolute; left: calc(-1 * var(--gutter)); bottom: calc(100% - var(--sock) - 2px); width: calc(var(--gutter) + 12px); height: 0; pointer-events: none; z-index: 1; }
 
   /* The display window: dialled digits in line green, the matched title in dial white. */
   .dsp {
@@ -376,7 +375,7 @@
   .jack { position: relative; align-self: start; height: var(--tap); }
   .jack::before { content: ""; position: absolute; left: -2px; top: 14px; width: 14px; height: 20px; background: var(--deepest); box-shadow: inset 0 0 0 2px var(--cord); }
   .jack::after { content: ""; position: absolute; left: 4px; top: 21px; width: 4px; height: 6px; background: var(--bakelite); }
-  .plug { position: absolute; left: 0; top: 0; width: 30px; height: var(--tap); visibility: hidden; pointer-events: none; }
+  .plug { position: absolute; right: 0; top: 0; width: 30px; height: var(--tap); visibility: hidden; pointer-events: none; }
   .plug i { position: absolute; display: block; }
   .plug .pin { left: 4px; top: 22px; width: 8px; height: 4px; background: var(--line); }
   .plug .body-p { left: 12px; top: 17px; width: 10px; height: 14px; background: var(--line); }
@@ -386,7 +385,7 @@
   .fld:focus-within .plug { visibility: visible; animation: plug-in var(--d-plug) steps(1, end); }
   /* Invalid: a hatched dial-white bar under the field, and the message on its reserved line. */
   .hatch { display: block; height: 6px; margin-top: 4px; margin-right: 30px; visibility: hidden; background: repeating-linear-gradient(90deg, var(--dial) 0 2px, transparent 2px 6px); }
-  .is-bad .hatch, .slots.is-bad .hatch { visibility: visible; }
+  .hatch.is-bad, .slots.is-bad .hatch { visibility: visible; }
   .fld.is-bad input, .fld.is-bad textarea { border-color: var(--dial); }
   .err { min-height: calc(var(--t-small) * 1.4 * 2); margin-top: 2px; font-size: var(--t-small); line-height: 1.4; font-weight: 500; }
 
@@ -452,8 +451,8 @@
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .btn:hover .hook, .btn:focus-visible .hook { animation: none; transform: translateY(-3px); }
-    .btn.is-down .hook, .btn:active .hook { transform: translateY(3px); }
+    .btn:hover .hook::after, .btn:focus-visible .hook::after { animation: none; transform: translateY(-3px); }
+    .btn.is-down .hook::after, .btn:active .hook::after { animation: none; transform: translateY(3px); }
     .u:hover::after, .u:focus-visible::after, .u.is-ring::after { animation: none; opacity: 1; }
     .fld:focus-within .plug { animation: none; }
   }
@@ -865,16 +864,18 @@
   let following = false, followed = null, raf = 0;
   const follow = () => {
     raf = 0;
-    if (!following || pending || now() < quiet || seq.length && seq.some(Boolean) && now() < quiet) return;
+    if (!following || pending || now() < quiet) return;
     const y = innerHeight / 3;
     let cur = null;
     for (const h of heads) { if (h.el.getBoundingClientRect().top <= y) cur = h; else break; }
     const id = cur ? cur.n : '';
     if (id === followed) return;
     followed = id;
-    if (!cur) show('', 'Dial 1 to 4');
-    else if (cur.form) booked ? show(booked.num, `Call back ${booked.slot}, number ${booked.num}`) : show('0', 'Ask for a call back');
-    else show(cur.n, cur.t);
+    // A cut, not a fade. Under a hover preview the new reading waits underneath and shows when the pointer leaves.
+    state = !cur ? { d: '', t: 'Dial 1 to 4', k: '' }
+      : cur.form ? (booked ? { d: booked.num, t: `Call back ${booked.slot}, number ${booked.num}`, k: '' } : { d: '0', t: 'Ask for a call back', k: '' })
+      : { d: cur.n, t: cur.t, k: '' };
+    if (!pre) render();
   };
   addEventListener('scroll', () => { if (!raf) raf = requestAnimationFrame(follow); }, { passive: true });
   const startFollowing = () => { following = true; followed = null; follow(); };
@@ -1016,12 +1017,13 @@
   /* ---------- The cord: a stepped pixel coil, whole loops only ---------- */
   const cord = (() => {
     const cv = $('.cord'), g = cv.getContext('2d'), hs = $('.handset');
-    const U = 2, R = 7, TILT = 2.5, P = 8, TOP = 3, LOW = 5; // in 2px cells: radius, tilt, pitch, leads
-    // One loop of the helix, sampled and snapped to cells; the far half and the near half kept apart.
+    const U = 2, R = 7, TILT = 4, P = 6, TOP = 4, LOW = 5; // in 2px cells: radius, tilt, pitch, leads
+    // One loop of the helix seen from a little above, sampled and snapped to cells: the near half is the
+    // lower arc, drawn last in --cord; the far half is the upper arc, in --cord-back.
     const far = new Map(), near = new Map();
     for (let i = 0; i < 720; i++) {
       const t = i / 720 * Math.PI * 2, x = Math.round(R * Math.sin(t)), y = Math.round(P * t / (Math.PI * 2) + TILT * (1 - Math.cos(t)));
-      (Math.cos(t) > 0 ? near : far).set(x + ',' + y, [x, y]);
+      (Math.cos(t) < 0 ? near : far).set(x + ',' + y, [x, y]);
     }
     const FAR = [...far.values()], NEAR = [...near.values()];
     let W = 0, H = 0, dpr = 1, key = '', cf = '', cb = '', loops = 0;
@@ -1037,20 +1039,23 @@
     }
     function draw() {
       if (!H) return;
-      const c = cv.getBoundingClientRect(), h = hs.getBoundingClientRect(), u = h.width / 88;
-      const ax = Math.round((h.left + 5.5 * u - c.left) / U), ay = Math.round((h.top + 16 * u - c.top) / U);
+      // The cord leaves the mouthpiece's left side, runs left into its lane and coils down to the socket.
+      const c = cv.getBoundingClientRect(), h = hs.getBoundingClientRect(), u = h.width / 82;
+      const hx = Math.round((h.left + u - c.left) / U), ay = Math.round((h.top + 11.5 * u - c.top) / U);
+      const ax = Math.round(parseFloat(read('--gutter')) / 2 / U);
       const sy = Math.floor(H / U) - 2, room = sy - ay - TOP - LOW;
       const n = Math.max(0, Math.floor(room / P));
-      const k = ax + ',' + ay + ',' + n;
+      const k = hx + ',' + ay + ',' + n;
       if (k === key) return;
       key = k; loops = n;
       g.setTransform(dpr * U, 0, 0, dpr * U, 0, 0);
       g.clearRect(0, 0, W, H);
       const y0 = ay + TOP, y1 = y0 + n * P, rows = H / U;
       g.fillStyle = cf;
-      g.fillRect(ax - 1, Math.max(-1, ay), 2, Math.max(0, y0 - ay + 1));          // lead out of the handset
+      g.fillRect(ax - 1, ay - 1, Math.max(2, hx - ax + 1), 2);                    // out of the mouthpiece
+      g.fillRect(ax - 1, ay - 1, 2, Math.max(0, y0 - ay + 2));                    // down to the first loop
       g.fillRect(ax - 1, y1, 2, sy - y1 + 2);                                     // lead down to the socket
-      g.fillRect(ax - 1, sy, W / U - ax + 1, 2);                                  // and into it
+      g.fillRect(ax - 1, sy, 2 * ax - ax + 1, 2);                                 // and into the socket
       for (let i = 0; i < n; i++) {
         const oy = y0 + i * P;
         if (oy > rows || oy + P + 2 * TILT < -2) continue;
@@ -1154,7 +1159,7 @@
       resize();
       if (played) { root.classList.add('go'); startFollowing(); return; }
       played = true;
-      const u = hs.getBoundingClientRect().width / 88;
+      const u = hs.getBoundingClientRect().width / 82;
       // The same seated state the CSS shows before .go, now held inline so the timeline can step out of it.
       gsap.set(hs, { y: Math.round(7 * u) }); gsap.set(plg, { y: Math.round(2 * u) });
       lamp.classList.add('is-off');
