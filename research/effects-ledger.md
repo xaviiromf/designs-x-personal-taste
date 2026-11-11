@@ -123,6 +123,7 @@ Effects are added here batch by batch as designs are accepted, as built. The art
 | `testimonials-capsule-club` | `#4A148C` | electric violet | a monthly capsule-toy subscription |
 | `process-convoy-night` | `#0B3350` | petrol blue | a flight club's weekly convoy in a space-trading simulator |
 | `footer-cartridge-publisher` | `#3B2731` | dusty mauve | a publisher of new cartridges for old consoles |
+| `portfolio-chiptune-composer` | `#40103C` | aubergine | a chiptune composer and sound designer |
 | `portfolio-disk-archivist` | `#2B3A34` | sage slate | a software-preservation archivist |
 | `nav-pirate-radio` | `#3D2C08` | tarnished brass | a community radio station that began as a pirate transmitter |
 | `faq-hint-hotline` | `#5A2C24` | bakelite | a volunteer hint line for old adventure games |
@@ -239,6 +240,17 @@ Effects are added here batch by batch as designs are accepted, as built. The art
 - **Dialog:** pulled out of its sleeve: the panel slides out from behind a fixed spine in four steps.
 - **Success:** an end label with the visitor's email on a ruled line, and one gust across the wordmark.
 
+### `portfolio-chiptune-composer`
+- **Signature:** a tracker pattern (32 rows by four channels) with a playhead that jumps row to row at the track's tempo; notes under it light in their channel's hue and stepped level meters kick and fall. Optional Web Audio playback, off by default.
+- **Pointer:** the edit cursor: the row under the pointer inverts as a band, the cell is framed and the meters kick for that row (touch: tap a row; keyboard: grid arrows, Enter plays the row).
+- **Scroll:** the order list: the page's parts are the song's orders, with a marker that steps between them; while nothing plays, scrolling steps the playhead through the rows.
+- **Load:** the song loads: the pattern fills in four blocks of eight rows, then the four meters kick in channel order.
+- **Button:** pulse width: the top edge is a row of square teeth whose duty widens in steps; inverted phase (teeth on the bottom edge, face inverted) on press.
+- **Link:** vibrato: the underline becomes a square wave that flips phase three times.
+- **Field:** the current row: label and field invert together as a band, with a row number in the gutter.
+- **Dialog:** four channels: four vertical strips cut in left to right.
+- **Success:** a four-note fanfare: an eight-row pattern the playhead runs through once.
+
 ### `portfolio-disk-archivist`
 - **Signature:** a block map with one square per medium that consolidates by outcome the way a disk optimiser works: a read cursor and a write cursor swap blocks until each outcome is one run and the map reads as a stacked bar.
 - **Pointer:** the read head: a marker in the margin jumps to the row under the pointer, the block is outlined and a readout names the medium (touch: tap; keyboard: arrows, Home and End).
@@ -283,3 +295,7 @@ Effects are added here batch by batch as designs are accepted, as built. The art
 - **Dialog:** the deadbolt: the panel steps into place and a bolt is thrown into a strike plate.
 - **Success:** the rain stops and its bottom rows lock, row by row, into the message's fingerprint.
 - **Other:** radio buttons drawn as stepped pixel diamonds.
+
+## State of the collection
+
+Twenty-two designs: the seven from the Arcade series and the fifteen of series two. Before adding a twenty-third, read every block above; its subject, its ground and each of its effects must be new.

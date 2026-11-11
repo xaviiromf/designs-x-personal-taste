@@ -19,7 +19,8 @@ designs/<slug>/index.html   the design, opens directly in a browser
 designs/<slug>/design.md    metadata and design notes
 designs/<slug>/preview.png  1440x900 capture of the top of the section
 PRINCIPLES.md               the taste behind the collection
-research/effects-ledger.md   every effect already used in the collection; nothing may be reused
+research/effects-ledger.md  every effect already used in the collection; nothing may be reused
+research/series-two.md      the art direction behind the fifteen designs of series two
 SKILL.md                    instructions for agents using a local clone
 site/                       Astro catalogue, deployed to GitHub Pages
 scripts/shot.sh             screenshot a design with system Chromium
