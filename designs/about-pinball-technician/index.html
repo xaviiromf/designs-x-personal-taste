@@ -1571,7 +1571,7 @@
       gsap.ticker.remove(tick);
       gsap.ticker.lagSmoothing(500, 33);
       lenis.destroy(); lenis = null;
-      gsap.set([rv, plates, rollIn, plate, knocker, doneRest], { clearProps: 'all' });
+      gsap.set([...rv, ...plates, rollIn, plate, knocker, doneRest], { clearProps: 'all' });
       root.classList.remove('fx', 'pin');
       sd.classList.remove('is-blank');
       hint.textContent = sub;
