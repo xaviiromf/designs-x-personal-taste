@@ -1,6 +1,6 @@
 # Principles
 
-designs-x-personal-taste is a collection of front-end **sections** (hero, features, pricing, testimonials, process, call to action, footer, portfolio, CRUD, navigation, scroll story, gallery, FAQ, contact, team) in one style: **retro gamer / cyberpunk**. It is built to be read and reused by AI agents. Every design is original, self-contained HTML and CSS, and ships with a note that explains why it works.
+designs-x-personal-taste is a collection of front-end **sections** (hero, features, pricing, testimonials, process, call to action, footer, portfolio, CRUD, navigation, scroll story, gallery, FAQ, contact, team, about me) in one style: **retro gamer / cyberpunk**. It is built to be read and reused by AI agents. Every design is original, self-contained HTML and CSS, and ships with a note that explains why it works.
 
 The collection grew out of the Arcade series in [designs-x](https://github.com/xaviiromf/designs-x). There, repeating a typeface pair was the exception. Here it is the rule: every design shares the same two typefaces and the same family of geometry and motion, and is told apart by its subject, its ground, its palette and its effects.
 
@@ -13,6 +13,7 @@ This document is the taste behind the collection. Read it before using a design,
 - **One file that runs on its own.** `index.html` opens in a browser with no build step. CSS lives in one `<style>` block. JavaScript lives in one `<script>` block at the end. There are no image files or other assets: everything is drawn with CSS, inline SVG or canvas. External fonts and the two pinned libraries are the only requests.
 - **Tokenised.** Every colour, font family, type size, duration and the spacing scale is a CSS custom property on `:root`, commented with its job and its contrast. Porting a design to another brand starts by changing those variables, not by hunting through rules.
 - **Portfolio and CRUD sections** are larger, app-like sections. Portfolio designs carry interactive charts and editable contact/social links. CRUD designs create, read, update and delete typed records (text, integer, decimal, date, boolean, choice) kept only for the browser session.
+- **About me sections** are the largest sections in the collection: a whole personal front end for one fictional person (who they are, what they do now, how they got here, what they use, how to reach them). They are the collection's anthologies. Each one gathers every kind of motion the collection uses (a pointer-reactive engine, a pinned scroll scene, scroll-linked markers, a load sequence, two kinds of button, text links, form controls, a dialog, a success state, an interactive chart) as new variations, and carries a palette of at least ten hues.
 - **Explained.** `design.md` says what the design is for, why it works, what must not be changed, how every animation is built, and how to adapt it.
 - **Original.** No design recreates an existing game, console, character, logo or brand. The genre is the reference, never a specific work.
 
@@ -22,19 +23,22 @@ This document is the taste behind the collection. Read it before using a design,
 - **Handjet** is the display face, and only that: headings and the few large words that act as graphics. It is always set with `font-variation-settings: "ELSH" 2, "ELGR" 1`, so its modules are square tiles.
 - **Host Grotesk** is everything else: body, labels, buttons, data, forms. Tabular figures where numbers line up.
 - No third family, not even a monospace for small data labels.
+- **The one exception: About me sections are set entirely in Departure Mono**, a pixel monospace, for display and text alike, with no second family. It is drawn on an 11px grid, so its sizes are multiples of 11px wherever the layout allows (11, 22, 33, 44, 55 and up), and never smaller than 13px for text that must be read. It is loaded from a pinned package on jsDelivr with an `@font-face` rule in the design's own `<style>`, because it is not on Google Fonts.
 - A deliberate type scale with intentional weights, tracking and leading. Body line length under about 75 characters.
 
 ### A chosen dark ground
 Every design is dark, and its ground is a chosen colour with a name and a reason: a harbour navy, a PCB green, a wine red. Never pure black and never a tinted near-black (`#0B0B0B`, `#111`). No two designs share a ground, and the grounds are spread around the colour wheel.
 
 ### A wide palette in which every hue has a job
-Each design has five to seven hues, and every hue has one stated meaning in the subject's world: a competition, a module, a side, a pace, a state. A hue appears only where its job is. If two hues could swap places and nothing would be lost, one of them has no job and should go. The jobs are written beside the tokens in `:root` and in `design.md`.
+Each design has five to seven hues, and every hue has one stated meaning in the subject's world: a competition, a module, a side, a pace, a state. A hue appears only where its job is. If two hues could swap places and nothing would be lost, one of them has no job and should go. The jobs are written beside the tokens in `:root` and in `design.md`. About me sections carry ten hues or more, each still with one job; some are vivid on a saturated ground, others muted (burgundy, navy, royal green and their neighbours).
 
 ### Flat pixel geometry
 Square modules, stepped corners, whole-pixel grids. No soft shadows, no blur as decoration, no rounded card kit, no gradient washes. Structure encodes something true about the content: borders, rules, numbers and labels are there because the subject has them.
 
 ### Nothing recycled
 Every effect in the collection is used exactly once. That covers the signature, the pointer response, the scroll moment, the load sequence, the button hover and press, text links, form fields, the dialog and the success state. `research/effects-ledger.md` is the inventory of every effect already used, and of the generic techniques this collection never uses. A new design takes none of them and adds its own to the ledger. Two designs that share an effect are one design too many.
+
+About me sections are the exception, on purpose. They revisit the families of effect in the ledger (a field that answers the pointer, a scene scrubbed by scroll, a stepped load, a button with two states) and must change each one: another subject, another geometry, another rule. A variation that could be mistaken for its source is a copy. Each About me design lists in its `design.md` which ledger effect every variation descends from and what it changed.
 
 ### Spend boldness in one place
 Each design has one signature: an engine, a simulation, an interaction or a layout move that comes from the subject. Everything around it is quiet and supports it. If a design has three clever ideas, it has two too many.
