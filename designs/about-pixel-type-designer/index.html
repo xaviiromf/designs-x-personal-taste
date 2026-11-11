@@ -425,7 +425,7 @@
   .legend { display: flex; flex-wrap: wrap; gap: var(--s1) var(--s4); margin: var(--s4) 0 0; padding: 0; list-style: none; color: var(--fog); font-size: var(--t-small); line-height: var(--lh-small); }
   .legend li { display: flex; align-items: center; gap: var(--s2); }
   .legend i { width: 11px; height: 11px; background: var(--hue); }
-  .cal { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: var(--s2) var(--s2); margin-top: var(--s3); max-width: 880px; }
+  .cal { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: var(--s2) var(--s2); margin-top: var(--s3); }
   .cal-mh, .cal-row { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 4px; }
   .cal-mh { grid-column: 2; color: var(--fog); font-size: var(--t-small); line-height: var(--lh-small); text-align: center; }
   .cal-y { align-self: center; color: var(--fog); font-size: var(--t-small); line-height: var(--lh-small); }
@@ -439,6 +439,7 @@
     cursor: pointer;
     -webkit-tap-highlight-color: transparent;
   }
+  @media (min-width: 768px) { .mo { height: var(--s7); } }
   .mo-f { position: absolute; left: 2px; right: 2px; bottom: 2px; display: flex; flex-direction: column-reverse; }
   .mo-f i { display: block; flex: none; }
   .mo-f .b1 { background: var(--teal); }
@@ -489,7 +490,7 @@
   .t-row { margin: 0; min-width: 0; }
   .t-miss { margin-top: var(--s1); color: var(--fog); font-size: var(--t-small); line-height: var(--lh-small); }
   .cmap { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--s4); padding-top: var(--s4); border-top: 2px solid var(--plate); }
-  .cmap-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(var(--hit), 1fr)); gap: 4px; margin-top: var(--s3); }
+  .cmap-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(var(--s6), 1fr)); gap: 4px; margin-top: var(--s3); }
   .ch-b {
     display: grid; place-items: center;
     height: var(--s7);
@@ -1359,7 +1360,7 @@
     const w = innerWidth, h = innerHeight;
     if (!root.classList.contains('fx')) return w < 600 ? Math.max(14, Math.min(22, Math.floor((w - 44) / 11))) : 22;
     if (w < 768) return Math.max(12, Math.min(24, Math.floor((w - 44) / 11), Math.floor((h - 470) / 14)));
-    return Math.max(16, Math.min(33, Math.floor((h - 190) / 14), Math.floor((w * .42) / 11)));
+    return Math.max(16, Math.min(44, Math.floor((h - 190) / 14), Math.floor((w * .42) / 11))); // up to 44px, larger than the editor's 33px
   };
   const drawStory = () => {
     const cell = storyCell();
@@ -1438,7 +1439,7 @@
   const renderTester = () => {
     const text = tIn.value || ' ';
     tCvs.forEach((cv, k) => {
-      const miss = paint(cv, FACES[k], text, { px: 2 * scale });
+      const miss = paint(cv, FACES[k], text, { px: 3 * scale }); // x1, x2, x3 are 3, 6 and 9 screen pixels per font pixel
       tMiss[k].textContent = miss.size ? `Not drawn yet: ${[...miss].join(' ')}` : 'Every character is drawn.';
     });
   };
@@ -1482,7 +1483,7 @@
       b.setAttribute('aria-label', ch === "'" ? 'apostrophe' : ch === '.' ? 'full stop' : ch === ',' ? 'comma' : ch === '-' ? 'hyphen' : ch);
       const cv = document.createElement('canvas'); cv.setAttribute('aria-hidden', 'true'); b.append(cv);
       cmap.append(b);
-      drawCell(cv, F, ch, F.h > 9 ? 2 : 3, false);
+      drawCell(cv, F, ch, F.h > 9 ? 4 : F.h > 7 ? 5 : 6, false);
       b.addEventListener('pointerenter', (e) => { if (e.pointerType === 'mouse') preview(ch); });
       b.addEventListener('focus', () => preview(ch));
       b.addEventListener('click', () => preview(ch));

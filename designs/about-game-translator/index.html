@@ -47,7 +47,7 @@
     --t-h3: 33px;
     --t-display: 44px;       /* the h2: 44, 55, 66 or 88 by breakpoint */
     --t-box: 22px;           /* text inside the hero's dialogue box */
-    --t-tile: 33px;          /* the sign-off tiles: 33, 44, 66 or 110 */
+    --t-tile: 66px;          /* the sign-off tiles: 66, 110, 88, 110 or 176 by breakpoint */
     --lh-small: 22px;
     --lh-body: 27.5px;
     --lh-lede: 33px;
@@ -62,7 +62,7 @@
     --notch: 4px;            /* the stepped pixel corner */
     --tap: 48px;             /* button and field height */
     --hit: 44px;             /* minimum target for text actions */
-    --block: 11px;           /* one chart block: 10,000 words */
+    --block: 11px;           /* one chart block: 10,000 words (8px from 600px, 6px on phones) */
     --bar-h: 33px;           /* the strings-done strip at the bottom edge */
     --stage-len: 45svh;      /* scroll length of one stage while the story is pinned */
 
@@ -81,10 +81,10 @@
     --d-sort: .16s;          /* one frame of the name being sorted, when replayed */
   }
   @media (min-width: 600px) {
-    :root { --gutter: 33px; --t-display: 55px; --t-tile: 44px; }
+    :root { --gutter: 33px; --t-display: 55px; --t-tile: 110px; }
   }
   @media (min-width: 768px) {
-    :root { --t-display: 66px; --t-tile: 66px; }
+    :root { --t-display: 66px; --t-tile: 88px; }
   }
   @media (min-width: 1100px) {
     :root { --gutter: 44px; --t-display: 55px; }
@@ -92,17 +92,20 @@
   @media (min-width: 1240px) and (min-height: 800px) {
     :root { --t-display: 66px; }
   }
-  @media (min-width: 1280px) {
+  @media (min-width: 1100px) {
     :root { --t-tile: 110px; }
+  }
+  @media (min-width: 1280px) {
+    :root { --t-tile: 176px; }
   }
   @media (min-width: 1400px) and (min-height: 860px) {
     :root { --gutter: 66px; --t-display: 88px; }
   }
   @media (max-width: 599px) {
-    :root { --t-box: 13.75px; --lh-box: 22px; --t-h3: 22px; --lh-h3: 27.5px; --t-lede: 16.5px; --lh-lede: 27.5px; --block: 5px; }
+    :root { --t-box: 13.75px; --lh-box: 22px; --t-h3: 22px; --lh-h3: 27.5px; --t-lede: 16.5px; --lh-lede: 27.5px; --block: 6px; }
   }
-  @media (max-width: 379px) {
-    :root { --block: 4px; }
+  @media (min-width: 600px) and (max-width: 767px) {
+    :root { --block: 8px; }
   }
 
   /* Lenis rules, inlined from lenis@1.3.26/dist/lenis.css */
@@ -349,7 +352,7 @@
   }
   .step:hover { border-color: var(--paper); }
   .step.is-press { background: var(--paper); color: var(--ground); }
-  .hint { margin-top: var(--s2); color: var(--tea); font-size: var(--t-small); line-height: var(--lh-small); max-width: 56ch; }
+  .hint { margin-top: var(--s2); color: var(--tea); max-width: 56ch; }
 
   /* ---------- Parts ---------- */
   .part { padding-block: var(--s7); border-top: 2px solid var(--plate); }
@@ -373,7 +376,7 @@
   @media (min-width: 1000px) { .scene-grid { grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); column-gap: var(--s5); } }
   .rail { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: var(--s1); margin: var(--s4) 0 0; padding: 0; list-style: none; font-size: var(--t-small); line-height: var(--lh-small); }
   .rail li { display: grid; gap: var(--s1); color: var(--tea); }
-  .rail i { display: block; height: 11px; border: 2px solid var(--hue); }
+  .rail i { display: block; height: 22px; border: 2px solid var(--hue); }
   .rail .is-done i, .rail [aria-current] i { background: var(--hue); }
   .rail [aria-current] { color: var(--paper); }
   .rail [aria-current] span { background: var(--paper); color: var(--ground); padding: 0 var(--s1); justify-self: start; }
@@ -384,31 +387,31 @@
   .st caption { text-align: left; color: var(--tea); padding-bottom: var(--s2); }
   .st th, .st td { padding: var(--s1) var(--s2) var(--s1) 0; text-align: left; vertical-align: top; border-top: 2px solid var(--plate); }
   .st thead th { border-top: 0; color: var(--tea); }
-  .st .c-id { width: 9ch; } .st .c-who { width: 8ch; } .st .c-n { width: 7ch; text-align: right; padding-right: 0; }
+  .st .c-id { width: 11ch; } .st .c-who { width: 8ch; } .st .c-n { width: 7ch; text-align: right; padding-right: 0; }
   .st td.c-n { text-align: right; padding-right: 0; }
   .st td { overflow-wrap: anywhere; }
   .st .is-prev td { color: var(--tea); }
   .st .is-prev .c-line { text-decoration: line-through; text-decoration-thickness: 2px; }
   .st .is-prev.is-empty td { visibility: hidden; }
   .st .is-cur td { background: var(--well); }
-  .st .is-cur td:first-child { box-shadow: inset 6px 0 0 var(--hue); padding-left: var(--s2); }
+  .st .is-cur td:first-child { box-shadow: inset 11px 0 0 var(--hue); padding-left: calc(11px + var(--s2)); }
   .st .is-cur .c-line { color: var(--paper); }
   .st .over { color: var(--brick); }
   .lang-ja { color: var(--ochre); }
   .cards { position: relative; min-width: 0; }
-  .card { display: grid; gap: var(--s2); }
+  .card { display: grid; gap: var(--s2); padding-top: var(--s3); border-top: 4px solid var(--hue); }
   .card + .card { margin-top: var(--s5); }
   .card h4 { margin: 0; font-size: var(--t-lede); line-height: var(--lh-lede); display: flex; flex-wrap: wrap; gap: 0 var(--s2); align-items: baseline; }
   .card-stage { background: var(--hue); color: var(--ground); padding: 0 var(--s1); font-size: var(--t-small); line-height: var(--lh-small); }
   .card-years { color: var(--tea); font-size: var(--t-small); line-height: var(--lh-small); }
   .card p { max-width: 52ch; }
-  .card-draft { color: var(--tea); font-size: var(--t-small); line-height: var(--lh-small); }
+  .card-draft { color: var(--tea); }
   .mini { margin-top: var(--s3); }
-  .mini .tb { font-size: var(--t-small); line-height: var(--lh-small); grid-template-rows: 11px repeat(3, var(--lh-small)) 11px; --fh: 11px; }
-  .mini-cap { color: var(--tea); font-size: var(--t-small); line-height: var(--lh-small); margin-bottom: var(--s1); }
+    .mini-cap { color: var(--tea); font-size: var(--t-small); line-height: var(--lh-small); margin-bottom: var(--s1); }
   /* Pinned (motion allowed, viewport tall enough): the scene is a viewport-high sticky layer; scroll picks the stage. */
   .pin .story { height: calc(100svh + 5 * var(--stage-len)); }
-  .pin .scene { position: sticky; top: 0; height: 100svh; height: calc(100svh - var(--bar-h)); padding-block: var(--s5); overflow: clip; }
+  .pin .scene { position: sticky; top: 0; height: 100svh; height: calc(100svh - var(--bar-h)); padding-block: var(--s5); overflow: clip; display: flex; flex-direction: column; justify-content: center; }
+  .pin .scene > .wrap { width: 100%; }
   .pin .card { display: none; }
   .pin .card.is-on { display: grid; }
   .pin .card + .card { margin-top: 0; }
@@ -420,7 +423,6 @@
     .pin .scene-grid { margin-top: var(--s2); gap: var(--s3); }
     .pin .rail { margin-top: var(--s2); }
     .pin .st tr:not(.is-near) { display: none; }
-    .pin .card p { font-size: var(--t-small); line-height: var(--lh-small); }
     .pin .mini { margin-top: var(--s2); }
   }
   @media (min-width: 1000px) and (min-height: 800px) {
@@ -428,7 +430,7 @@
     .st th, .st td { padding-block: var(--s1); }
     .card p { font-size: var(--t-body); }
   }
-  @media (max-width: 699px) { .st { table-layout: auto; } .st .c-id { display: none; } .st .c-who, .st .c-n { width: 1%; white-space: nowrap; } .st .c-line { width: auto; } .st .is-cur td:nth-child(2) { box-shadow: inset 6px 0 0 var(--hue); padding-left: var(--s2); } }
+  @media (max-width: 699px) { .st { table-layout: auto; } .st .c-id { display: none; } .st .c-who, .st .c-n { width: 1%; white-space: nowrap; } .st .c-line { width: auto; } .st .is-cur td:nth-child(2) { box-shadow: inset 11px 0 0 var(--hue); padding-left: calc(11px + var(--s2)); } }
   @media (min-width: 1000px) and (max-height: 720px) {
     .pin .scene { padding-block: var(--s3); }
     .pin .scene-grid { margin-top: var(--s3); }
@@ -463,7 +465,7 @@
   .row-b .en { background: var(--navy-ink); }
   .row-b .de { background: var(--green-ink); }
   .row-b .ed { border: 2px solid var(--tea); }
-  @media (max-width: 599px) { .row-b .ed { border-width: 1px; } .row-b { gap: 1px; } }
+  @media (max-width: 599px) { .yr { grid-template-columns: minmax(0, 1fr); row-gap: 2px; padding-block: var(--s1); } .yr-y { justify-self: start; } }
   .readout { min-height: calc(var(--lh-body) * 4); }
   .readout b { color: var(--paper); }
   .ro-en { color: var(--navy-ink); } .ro-de { color: var(--green-ink); } .ro-ed { color: var(--tea); }
@@ -478,17 +480,20 @@
   .ftab thead th { border-top: 0; color: var(--tea); }
 
   /* 5. A toy: the choice menu */
+  .toy-grid { display: grid; gap: var(--s4); }
+  @media (min-width: 1000px) { .toy-grid { grid-template-columns: minmax(0, 1fr) auto; column-gap: var(--s6); align-items: start; } }
   .menu-box {
     position: relative;
-    max-width: 62ch; margin-top: var(--s4);
-    padding: var(--s3) var(--s3) var(--s3) var(--s4);
+    width: min(100%, calc(41ch + 4px));
+    font-size: var(--t-lede); line-height: var(--lh-lede);
     background:
       linear-gradient(90deg, var(--teal-grey) calc(1ch - 2px), transparent 0) 0 0 / 1ch 4px repeat-x,
       linear-gradient(90deg, var(--teal-grey) calc(1ch - 2px), transparent 0) 0 100% / 1ch 4px repeat-x,
-      linear-gradient(var(--teal-grey) calc(var(--lh-body) / 2 - 2px), transparent 0) 0 0 / 4px calc(var(--lh-body) / 2) repeat-y,
-      linear-gradient(var(--teal-grey) calc(var(--lh-body) / 2 - 2px), transparent 0) 100% 0 / 4px calc(var(--lh-body) / 2) repeat-y,
+      linear-gradient(var(--teal-grey) calc(var(--lh-lede) / 2 - 2px), transparent 0) 0 0 / 4px calc(var(--lh-lede) / 2) repeat-y,
+      linear-gradient(var(--teal-grey) calc(var(--lh-lede) / 2 - 2px), transparent 0) 100% 0 / 4px calc(var(--lh-lede) / 2) repeat-y,
       var(--well);
-    min-height: calc(var(--lh-body) * 6 + var(--s3) * 2 + var(--hit));
+    padding: var(--s3) 2ch;
+    min-height: calc(var(--lh-lede) * 9 + var(--s3) * 2);
   }
   .mb-who { color: var(--teal-grey); font-size: var(--t-small); line-height: var(--lh-small); }
   .choices { margin: var(--s1) 0 0; padding: 0; list-style: none; }
@@ -496,15 +501,15 @@
     position: relative;
     display: block; width: 100%;
     min-height: var(--hit);
-    padding: var(--s1) 2ch;
+    padding: var(--s1) 1.5ch;
     border: 0; border-radius: 0; background: none; color: var(--paper);
     font: inherit; text-align: left; cursor: pointer;
     touch-action: manipulation;
   }
   .choice-t { position: relative; }
-  .choice-t::before, .choice-t::after { position: absolute; top: 0; color: var(--teal-grey); visibility: hidden; }
-  .choice-t::before { content: "["; left: -1.5ch; }
-  .choice-t::after { content: "]"; right: -1.5ch; }
+  .choice-t::before, .choice-t::after { display: inline-block; width: 1.5ch; color: var(--teal-grey); visibility: hidden; }
+  .choice-t::before { content: "["; margin-left: -1.5ch; }
+  .choice-t::after { content: "]"; margin-right: -1.5ch; text-align: right; }
   .choice.is-sel .choice-t::before, .choice.is-sel .choice-t::after { visibility: visible; }
   .choice.is-sel { color: var(--paper); }
   .choice:focus-visible { outline-offset: -2px; }
@@ -615,33 +620,41 @@
   .done .u { margin-top: var(--s2); }
   @media (max-width: 599px) { .echo > div { grid-template-columns: minmax(0, 1fr); gap: 0; } }
 
-  /* 8. Sign-off: HARUKA sorted */
-  .signoff { min-height: calc(100svh - var(--bar-h)); padding-block: var(--s7) var(--s6); border-top: 2px solid var(--plate); }
-  .mark { position: relative; height: calc(var(--t-tile) * 1.5 + var(--t-tile) * .5 + 44px); margin-top: var(--s5); --gap: 11px; --tw: calc((100% - 5 * var(--gap)) / 6); }
+  /* 8. Sign-off: HARUKA sorted. Six square tiles across the full content width (two rows of three under 768px). */
+  .signoff { min-height: calc(100svh - var(--bar-h)); padding-block: var(--s5) var(--s6); border-top: 2px solid var(--plate); }
+  .signoff .wrap { container-type: inline-size; }
+  .mark {
+    --cols: 6; --rows: 1; --gap: 11px; --mk: 33px;
+    --tw: calc((100cqw - (var(--cols) - 1) * var(--gap)) / var(--cols));
+    --lift-room: calc(var(--tw) * .25);
+    position: relative;
+    height: calc(var(--lift-room) + var(--rows) * (var(--tw) + var(--mk)));
+  }
   .tile {
-    position: absolute; left: 0; top: calc(var(--t-tile) * .5);
-    width: var(--tw); height: calc(var(--t-tile) * 1.5);
+    position: absolute; left: 0; top: var(--lift-room);
+    width: var(--tw); height: var(--tw);
     display: grid; place-items: center;
     background: var(--well); color: var(--tea);
     font-size: var(--t-tile); line-height: 1;
-    transform: translate(calc(var(--p, 0) * (100% + var(--gap))), calc(var(--lift, 0) * -50%));
+    transform: translate(calc(var(--c, 0) * (100% + var(--gap))), calc(var(--r, 0) * (100% + var(--mk)) - var(--lift, 0) * 25%));
   }
   .tile.is-home { background: var(--plate); color: var(--paper); }
-  .pos { position: absolute; left: 6px; top: 4px; font-size: var(--t-small); line-height: 1; color: var(--paper); visibility: hidden; }
+  .pos { position: absolute; left: 8px; top: 6px; font-size: var(--t-small); line-height: 1; color: var(--paper); visibility: hidden; }
   .tile:hover .pos, .mark.show-pos .pos { visibility: visible; }
   .marker {
-    position: absolute; left: 0; bottom: 0;
-    width: var(--tw); height: 22px;
+    position: absolute; left: 0; top: calc(var(--lift-room) + var(--tw) + 5.5px);
+    width: calc(var(--tw) / 2); height: 22px;
     font-size: var(--t-small); line-height: 22px; text-align: center;
-    transform: translateX(calc(var(--p, 0) * (100% + var(--gap))));
+    transform: translate(calc(var(--c, 0) * (var(--tw) + var(--gap))), calc(var(--r, 0) * (var(--tw) + var(--mk))));
   }
-  .marker.w { background: var(--paper); color: var(--ground); width: calc(var(--tw) / 2); }
-  .marker.r { border: 2px solid var(--tea); line-height: 18px; color: var(--paper); width: calc(var(--tw) / 2); margin-left: calc(var(--tw) / 2); }
+  .marker.w { background: var(--paper); color: var(--ground); }
+  .marker.r { border: 2px solid var(--tea); line-height: 18px; color: var(--paper); margin-left: calc(var(--tw) / 2); }
   .marker[hidden] { display: none; }
-  .mark-foot { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--s3); margin-top: var(--s4); }
-  .mark-read { color: var(--tea); font-size: var(--t-small); line-height: var(--lh-small); }
-  .colophon { margin-top: var(--s5); color: var(--tea); font-size: var(--t-small); line-height: var(--lh-small); max-width: 72ch; }
-  @media (max-width: 599px) { .mark { --gap: 5px; } .marker { font-size: 11px; } }
+  .mark-foot { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--s3); margin-top: var(--s3); }
+  .mark-read { color: var(--tea); }
+  .colophon { margin-top: var(--s5); color: var(--tea); max-width: 72ch; }
+  @media (max-width: 767px) { .mark { --cols: 3; --rows: 2; } }
+  @media (max-width: 599px) { .mark { --gap: 6px; } }
 
   /* ---------- The strings-done strip: 40 blocks along the bottom edge ---------- */
   .strip { display: none; }
@@ -871,10 +884,10 @@
 
   <!-- 5. A toy -->
   <section class="part toy" id="toy" data-part="toy" aria-labelledby="toy-title">
-    <div class="wrap">
+    <div class="wrap toy-grid">
       <div class="part-head">
         <h3 id="toy-title">Ask me something</h3>
-        <p class="part-intro">The four questions studios ask me first, as a dialogue menu. Point at one or use the arrow keys, then choose it.</p>
+        <p class="part-intro">The four questions studios ask me first, as a dialogue menu in a box 34 characters wide. Point at one or use the arrow keys, then choose it.</p>
       </div>
       <div class="menu-box" id="menu-box">
         <div id="menu">
@@ -1489,20 +1502,24 @@
     if (i === frameNo) return;
     frameNo = i;
     const f = sorting.frames[i];
+    const cols = parseInt(getComputedStyle(mark).getPropertyValue('--cols')) || 6;
+    const at = (el, p) => { el.style.setProperty('--c', p % cols); el.style.setProperty('--r', Math.floor(p / cols)); };
     f.order.forEach((k, p) => {
       const t = tiles[k];
-      t.style.setProperty('--p', p);
+      at(t, p);
       t.style.setProperty('--lift', f.lift && f.lift.includes(k) ? 1 : 0);
       t.classList.toggle('is-home', TARGET[k] === TARGET[p] && (f.w < 0 || p < f.w || (p === f.w && !f.lift && f.r === f.w)));
       $('.pos', t).textContent = p + 1;
     });
     mkW.hidden = mkR.hidden = f.w < 0;
-    if (f.w >= 0) { mkW.style.setProperty('--p', f.w); mkR.style.setProperty('--p', f.r); }
+    if (f.w >= 0) { at(mkW, f.w); at(mkR, f.r); }
     markRead.textContent = f.w < 0
       ? `Sorted from ${lettersOf(startOrder)} in ${sorting.swaps} swaps.`
       : `Swap ${f.n} of ${sorting.swaps}: ${lettersOf(f.order)}`;
   };
   showFrame(sorting.frames.length - 1);
+  let markCols = 0;
+  new ResizeObserver(() => { const c = getComputedStyle(mark).getPropertyValue('--cols'); if (c !== markCols) { markCols = c; const n = frameNo; frameNo = -1; showFrame(n); } }).observe(mark);
   let replay = 0, replaying = false;
   const shuffle = () => {
     let o;

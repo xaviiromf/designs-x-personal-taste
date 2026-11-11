@@ -90,7 +90,7 @@
     :root { --t-h2: 55px; --t-top: var(--t-lede); --lh-top: var(--lh-lede); --gl: 33px; --gr: 33px; --gap-part: var(--s8); --plot-h: 220px; --pip: 6px; --pip-row: 28px; }
   }
   @media (min-width: 1024px) {
-    :root { --t-h2: 66px; --gl: max(44px, (100% - var(--max-w)) / 2); --gr: max(77px, (100% - var(--max-w)) / 2); --strip: 0px; --step-px: 30px; }
+    :root { --t-h2: 66px; --gl: max(44px, (100% - var(--max-w)) / 2); --gr: max(77px, (100% - var(--max-w)) / 2); --strip: 0px; --step-px: 30px; --plot-h: 264px; --pip: 8px; --pip-row: 34px; }
   }
   @media (min-width: 1280px) { :root { --t-h2: 44px; --t-top: var(--t-body); --lh-top: var(--lh-body); } }
   @media (min-width: 1366px) { :root { --t-top: var(--t-lede); --lh-top: var(--lh-lede); } }
@@ -161,7 +161,7 @@
   @media (min-width: 1280px) { .top { grid-template-columns: minmax(0, 1fr) 720px; align-items: start; } }
   .who { display: flex; flex-wrap: wrap; gap: 0 var(--s3); }
   .who span { color: var(--sand); }
-  .h2 { position: relative; margin: var(--s3) 0 0; font-size: var(--t-h2); line-height: 1; }
+  .h2 { position: relative; margin: var(--s3) 0 0; font-size: var(--t-h2); line-height: 1; text-wrap: balance; }
   .h2 .w { display: inline-block; }
   .h2.is-split .w { visibility: hidden; }
   .h2.is-split .w.on { visibility: visible; }
@@ -173,7 +173,7 @@
   .editor { min-width: 0; }
   .ed-frame { width: fit-content; max-width: 100%; background: var(--well); }
   .ed { display: block; width: 100%; aspect-ratio: 20 / 9; image-rendering: pixelated; touch-action: pan-y; cursor: crosshair; }
-  .ed-bar { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s2) var(--s3); margin-top: var(--s3); }
+  .ed-bar { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s2) var(--s3); margin: 4px 0 var(--s3) 4px; }
   .brushes { display: flex; gap: var(--s2); }
   .brush {
     position: relative; flex: none;
@@ -192,6 +192,7 @@
     content: ""; position: absolute; inset: -4px; border: 2px solid var(--white); pointer-events: none;
   }
   .brush[aria-pressed="true"] { color: var(--white); }
+  .ed-read { margin-top: var(--s3); }
   .ed-read, .ed-help { margin-top: var(--s2); color: var(--sand); font-size: var(--t-small); line-height: var(--lh-small); max-width: 82ch; }
   .ed-read { color: var(--white); }
 
@@ -218,9 +219,9 @@
   .btn-jump { --bw: 0px; --rim: var(--spawn); --fill: var(--spawn); --ink: var(--deep); }
   .btn-jump:focus-visible, .btn-jump.is-down { --fill: var(--spawn-hot); --rim: var(--spawn-hot); }
   @media (hover: hover) { .btn-jump:hover { --fill: var(--spawn-hot); --rim: var(--spawn-hot); } }
-  .dust { position: absolute; bottom: 0; width: 6px; height: 6px; background: var(--sand); visibility: hidden; pointer-events: none; }
-  .dust.l { left: -10px; }
-  .dust.r { right: -10px; }
+  .dust { position: absolute; bottom: 0; width: 8px; height: 8px; background: var(--sand); visibility: hidden; pointer-events: none; }
+  .dust.l { left: -12px; }
+  .dust.r { right: -12px; }
   .btn-jump.is-down .face { transform: scale(var(--sx, 1.02), var(--sy, .92)); transform-origin: 50% 100%; }
   .btn-jump.is-down .dust { visibility: visible; }
   html.fx .btn-jump.is-hop .face { animation: hop var(--d-hop) steps(1); }
@@ -232,13 +233,13 @@
   /* Secondary, key and lock: a key at the left end of a lane under the label, a lock at the right end. Pointing sends the
      key to the lock in three steps; pressing opens the lock and inverts the face. */
   .btn-lock { --bw: 2px; --rim: var(--sand); --fill: var(--ground); --ink: var(--white); }
-  .btn-lock .inner { display: grid; grid-template-rows: 16.5px 12px; row-gap: 3px; align-content: center; justify-items: stretch; padding: 0 var(--s2); }
+  .btn-lock .inner { display: grid; grid-template-rows: 16.5px 15px; row-gap: 2px; align-content: center; justify-items: stretch; padding: 0 var(--s2); }
   .btn-lock .label { text-align: center; padding: 0 var(--s2); }
-  .lane { position: relative; height: 12px; }
-  .run { position: absolute; left: 0; right: 36px; top: 0; bottom: 0; }
+  .lane { position: relative; height: 15px; }
+  .run { position: absolute; left: 0; right: 51px; top: 0; bottom: 0; }
   html.fx .run { transition: transform var(--d-key) steps(3, end); }
-  .keyi { position: absolute; left: 0; top: 2px; width: 20px; height: 8px; }
-  .locki { position: absolute; right: 0; top: 0; width: 10px; height: 12px; }
+  .keyi { position: absolute; left: 0; top: 2px; width: 30px; height: 12px; }
+  .locki { position: absolute; right: 0; top: 0; width: 15px; height: 15px; }
   .locki.open { display: none; }
   .btn-lock:focus-visible .run, .btn-lock.is-down .run { transform: translateX(100%); }
   .btn-lock:focus-visible { --rim: var(--white); }
@@ -471,8 +472,9 @@
   .lv { flex: none; width: 44px; height: 30px; color: var(--sand); }
   .lv .on, .lever .yes { display: none; }
   .lever input:checked ~ .lv { color: var(--white); }
-  .lever input:checked ~ .lv .on, .lever input:checked ~ .lv-state .yes { display: inline; }
-  .lever input:checked ~ .lv .off, .lever input:checked ~ .lv-state .no { display: none; }
+  .lever input:checked ~ .lv .on, .lever input:checked ~ .lv-text .yes { display: inline; }
+  .lever input:checked ~ .lv .off, .lever input:checked ~ .lv-text .no { display: none; }
+  .lever input:checked ~ .lv-text .lv-state { color: var(--white); }
   .lever input:focus-visible ~ .lv { outline: 2px solid var(--spawn); outline-offset: 4px; }
   .lv-state { color: var(--sand); }
   .form .btn { justify-self: start; margin-top: var(--s2); }
@@ -557,12 +559,11 @@
       <p class="lede cut">I build levels for 2D platformers and top-down adventures: grey-box layouts, pacing, secrets and the first hour of play. The room on this page is unfinished on purpose. Paint in it.</p>
       <div class="actions cut">
         <a class="btn btn-jump" href="#hello"><span class="face"><span class="inner"><span class="label">Hire me for a level</span></span></span><i class="dust l" aria-hidden="true"></i><i class="dust r" aria-hidden="true"></i></a>
-        <button class="btn btn-lock" type="button" data-bio aria-haspopup="dialog" aria-controls="bio"><span class="face"><span class="inner"><span class="label">Read the short bio</span><span class="lane" aria-hidden="true"><span class="run"><svg class="keyi" viewBox="0 0 10 4"><path d="M1 0h2v1H1zM0 1h1v2H0zM3 1h7v1H3zM3 2h1v1H3zM6 2h1v1H6zM8 2h1v1H8zM1 3h2v1H1z"/></svg></span><svg class="locki shut" viewBox="0 0 5 6"><path d="M1 1h3v1H1zM1 2h1v1H1zM3 2h1v1H3zM0 3h5v1H0zM0 4h2v1H0zM3 4h2v1H3zM0 5h5v1H0z"/></svg><svg class="locki open" viewBox="0 0 5 6"><path d="M1 0h3v1H1zM1 1h1v1H1zM3 1h1v2H3zM0 3h5v1H0zM0 4h2v1H0zM3 4h2v1H3zM0 5h5v1H0z"/></svg></span></span></span></button>
+        <button class="btn btn-lock" type="button" data-bio aria-haspopup="dialog" aria-controls="bio"><span class="face"><span class="inner"><span class="label">Read the short bio</span><span class="lane" aria-hidden="true"><span class="run"><svg class="keyi" viewBox="0 0 10 4"><path d="M1 0h2v1H1zM0 1h1v2H0zM3 1h7v1H3zM3 2h1v1H3zM6 2h1v1H6zM8 2h1v1H8zM1 3h2v1H1z"/></svg></span><svg class="locki shut" viewBox="0 0 5 5"><path d="M1 0h3v1H1zM1 1h1v1H1zM3 1h1v1H3zM0 2h5v1H0zM0 3h2v1H0zM3 3h2v1H3zM0 4h5v1H0z"/></svg><svg class="locki open" viewBox="0 0 5 5"><path d="M0 0h3v1H0zM0 1h1v1H0zM0 2h5v1H0zM0 3h2v1H0zM3 3h2v1H3zM0 4h5v1H0z"/></svg></span></span></span></button>
       </div>
     </div>
 
     <div class="editor" id="editor">
-      <div class="ed-frame"><canvas class="ed" width="240" height="108" tabindex="0" role="application" aria-label="Tile editor: a room of 40 by 18 tiles that you can paint" aria-describedby="ed-help ed-read"></canvas></div>
       <div class="ed-bar cut">
         <div class="brushes" role="group" aria-label="Brush">
           <button class="brush" type="button" data-t="1" aria-pressed="true"><canvas width="6" height="6" aria-hidden="true"></canvas><span class="vh">Solid ground, key </span><span class="k">1</span></button>
@@ -574,6 +575,7 @@
         </div>
         <button class="u" id="ed-reset" type="button">Reset the room</button>
       </div>
+      <div class="ed-frame"><canvas class="ed" width="240" height="108" tabindex="0" role="application" aria-label="Tile editor: a room of 40 by 18 tiles that you can paint" aria-describedby="ed-help ed-read"></canvas></div>
       <p class="ed-read cut" id="ed-read">Brush: solid ground.</p>
       <p class="ed-help cut" id="ed-help">Move across the room to paint with the chosen tile; on a touch screen, drag sideways or tap. With a keyboard, focus the room, move with the arrow keys, place with Space and pick a tile with 1 to 6.</p>
       <p class="vh" id="ed-say" aria-live="polite"></p>
@@ -740,7 +742,7 @@
           <p class="err" id="f-levels-err"></p>
         </div>
         <div class="fld">
-          <label class="lever"><input type="checkbox" name="build" id="f-build"><svg class="lv" viewBox="0 0 22 15" aria-hidden="true"><path class="off" fill-rule="evenodd" d="M3 12h16v3H3zM9 10h2v2H9zM7 8h2v2H7zM5 6h2v2H5zM1 1h5v5H1zM2 2v3h3V2z"/><path class="on" d="M3 12h16v3H3zM11 10h2v2h-2zM13 8h2v2h-2zM15 6h2v2h-2zM16 1h5v5h-5z"/></svg><span>There is a playable build</span><span class="lv-state" aria-hidden="true"><span class="no">No</span><span class="yes">Yes</span></span></label>
+          <label class="lever"><input type="checkbox" name="build" id="f-build"><svg class="lv" viewBox="0 0 22 15" aria-hidden="true"><path class="off" fill-rule="evenodd" d="M3 12h16v3H3zM9 10h2v2H9zM7 8h2v2H7zM5 6h2v2H5zM1 1h5v5H1zM2 2v3h3V2z"/><path class="on" d="M3 12h16v3H3zM11 10h2v2h-2zM13 8h2v2h-2zM15 6h2v2h-2zM16 1h5v5h-5z"/></svg><span class="lv-text">There is a playable build: <span class="lv-state" aria-hidden="true"><span class="no">no</span><span class="yes">yes</span></span></span></label>
         </div>
         <div class="fld wide" data-f="message">
           <label class="lbl" for="f-message">What is the game, and where are you stuck?</label>
@@ -842,7 +844,7 @@
   const rgb = (h) => [1, 3, 5].map((i) => parseInt(h.slice(i, i + 2), 16));
   const mix = (a, b, t) => { const p = rgb(a), q = rgb(b); return '#' + p.map((v, i) => Math.round(v + (q[i] - v) * t).toString(16).padStart(2, '0')).join(''); };
   // The shade of each tile hue: the body of a tile, with the full hue on its exposed edges.
-  const DIM = Object.fromEntries(['solid', 'ladder', 'water', 'moss', 'key', 'door', 'light'].map((k) => [k, mix(C[k], C.well, .5)]));
+  const DIM = Object.fromEntries(Object.entries({ solid: .7, ladder: .5, water: .25, moss: .5, key: .5, door: .5, light: .5 }).map(([k, t]) => [k, mix(C[k], C.well, t)]));
   const R = (g, col, x, y, w, h) => { g.fillStyle = col; g.fillRect(x, y, w, h); };
   const bits = (g, rows, col, x, y) => rows.forEach((row, j) => { for (let i = 0; i < row.length; i++) if (row[i] === '#') R(g, col, x + i, y + j, 1, 1); });
   const rle = (s) => s.replace(/(\D)(\d+)/g, (_, c, n) => c.repeat(+n));   // '#1.3#1' -> '#...#'
@@ -961,10 +963,14 @@
     };
     const cellAt = (e) => { const b = cv.getBoundingClientRect(); return [clamp(0, vis - 1, Math.floor((e.clientX - b.left) / (T * k))), clamp(0, ROWS - 1, Math.floor((e.clientY - b.top) / (T * k)))]; };
     const stroke = (e) => { if (build != null) return; const p = cellAt(e); line(last || p, p); last = p; cur = p; queue(); };
-    cv.addEventListener('pointerdown', (e) => { last = null; stroke(e); });
-    cv.addEventListener('pointermove', stroke);
+    // A finger that lands on the room may be starting to scroll the page, so its first tile waits: it is placed when
+    // the finger moves sideways (a drag) or lifts (a tap), and dropped if the browser takes the gesture for a scroll.
+    let pend = null;
+    cv.addEventListener('pointerdown', (e) => { last = null; if (e.pointerType === 'touch') pend = cellAt(e); else stroke(e); });
+    cv.addEventListener('pointermove', (e) => { if (pend) { last = pend; pend = null; } stroke(e); });
+    cv.addEventListener('pointerup', (e) => { if (pend) { pend = null; last = null; stroke(e); } });
     cv.addEventListener('pointerleave', () => { last = null; if (document.activeElement !== cv) cur = null; queue(); });
-    cv.addEventListener('pointercancel', () => { last = null; });
+    cv.addEventListener('pointercancel', () => { last = null; pend = null; });
     function pick(t) {
       brush = t;
       brushes.forEach((b) => b.setAttribute('aria-pressed', +b.dataset.t === t));
@@ -1194,11 +1200,11 @@
         [14, 15].forEach((c) => { bits(q, BIT.spike, C.sand, c * T, 9 * T + 4); bits(q, BIT.spike.slice(0, 3), C.spike, c * T, 9 * T + 5); });
         doorTile(q, 17 * T, 8 * T, T);
       }),
-      mk((q) => {   // lighting: two lamps, a dithered core of light around each and three dithered bands of shadow beyond
+      mk((q) => {   // lighting: two lamps, a dithered core of light around each and three dithered bands of shadow far from both
         for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) {
           const d = Math.min(...LAMPS.map(([lx, ly]) => Math.hypot(x - lx, (y - ly) * 1.15))), b = BAYER[(y & 3) * 4 + (x & 3)];
-          if (d < 9 ? b < 8 : d < 18 && b < 3) R(q, C.light, x, y, 1, 1);
-          else if (d > 78 ? b < 12 : d > 60 ? b < 8 : d > 44 && b < 4) R(q, C.deep, x, y, 1, 1);
+          if (d < 7 ? b < 8 : d < 14 && b < 4) R(q, C.light, x, y, 1, 1);
+          else if (d > 96 ? b < 8 : d > 74 ? b < 4 : d > 54 && b < 2) R(q, C.deep, x, y, 1, 1);
         }
         LAMPS.forEach(([lx, ly]) => { R(q, DIM.light, lx, 8, 1, ly - 10); R(q, C.light, lx - 2, ly - 2, 5, 4); R(q, C.white, lx - 1, ly - 1, 3, 2); });
       })
@@ -1291,7 +1297,7 @@
   }
 
   /* ---------- 7. The level request (validated here; nothing is sent anywhere) ---------- */
-  const form = $('#ask'), done = $('#done'), doneTitle = $('#done-title');
+  const form = $('#ask'), done = $('#done'), doneTitle = $('#done-title'), swapBox = $('.swap');
   form.noValidate = true;
   const val = (name) => form.elements[name].value.trim();
   const RULES = {
@@ -1339,12 +1345,13 @@
     $('#done-kind').textContent = val('kind'); $('#done-levels').textContent = val('levels') ? plural(+val('levels'), 'level') : 'Not sure yet';
     $('#done-build').textContent = form.elements.build.checked ? 'Yes, there is one' : 'Not yet';
     $('#done-msg').textContent = val('message');
+    swapBox.style.minHeight = swapBox.offsetHeight + 'px';   // the page keeps its height, so nothing below jumps
     form.hidden = true; done.hidden = false;
     restart(done, 'is-run');   // level clear: the flag climbs and three collectibles cut in (CSS, motion layer only)
     doneTitle.focus();
   });
   $('#again').addEventListener('click', () => {
-    done.hidden = true; form.hidden = false; done.classList.remove('is-run');
+    done.hidden = true; form.hidden = false; done.classList.remove('is-run'); swapBox.style.minHeight = '';
     form.elements.name.focus();
   });
 

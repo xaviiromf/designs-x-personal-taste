@@ -140,7 +140,7 @@
   }
   .part h3 { margin: 0; font-size: var(--t-h3); line-height: var(--lh-h3); }
   .intro { margin-top: var(--s3); max-width: var(--measure); color: var(--haze); }
-  .hint { margin-top: var(--s2); color: var(--haze); font-size: var(--t-small); line-height: var(--lh-small); max-width: var(--measure); }
+  .hint { margin-top: var(--s2); color: var(--haze); max-width: var(--measure); }
 
   /* ---------- Buttons ---------- */
   .btn, .rider {
@@ -243,12 +243,9 @@
   .top { padding-block: var(--s4) var(--s6); }
   .top-grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--s5); }
   @media (min-width: 1024px) {
-    .top-grid {
-      grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
-      align-items: center;
-      min-height: calc(100svh - var(--s4) - var(--s4));
-    }
-    .top { padding-block: var(--s4); }
+    .top-grid { grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); align-items: start; }
+    .top { padding-block: var(--s5) var(--s6); }
+    .copy { padding-top: var(--s3); }
   }
   .who { display: flex; flex-wrap: wrap; column-gap: 2ch; color: var(--white); }
   .who span { color: var(--haze); }
@@ -264,11 +261,11 @@
   .lede { margin-top: var(--s4); max-width: 52ch; font-size: var(--t-lede); line-height: var(--lh-lede); }
   @media (min-width: 1024px) { .lede { font-size: var(--t-body); line-height: var(--lh-body); } }
   .actions { display: flex; flex-wrap: wrap; gap: var(--s3); margin-top: var(--s4); }
-  .onstage { display: flex; gap: 1ch; align-items: baseline; margin-top: var(--s3); color: var(--haze); font-size: var(--t-small); line-height: var(--lh-small); }
+  .onstage { display: flex; gap: 1ch; align-items: baseline; margin-top: var(--s3); color: var(--haze); }
   .lamp { flex: none; display: inline-block; width: 11px; height: 11px; background: var(--live); }
 
   /* The tunnel: a framed screen, a test-card overlay for the load, the ten-swatch legend under it */
-  .tv { min-width: 0; margin: 0; }
+  .tv { min-width: 0; margin: 0; container-type: inline-size; }
   .tv-box { padding: 6px; background: var(--plate); }
   .tv-box:focus-visible { outline: none; }
   .tv:has(.tv-box:focus-visible) .tv-frame { outline: 2px solid var(--strobe); outline-offset: 3px; }
@@ -283,7 +280,7 @@
     cursor: crosshair;
   }
   @media (min-width: 1024px) {
-    .tv-screen { aspect-ratio: auto; height: min(calc((100vw - var(--fader-w)) * .3), calc(100svh - 196px)); min-height: 240px; }
+    .tv-screen { aspect-ratio: auto; height: min(80cqw, calc(100svh - 190px)); min-height: 264px; }
   }
   .tv-screen canvas { display: block; image-rendering: pixelated; image-rendering: crisp-edges; }
   .bars { position: absolute; inset: 0; display: none; grid-template-columns: repeat(10, minmax(0, 1fr)); }
@@ -358,12 +355,19 @@
   /* ---------- 03 The set list (pinned while it plays) ---------- */
   .story-stage { padding-top: 0; }
   .story-body { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--s4); margin-top: var(--s4); }
-  @media (min-width: 1024px) { .story-body { grid-template-columns: minmax(0, 7fr) minmax(0, 4fr); gap: var(--s5); align-items: start; } }
+  /* Sequencer cells on the 11px grid: 22px from 1024, 33px from 1200, 44px from 1400 wide and 760 tall. */
+  @media (min-width: 1024px) {
+    .story-body { grid-template-columns: max-content minmax(0, 1fr); gap: var(--s5); align-items: start; }
+    .story .seq { --sc: 22px; }
+    .card { max-width: 56ch; }
+  }
+  @media (min-width: 1200px) { .story .seq { --sc: 33px; } }
+  @media (min-width: 1400px) and (min-height: 760px) { .story .seq { --sc: 44px; --gap: 5.5px; } .story .seq .n { font-size: var(--t-small); } }
   .seq {
-    --gap: 4px; --lab: 7ch;
+    --gap: 4px; --lab: 7ch; --sc: minmax(0, 1fr);
     position: relative;
     display: grid;
-    grid-template-columns: var(--lab) repeat(16, minmax(0, 1fr));
+    grid-template-columns: var(--lab) repeat(16, var(--sc));
     gap: var(--gap);
     align-items: center;
   }
@@ -417,7 +421,7 @@
   }
 
   /* ---------- 04 By the numbers: LED columns with a peak-hold cap ---------- */
-  .meter-wrap { margin-top: var(--s4); max-width: 960px; }
+  .meter-wrap { margin-top: var(--s4); }
   .readout { min-height: calc(2 * var(--lh-body)); max-width: var(--measure); }
   .meter { margin-top: var(--s3); touch-action: pan-y; cursor: pointer; }
   .meter canvas { display: block; }
@@ -587,7 +591,7 @@
   .mark { margin-top: var(--s4); touch-action: none; cursor: crosshair; }
   .mark canvas { display: block; max-width: 100%; }
   .mark-tools { display: flex; flex-wrap: wrap; gap: var(--s3); margin-top: var(--s3); }
-  .colophon { display: flex; flex-wrap: wrap; justify-content: space-between; gap: var(--s3); margin-top: var(--s6); color: var(--haze); font-size: var(--t-small); line-height: var(--lh-small); }
+  .colophon { display: flex; flex-wrap: wrap; justify-content: space-between; gap: var(--s3); margin-top: var(--s6); color: var(--haze); }
   .colophon p { max-width: 70ch; }
 
   /* ---------- The rider: a video wall of six tiles ---------- */
@@ -1118,20 +1122,18 @@
         let r = 0;
         const lit = [];
         runs.forEach(([c, n]) => { for (let j = 0; j < n; j++) lit[r++] = c; });
-        for (let row = 0; row < ROWS; row++) {
-          g.fillStyle = lit[row] || (i === sel ? C.plate : C.well);
-          g.fillRect(x, H - (row + 1) * PITCH, colW, CELL);
-        }
-        // The peak cap: one white cell resting on the column, lifted by caps[i] cells while it falls back.
-        const capRow = r + caps[i];
+        const cellRow = (row) => { for (let cx = 0; cx + CELL <= colW; cx += PITCH) g.fillRect(x + cx, H - (row + 1) * PITCH, CELL, CELL); };
+        for (let row = 0; row < ROWS; row++) { g.fillStyle = lit[row] || (i === sel ? C.plate : C.well); cellRow(row); }
+        // The peak cap: one white row resting on the column, lifted by caps[i] cells while it falls back.
         g.fillStyle = C.white;
-        g.fillRect(x, H - (capRow + 1) * PITCH, colW, CELL);
+        cellRow(r + caps[i]);
       });
     }
     function fit() {
-      const w = Math.min(wrap.clientWidth, 960);
+      const w = wrap.clientWidth;
       gap = w >= 600 ? 22 : 6;
-      colW = Math.floor((w - gap * 9) / 10);
+      // Whole LED cells across the column too: 6px cells on an 8px pitch, the column ends on a cell.
+      colW = Math.max(6, Math.floor(((w - gap * 9) / 10 + 2) / PITCH) * PITCH - 2);
       W = colW * 10 + gap * 9;
       const k = dpr();
       cv.width = W * k; cv.height = H * k;

@@ -337,6 +337,8 @@
     .pin .story-lane { grid-area: lane; }
     .pin .idx { grid-area: idx; }
     .pin .chapters { grid-area: ch; margin: 0; max-width: none; }
+    .pin .card { padding-block: var(--s2); }
+    .pin .card p:last-child { font-size: var(--t-small); line-height: var(--lh-small); }
   }
   .idx li { display: flex; align-items: center; gap: var(--s2); color: var(--blush); font-size: var(--t-small); line-height: var(--lh-small); }
   .idx li::before { content: ""; flex: none; width: var(--s3); height: var(--cell); border: 2px solid var(--hue); }   /* a lamp for the target: hollow until it is down */
@@ -394,18 +396,18 @@
   /* ---------- The spinner ---------- */
   .spin { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--s4); margin-top: var(--s4); align-items: center; }
   .spinner {
-    position: relative; display: block; width: 242px; height: 132px; padding: 0; border: 0;
+    position: relative; display: block; width: 286px; height: 154px; padding: 0; border: 0;
     background: none; color: inherit; font: inherit; cursor: grab;
     touch-action: none; -webkit-tap-highlight-color: transparent; user-select: none;
   }
   .sp-post { position: absolute; top: 0; bottom: 0; width: var(--cell); background: var(--blush); }
   .sp-post:first-child { left: 0; } .sp-post:last-child { right: 0; }
-  .sp-axle { position: absolute; left: var(--cell); right: var(--cell); top: 65px; height: 2px; background: var(--white); }
+  .sp-axle { position: absolute; left: var(--cell); right: var(--cell); top: 76px; height: 2px; background: var(--white); }
   .sp-plate {
-    position: absolute; left: 55px; top: 22px; width: 132px; height: 88px;
+    position: absolute; left: 55px; top: 22px; width: 176px; height: 110px;
     display: grid; place-items: center;
     background: var(--plate); color: var(--white);
-    font-size: 66px; line-height: 66px;
+    font-size: 88px; line-height: 88px;
   }
   .sp-plate::after { content: ""; position: absolute; inset: 0; border: 4px solid var(--white); }
   .sp-b { display: none; }
@@ -414,11 +416,11 @@
   .sp-plate[data-face="1"] .sp-a { display: none; }
   .sp-plate[data-face="1"] .sp-b { display: block; }
   .sp-plate[data-lean="1"] { transform: scaleY(.8); } .sp-plate[data-lean="2"] { transform: scaleY(.6); } .sp-plate[data-lean="3"] { transform: scaleY(.4); }
-  .marks { display: flex; gap: var(--s1); }
+  .marks { display: flex; gap: var(--s1); margin-top: var(--s3); }
   .marks li { width: var(--cell); height: var(--s3); border: 2px solid var(--blush); }
   .marks li.is-on { border-color: var(--white); background: var(--white); }
   .spin-count { margin-top: var(--s2); color: var(--blush); font-size: var(--t-small); line-height: var(--lh-small); }
-  .spin-fact { max-width: 44ch; min-height: calc(var(--lh-lede) * 4 + var(--s5)); margin-top: var(--s3); padding: var(--s3); background: var(--well); font-size: var(--t-lede); line-height: var(--lh-lede); }
+  .spin-fact { max-width: 44ch; min-height: calc(var(--lh-lede) * 4 + var(--s5)); padding: var(--s3); background: var(--well); font-size: var(--t-lede); line-height: var(--lh-lede); }
   @media (min-width: 900px) { .spin { grid-template-columns: auto minmax(0, 1fr); column-gap: var(--s6); } }
   @media (max-width: 599px) { .spin-fact { font-size: var(--t-body); line-height: var(--lh-body); min-height: calc(var(--lh-body) * 5 + var(--s5)); } }
 
@@ -489,11 +491,11 @@
   /* The rocker: a power switch with a lamp. The half that is down is the state. */
   .rocker { display: inline-flex; align-items: center; gap: var(--s2); min-height: var(--tap); cursor: pointer; position: relative; }
   .rocker input { position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; opacity: 0; cursor: pointer; }
-  .rk { display: grid; grid-template-columns: 27px 27px; height: 38px; padding: 2px; background: var(--blush); }
-  .rk i { display: grid; place-items: center; height: 31px; background: var(--plate); color: var(--white); border-bottom: 3px solid var(--pit); box-sizing: content-box; }
-  .rk .rk-0, .rocker input:checked ~ .rk .rk-1 { height: 34px; background: var(--well); color: var(--blush); border-bottom: 0; padding-top: 0; }   /* pressed in */
-  .rocker input:checked ~ .rk .rk-0 { height: 31px; background: var(--plate); color: var(--white); border-bottom: 3px solid var(--pit); }
-  .rk-lamp { width: var(--cell); height: var(--cell); border: 2px solid var(--blush); }
+  .rk { display: grid; grid-template-columns: 33px 33px; padding: 2px; background: var(--blush); }
+  .rk i { display: grid; place-items: center; height: 40px; }
+  .rk .rk-1, .rocker input:checked ~ .rk .rk-0 { background: var(--plate); color: var(--white); border-bottom: 4px solid var(--pit); }   /* the half that stands proud */
+  .rk .rk-0, .rocker input:checked ~ .rk .rk-1 { background: var(--well); color: var(--blush); border-bottom: 0; padding-top: 4px; }   /* the half that is pressed in */
+  .rk-lamp { width: var(--s3); height: var(--s3); border: 2px solid var(--blush); }
   .rocker input:checked ~ .rk-lamp { border-color: var(--white); background: var(--white); }
   .rocker:focus-within { outline: 2px solid var(--start); outline-offset: 3px; }
   .rk-state { color: var(--blush); }
@@ -515,7 +517,8 @@
   .wm { display: block; touch-action: pan-y; }
   .signoff-row { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--s2) var(--s5); margin-top: var(--s4); }
   .signoff-row p { max-width: 52ch; }
-  .signoff-acts { display: flex; flex-wrap: wrap; gap: var(--s2) var(--s4); }
+  .signoff-acts { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s2) var(--s4); }
+  .signoff-acts .u { margin: 0; }
 
   /* ---------- The tool-roll dialog: five drop-target plates ---------- */
   .roll {
@@ -528,11 +531,12 @@
   .roll-wrap { position: relative; overflow: clip; }
   .roll-plates { position: absolute; inset: 0; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 2px; }
   .roll-plates i { background: var(--plate); border-top: 4px solid var(--white); }
-  .roll-in { position: relative; padding: var(--s4) 0; }
+  .roll-in { position: relative; padding: 4px 0 var(--s4); }
+  .roll-top { padding: var(--s4) 0 var(--s3); background: var(--plate); }   /* the bank's top rail: the seams stop under it */
   .roll-head { display: flex; justify-content: space-between; align-items: center; gap: var(--s3); padding: 0 var(--s3); }
   .roll-head h2 { font-size: var(--t-h3); line-height: var(--lh-h3); }
   .roll-intro { max-width: 60ch; margin-top: var(--s2); padding: 0 var(--s3); }
-  .roll-cols { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--s3) 2px; margin-top: var(--s4); }
+  .roll-cols { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--s3) 2px; margin-top: var(--s2); }
   .roll-cols > div { padding: 0 var(--s3); }
   .roll-cols h3 { display: flex; align-items: center; gap: var(--s2); font-size: var(--t-body); line-height: var(--lh-body); }
   .roll-cols h3::before { content: ""; width: var(--cell); height: var(--cell); background: var(--white); }
@@ -635,16 +639,16 @@
       <h3 id="spin-title">Spin for a fact</h3>
       <p class="part-intro" id="spin-help">A spinner is the cheapest target on a playfield and the one people remember. Flick this one up or down, tap it, or press Enter. The harder the flick, the longer it spins.</p>
       <div class="spin">
+        <div>
         <button class="spinner" id="spinner" type="button" aria-describedby="spin-help">
           <i class="sp-post" aria-hidden="true"></i><i class="sp-axle" aria-hidden="true"></i>
           <span class="sp-plate" id="sp-plate" data-face="0" aria-hidden="true"><span class="sp-a">M</span><span class="sp-b">V</span></span>
           <span class="vh">Spin the spinner</span><i class="sp-post" aria-hidden="true"></i>
         </button>
-        <div>
           <ol class="marks" id="marks" aria-hidden="true"><li></li><li></li><li></li><li></li><li></li><li></li><li></li><li></li><li></li><li></li><li></li><li></li></ol>
           <p class="spin-count" id="spin-count">No flips yet. One mark is one flip.</p>
-          <p class="spin-fact nt" id="spin-fact" aria-live="polite">It stops on one of twelve short facts about the work.</p>
         </div>
+        <p class="spin-fact nt" id="spin-fact" aria-live="polite">It stops on one of twelve short facts about the work.</p>
       </div>
     </section>
 
@@ -692,7 +696,7 @@
               <p class="err"></p>
             </fieldset>
             <div class="fld" data-f="year">
-              <label class="lbl" for="f-year">Year of the machine <span class="opt">(if you know it)</span></label>
+              <label class="lbl" for="f-year">Year it was built <span class="opt">(optional)</span></label>
               <div class="box"><i class="coin" aria-hidden="true"></i><input id="f-year" name="year" type="text" inputmode="numeric" autocomplete="off"><span class="cred" aria-hidden="true">00</span></div>
               <p class="err" id="f-year-err"></p>
             </div>
@@ -717,7 +721,7 @@
             </div>
             <div class="done-rest" id="done-rest">
               <h3 id="done-title" tabindex="-1">You win a reply.</h3>
-              <p>Nothing was sent anywhere: this page is a demonstration. On the real one I would answer <span id="done-name">you</span> within two working days.</p>
+              <p>Thank you, <span id="done-name">you</span>. I will answer within two working days, from the bench or the van. This is what I have:</p>
               <dl class="echo">
                 <dt>Email</dt><dd id="done-email"></dd>
                 <dt>Machine</dt><dd id="done-kind"></dd>
@@ -748,11 +752,13 @@
   <div class="roll-wrap">
     <div class="roll-plates" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
     <div class="roll-in" id="roll-in">
-      <div class="roll-head">
-        <h2 id="roll-title">My tool roll</h2>
-        <button class="u" id="roll-close" type="button">Close</button>
+      <div class="roll-top">
+        <div class="roll-head">
+          <h2 id="roll-title">My tool roll</h2>
+          <button class="u" id="roll-close" type="button">Close</button>
+        </div>
+        <p class="roll-intro">Waxed canvas, 22 pockets, 4.1 kg. It has been the same roll since 2016; about half of what is in it has been replaced.</p>
       </div>
-      <p class="roll-intro">Waxed canvas, 22 pockets, 4.1 kg. It has been the same roll since 2016; about half of what is in it has been replaced.</p>
       <div class="roll-cols">
         <div><h3>Measure</h3><ul><li>Multimeter</li><li>Test lamp</li><li>Feeler gauges</li><li>Spirit level</li><li>Steel rule</li></ul></div>
         <div><h3>Clean</h3><ul><li>Contact file</li><li>Burnisher</li><li>Brass brush</li><li>Lint-free cloths</li></ul></div>
@@ -863,17 +869,18 @@
   const show = (big, sub) => { sdBig.textContent = big; sdSub.textContent = sub; };
   const table = (() => {
     const cv = $('#pf'), g = cv.getContext('2d');
-    const W = 112, H = 152, R = 3, BR = 7, GY = .085, LEAN = .028, VMAX = 5.6, FL = 15, ANG = [.56, 0, -.56];
+    const W = 112, H = 152, R = 3, BR = 7, GY = .085, LEAN = .02, VMAX = 5.6, FL = 15, ANG = [.56, 0, -.56];
     const LIT = Math.round(secs('--d-lamp') * 30);            // frames a bumper stays lit
     const BUMP = [[28, 36], [62, 28], [46, 56], [22, 70], [74, 64]];
     const SEG = [   // x0, y0, x1, y1, kick
-      [4, 146, 4, 12], [4, 12, 12, 4], [12, 4, 92, 4], [92, 4, 108, 20], [108, 20, 108, 146],   // cabinet and the arch that turns the ball
+      [4, 146, 4, 12], [4, 12, 12, 4], [12, 4, 92, 4], [92, 4, 108, 20, 1.8], [108, 20, 108, 146],   // cabinet, and the arch that throws the ball onto the field
       [98, 32, 98, 150], [98, 144, 108, 144],                                                    // shooter lane and plunger
       [4, 112, 32, 134], [98, 112, 70, 134],                                                     // guides down to the flippers
       [16, 92, 16, 110], [16, 110, 27, 116], [27, 116, 16, 92, 1.6],                             // left slingshot: its long side kicks
       [86, 92, 86, 110], [86, 110, 75, 116], [75, 116, 86, 92, 1.6]];                            // right slingshot
     const PIV = [[32, 135, 1], [70, 135, -1]];                // flipper pivots and the way each one points
-    const b = { x: 103, y: 141, vx: 0, vy: 0, live: false };
+    const GATE = [98, 32, 108, 22];                            // one way: it lets the ball out of the lane and never back in
+    const b = { x: 103, y: 141, vx: 0, vy: 0, live: false, out: false };
     const s = { lit: [0, 0, 0, 0, 0], flip: 0, fire: 0, lean: 0, serve: 0, rest: 0, stuck: 0, sx: 0, sy: 0, parked: true };
     const api = { ball: b, s, onHit: null, onDrain: null };
 
@@ -900,6 +907,7 @@
         s.lit[i] = LIT; api.onHit?.(i);
       }
       for (const q of SEG) bounce(q[0], q[1], q[2], q[3], R, .6, q[4] || 0);
+      if (b.out) bounce(GATE[0], GATE[1], GATE[2], GATE[3], R, .6, 0); else if (b.x < 92) b.out = true;
       for (const [x, y, dir] of PIV) { const a = ANG[s.flip]; bounce(x, y, x + dir * FL * Math.cos(a), y + FL * Math.sin(a), R + 1.5, .3, 0); }
     }
     // The bats moved up one position this frame: a ball that was on or above a bat and is now inside its sweep is thrown.
@@ -912,7 +920,7 @@
         b.x += n[2] * up; b.y += n[3] * up; b.vx = n[2] * sp; b.vy = n[3] * sp;
       }
     }
-    function launch() { Object.assign(b, { x: 103, y: 140, vx: 0, vy: -(5.15 + Math.random() * .4), live: true }); s.rest = 0; s.stuck = 0; }
+    function launch() { Object.assign(b, { x: 103, y: 140, vx: 0, vy: -(5.15 + Math.random() * .4), live: true, out: false }); s.rest = 0; s.stuck = 0; }
     // One frame at 30 per second.
     function step() {
       for (let i = 0; i < 5; i++) if (s.lit[i]) s.lit[i]--;
@@ -939,6 +947,7 @@
         for (let x = Math.ceil(xb); x <= xh; x++) px(g, C.plate, m ? 102 - x : x, y);
       }
       line(g, C.blush, 27, 116, 16, 92); line(g, C.blush, 75, 116, 86, 92);
+      line(g, C.blush, GATE[0], GATE[1], GATE[2], GATE[3]);
       BUMP.forEach(([x, y], i) => {
         const c = C[HUES[i]];
         disc(g, c, x, y, BR);
@@ -1036,7 +1045,8 @@
     function still() { d = END; n = 5; st.fill(2); render(); mark(false); }
     function fit() {
       const pin = root.classList.contains('pin'), wide = innerWidth >= 1024;
-      root.style.setProperty('--LS', wide ? clamp(2, pin ? 4 : 3, Math.floor((innerHeight - 66) / H)) : pin ? clamp(1, 2, Math.floor((innerHeight - 350) / H)) : 2);
+      const room = innerHeight - 341;   // phones, pinned: what the bonus row, the title and one card leave for the lane
+      root.style.setProperty('--LS', wide ? clamp(2, pin ? 4 : 3, Math.floor((innerHeight - 66) / H)) : !pin || room >= 2 * H ? 2 : room >= 1.5 * H ? 1.5 : 1);
     }
     return { set, settle, still, fit, render };
   })();
@@ -1378,7 +1388,7 @@
     motion: '(prefers-reduced-motion: no-preference)',
     reduce: '(prefers-reduced-motion: reduce)',
     fine: '(hover: hover) and (pointer: fine)',
-    pinnable: '(min-width: 1024px) and (min-height: 560px), (max-width: 1023.98px) and (min-height: 640px)'
+    pinnable: '(min-width: 1024px) and (min-height: 560px), (max-width: 1023.98px) and (min-height: 610px)'
   }, (ctx) => {
     const { motion, fine, pinnable } = ctx.conditions;
     if (!motion) {
