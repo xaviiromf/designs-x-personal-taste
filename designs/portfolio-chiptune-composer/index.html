@@ -480,6 +480,8 @@
   .work th, .work td { padding: 0 var(--s3) 0 0; vertical-align: middle; }
   .work tbody tr:hover { background: var(--beat); }
   .work tbody th { color: var(--sheet); }
+  .cur-tag { display: none; margin-left: var(--s3); color: var(--rest); font-size: var(--t-small); }
+  .is-cur .cur-tag { display: inline; }
   .clients { margin: var(--s4) 0 0; max-width: 70ch; color: var(--rest); }
   .clients b { color: var(--sheet); font-weight: 600; }
   @media (max-width: 699px) {
@@ -522,6 +524,7 @@
     font: inherit;
     appearance: none;
   }
+  .f-row :is(input, select, textarea) { scroll-margin: calc(var(--stick) + var(--s7)) 0 var(--s8); }   /* a focused field never lands under the order strip */
   .f-row textarea { height: 104px; padding-block: var(--s2); resize: vertical; }
   .f-row select { padding-right: var(--s6); cursor: pointer; }
   .f-row option { background: var(--well); color: var(--sheet); }
@@ -1215,6 +1218,7 @@
     main.setPlay(0);
     showStatus(0);
     $$('input', opts)[i].checked = true;
+    $$('#work-table tbody tr').forEach((tr, k) => tr.classList.toggle('is-cur', k === i));
     now.innerHTML = '';
     now.append('From ', el('b', '', cur.game), ` by ${cur.studio}, ${cur.year}. ${cur.key}, ${cur.bpm} BPM, ${cur.len}.`);
     // The text alternative: the same pattern as a table.
@@ -1357,12 +1361,13 @@
       const row = el('tr'), th = el('th'), b = el('button', 'u', tr.title);
       th.scope = 'row'; b.type = 'button'; b.dataset.sheet = i;
       b.setAttribute('aria-haspopup', 'dialog'); b.setAttribute('aria-controls', 'sheet');
-      th.append(b); row.append(th);
+      th.append(b, el('span', 'cur-tag', 'Loaded in the pattern')); row.append(th);
       [['g', 'Game', tr.game], ['num', 'Year', tr.year], ['num', 'Tempo', tr.bpm + ' BPM'], ['num', 'Length', tr.len]].forEach(([cls, l, v]) => { const td = el('td', cls, v); td.dataset.l = l; row.append(td); });
       body.append(row);
     });
     const cap = el('caption', 'vh', 'Six tracks: title, game, year, tempo and length.');
     t.append(cap, thead, body);
+    body.children[TRACKS.indexOf(cur)].classList.add('is-cur');
     const c = $('#clients');
     c.append(el('b', '', 'Clients since 2018: '), DATA.clients.join(', ') + '.');
   }

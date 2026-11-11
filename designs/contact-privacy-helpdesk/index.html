@@ -45,6 +45,7 @@
     --s5: 48px; --s6: 72px; --s7: 96px;
     --pad: 18px;                      /* panel padding, a cell and a half */
     --strip: calc(var(--cell) * 3);   /* open rain to the left of every lane panel */
+    --gutter-r: calc(var(--cell) * 7);/* open rain to the right of the email panels: the typing gutter */
     --rain-gap: calc(var(--cell) * 6);/* open rain between the headline and the lanes */
     --rain-foot: calc(var(--cell) * 12); /* open rain under the lanes, where the message fingerprint locks */
     --blk: 12px;                      /* one block of the ciphertext strip */
@@ -52,7 +53,7 @@
     --tap: 48px;
     --hit: 44px;
     --max-w: 1392px;
-    --form-w: clamp(360px, 30vw, 440px);
+    --form-w: clamp(340px, 27vw, 440px);
     --gutter: max(var(--s3), (100% - var(--max-w)) / 2);
     --rain: full;                     /* how the bands are laid: full (section height), block (above the form), strip (beside each lane) */
     --scroll-tick: 12px;              /* page scroll for one rain tick */
@@ -75,6 +76,7 @@
     --d-copied: 2.4s;     /* "Copied" stays this long */
     --d-wait: 1.5s;      /* the load waits this long for fonts at most */
   }
+  @media (max-width: 1439px) { :root { --gutter-r: calc(var(--cell) * 5); } }
   @media (max-width: 1199px) { :root { --rain: block; } }
   @media (max-width: 719px) { :root { --rain: strip; --strip: calc(var(--cell) * 5); } }
   @media (max-width: 599px) { :root { --cell: 8px; --s3: 16px; --pad: 16px; --t-h3: 19px; --t-fp: 17px; } }
@@ -126,7 +128,7 @@
 
   .left {
     display: grid;
-    grid-template-columns: minmax(0, 10fr) minmax(0, 11.5fr) minmax(0, 10fr);   /* the email lane is wider: it has a gutter on both sides */
+    grid-template-columns: minmax(0, 10fr) minmax(0, 13fr) minmax(0, 10fr);   /* the email lane is wider: it has a second, wider gutter on its right */
     grid-template-rows: auto 1fr;
     padding-bottom: var(--rain-foot);
   }
@@ -163,7 +165,7 @@
     clip-path: var(--corners);
   }
   .lane .panel + .panel { margin-top: var(--s4); }
-  .lane[data-lane="1"] { padding-right: var(--strip); }
+  .lane[data-lane="1"] { padding-right: var(--gutter-r); }   /* where typed characters fall beside the panels */
   /* The heading plate cuts to the inverse while its lane rains harder (hover, keyboard focus, a tap). */
   .plate {
     margin: 0 calc(-1 * var(--pad)) var(--s2);
@@ -237,7 +239,8 @@
   .btn.is-down .hole i { left: 6px; top: 3px; }
   .btn-key.is-down { --face: var(--teal); --ink: var(--key); }
   .btn-line.is-down { --face: var(--plain); --ink: var(--teal); --rim: var(--plain); }
-  .btn-sm { font-size: var(--t-small); }
+  .btn-sm { font-size: var(--t-small); white-space: nowrap; }
+  .btn-sm .inner { padding-left: var(--s2); }
 
   /* ---------- Text links and text buttons: the underline seals into an envelope ---------- */
   .u {
@@ -343,9 +346,9 @@
   .dia { position: absolute; left: 0; top: calc(50% - 11px); width: 22px; height: 22px; color: var(--mist); pointer-events: none; }
   .dia::before, .dia::after { content: ""; position: absolute; left: 10px; top: 10px; width: 2px; height: 2px; }
   .dia::before { box-shadow: -10px 0px, -8px -2px, -8px 2px, -6px -4px, -6px 4px, -4px -6px, -4px 6px, -2px -8px, -2px 8px, 0px -10px, 0px 10px, 2px -8px, 2px 8px, 4px -6px, 4px 6px, 6px -4px, 6px 4px, 8px -2px, 8px 2px, 10px 0px; }
-  .dia::after { visibility: hidden; background: currentColor; box-shadow: -4px 0px, -2px -2px, -2px 0px, -2px 2px, 0px -4px, 0px -2px, 0px 2px, 0px 4px, 2px -2px, 2px 0px, 2px 2px, 4px 0px; }
+  .dia::after { display: none; background: currentColor; box-shadow: -4px 0px, -2px -2px, -2px 0px, -2px 2px, 0px -4px, 0px -2px, 0px 2px, 0px 4px, 2px -2px, 2px 0px, 2px 2px, 4px 0px; }
   .radio:hover .dia, .radio input:checked + .dia { color: var(--plain); }
-  .radio input:checked + .dia::after { visibility: visible; }
+  .radio input:checked + .dia::after { display: block; }
   .radio input[aria-invalid="true"] + .dia { color: var(--fault); }
   .radio.is-risk { color: var(--urgent); font-weight: 600; }
   .radio.is-risk .dia, .radio.is-risk input:checked + .dia { color: var(--urgent); }
@@ -673,7 +676,7 @@
     const HEAD = 0, PLAIN = 4, TURN1 = 5, TURN2 = 6;
     let cell = 12, dpr = 1, W = 0, H = 0, S = 12, atlas = null, C = {}, atlasKey = '';
     let bands = [], covers = [], lock = null;
-    const kept = [0, 0, 0, 0];   // tick counts survive a rebuild
+    const kept = [0, 0, 0, 0], nexts = [0, 0, 0, 0];   // tick counts survive a rebuild
     const drops = [], typed = new Map();
     let START = 0;
 
@@ -699,15 +702,16 @@
     }
     // A typed character, drawn once in plaintext the first time it falls.
     // tile: a solid --plain cell with the character cut out in the well colour; else the character in --plain.
+    // The tile is two cells square, so a fresh character is the first thing seen in the rain.
     function glyphOf(ch, tile) {
       const key = (tile ? 't' : 'g') + ch;
       if (typed.has(key)) return typed.get(key);
-      const c = document.createElement('canvas'); c.width = c.height = S;
+      const z = tile ? 2 * S : S, c = document.createElement('canvas'); c.width = c.height = z;
       const a = c.getContext('2d');
-      if (tile) { a.fillStyle = C.plain; a.fillRect(0, 0, S, S); }
+      if (tile) { a.fillStyle = C.plain; a.fillRect(0, 0, z, z); }
       a.fillStyle = tile ? C.well : C.plain; a.textAlign = 'center'; a.textBaseline = 'alphabetic';
-      a.font = `700 ${Math.round(S * 1.18)}px ${css('--font-display')}`;
-      if (ch.trim()) a.fillText(ch, S / 2, Math.round(S * .86));
+      a.font = `700 ${Math.round(z * (tile ? 1.02 : 1.18))}px ${css('--font-display')}`;
+      if (ch.trim()) a.fillText(ch, z / 2, Math.round(z * (tile ? .8 : .86)));
       typed.set(key, c);
       return c;
     }
@@ -722,7 +726,7 @@
       makeAtlas();
       const mode = css('--rain'), d = desk.getBoundingClientRect(), left = $('.left').getBoundingClientRect();
       covers = $$('[data-cover]').map((el) => { const r = el.getBoundingClientRect(); return [r.left - d.left, r.top - d.top, r.right - d.left, r.bottom - d.top]; });
-      bands.forEach((b) => { kept[b.i] = b.T; });
+      bands.forEach((b) => { kept[b.i] = b.T; nexts[b.i] = b.next; });
       bands = lanes.map((li, i) => {
         const r = li.getBoundingClientRect(), x0 = r.left - d.left;
         const x1 = mode === 'strip' ? x0 + parseFloat(getComputedStyle(li).paddingLeft) : r.right - d.left;
@@ -737,7 +741,7 @@
           const L = 6 + (rnd() * 10 | 0), P = L + (mode === 'strip' ? 4 + (rnd() * 14 | 0) : 14 + (rnd() * 34 | 0));
           cols.push({ c, L, P, ph: rnd() * P | 0, entry: r0 });
         }
-        return { i, c0, c1, r0, r1, cols, T: bands.length ? kept[i] : START, next: 0, typeCols: [] };
+        return { i, c0, c1, r0, r1, cols, T: bands.length ? kept[i] : START, next: nexts[i], typeCols: [] };
       });
       // Tablet and phone: a short wire of rain above the message field (and above the confirmation's
       // fingerprint) carries the typed tiles and the lock, where the visitor can see them.
@@ -747,7 +751,7 @@
         const c0 = Math.ceil((r.left - d.left) / cell), c1 = Math.floor((r.right - d.left) / cell) - 1;
         const r0 = Math.ceil((r.top - d.top) / cell), r1 = Math.floor((r.bottom - d.top) / cell);
         for (let c = c0; c <= c1; c++) { const L = 3 + (rnd() * 4 | 0), P = L + 6 + (rnd() * 18 | 0); cols.push({ c, L, P, ph: rnd() * P | 0, entry: r0, top: r0 }); }
-        bands.push({ i: 3, wire: true, c0, c1, r0, r1, cols, T: kept[3] ?? START, next: 0, typeCols: cols });
+        bands.push({ i: 3, wire: true, c0, c1, r0, r1, cols, T: kept[3] ?? START, next: nexts[3], typeCols: cols });
       }
       // Typed glyphs enter where the band opens below its panels: the first row of each column's last open run.
       const open = (c, r) => !covers.some(([a, t, b, u]) => a < (c + 1) * cell && b > c * cell && t < (r + 1) * cell && u > r * cell);
@@ -761,7 +765,10 @@
         b.deep = deepest;
         b.typeCols = b.cols.filter((c) => c.entry >= deepest - 1);
         // gutters: columns open from their first open row to the bottom (beside the panels, never under them)
-        b.gutters = b.cols.filter((c) => c.entry <= c.top);
+        // the widest run of side-by-side gutter columns: the typing gutter right of the email panels
+        const runs = [];
+        b.cols.filter((c) => c.entry <= c.top).forEach((c) => { const last = runs[runs.length - 1]; last && last[last.length - 1].c === c.c - 1 ? last.push(c) : runs.push([c]); });
+        b.gutters = runs.sort((x, y) => y.length - x.length)[0] || [];
         b.gutterTop = b.gutters.length ? Math.max(...b.gutters.map((c) => c.top)) : deepest;
       });
       // typed drops survive a rebuild (the strip under the field grows as you type and resizes the section)
@@ -807,13 +814,14 @@
         if (age < 0) continue;
         for (let k = Math.min(age, 6); k >= 1; k--) {
           const rr = r - k;
-          if (rr >= b.r1) continue;
+          if (rr >= b.r1 || rr < b.r0) continue;
           knock(x, rr * cell);
           blit(hash(p.c, rr, p.seed) % NG, k <= 2 ? 1 : k <= 4 ? 2 : 3, x, rr * cell);
         }
-        if (r >= b.r1) continue;
+        if (r >= b.r1 || r < b.r0) continue;
+        if (age < 4) { if (r + 1 < b.r1) g.drawImage(glyphOf(p.ch, true), x, r * cell, 2 * cell, 2 * cell); continue; }
         knock(x, r * cell);
-        if (age < 6) g.drawImage(glyphOf(p.ch, age < 4), 0, 0, S, S, x, r * cell, cell, cell);
+        if (age < 6) g.drawImage(glyphOf(p.ch, false), 0, 0, S, S, x, r * cell, cell, cell);
         else blit(hash(p.seed, age >> 1, 11) % NG, age < 8 ? TURN1 : age < 10 ? TURN2 : HEAD, x, r * cell);
       }
     }
@@ -851,7 +859,6 @@
     return {
       build, draw,
       set start(v) { START = v; },
-      get debug() { return { tile: [...glyphOf('e', true).getContext('2d').getImageData(1, 1, 1, 1).data], C, drops: drops.slice(-5), bands: bands.map((b) => [b.i, b.c0, b.c1, b.r0, b.r1, b.T, b.gutters && b.gutters.map(c=>c.c), b.gutterTop, b.deep]) }; },
       get ready() { return !!atlas && bands.length > 0; },
       tick(n, only) { for (const b of bands) if (only == null || b.i === only) b.T += n; },
       // Drop typed characters into the next columns of the email band, where it is open and on screen:
@@ -865,6 +872,7 @@
           const r = Math.max(b.gutterTop, vt + 1);
           cols = b.gutters; row = () => r;
         }
+        cols = cols.filter((c, k) => k % 2 === 0 && k + 1 < cols.length); // two-cell lanes for the tiles
         if (!cols.length) return;
         for (const ch of chars) {
           const col = cols[b.next++ % cols.length];
@@ -874,6 +882,7 @@
       lock(fp, maxY) { lock = { fp, maxY, rows: [], shown: 0 }; lock.rows = plan(fp, maxY); return lock.rows.length; },
       show(n) { if (lock) lock.shown = n; },
       release() { lock = null; },
+      clearDrops() { drops.length = 0; },
       // The ciphertext strip under the message field uses the same eight blocks, in cipher.
       blocks(px) {
         const c = document.createElement('canvas'), m = Math.max(1, Math.round(px / 6)), ox = Math.round((px - 4 * m) / 2), oy = Math.round((px - 5 * m) / 2);
@@ -886,7 +895,6 @@
     };
   })();
 
-  window.__rain = rain;
   rain.start = lib && !reduced.matches ? -12 : 0; // with motion, the load gives the last twelve ticks
   let built = false;
   const rebuild = () => { rain.build(); built = true; };
@@ -1042,7 +1050,7 @@
     $('#done-fp').replaceChildren(...fp.map((g) => Object.assign(document.createElement('li'), { textContent: g })));
     $('#done-risk').hidden = val('urgency') !== 'I am at risk right now';
     swap(true);
-    if (built) rebuild(); // on tablets and phones the wire moves to the confirmation
+    if (built) { rain.clearDrops(); rebuild(); } // on tablets and phones the wire moves to the confirmation
     // The signature answers: ten quick ticks in every lane, then the email lane's bottom rows lock into the fingerprint.
     if (!built) return;
     const n = rain.lock(fp, window.innerHeight - desk.getBoundingClientRect().top);
@@ -1055,7 +1063,7 @@
     fx?.release();
     rain.release(); rain.draw();
     swap(false);
-    if (built) rebuild();
+    if (built) { rain.clearDrops(); rebuild(); }
   });
 
   if (!lib) return;

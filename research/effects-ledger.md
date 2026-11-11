@@ -126,6 +126,7 @@ Effects are added here batch by batch as designs are accepted, as built. The art
 | `portfolio-disk-archivist` | `#2B3A34` | sage slate | a software-preservation archivist |
 | `nav-pirate-radio` | `#3D2C08` | tarnished brass | a community radio station that began as a pirate transmitter |
 | `faq-hint-hotline` | `#5A2C24` | bakelite | a volunteer hint line for old adventure games |
+| `contact-privacy-helpdesk` | `#073B3A` | deep teal | a volunteer digital-security helpdesk |
 
 ### `portfolio-isometric-artist`
 - **Signature:** commissions as an isometric city on a low-resolution canvas: one tower per year, one floor slab per commission in the hue of its kind, read against an axis.
@@ -270,3 +271,15 @@ Effects are added here batch by batch as designs are accepted, as built. The art
 - **Field:** patched through: a plug on a short cord seats in a jack socket at the field's edge.
 - **Dialog:** the line opens: from a 2 px line at mid-height to a third, two thirds and full height.
 - **Success:** the keypad dials the call-back number by itself, one key at a time.
+
+### `contact-privacy-helpdesk`
+- **Signature:** glyph rain with no idle loop: three bands of falling glyphs, one per contact route, that advance one cell per tick only when something drives them.
+- **Pointer:** a lane rains harder: hovering or focusing a route runs its band for as long as the pointer stays; the other lanes are unchanged (touch: one second of burst on tap).
+- **Scroll:** scrolling is the rain's clock: every 12 px is one tick, down falls and up rises.
+- **Load:** twelve ticks of rain into its resting positions, then the lane panels cut in.
+- **Button:** a padlock shackle standing proud of the button drops closed; a keyhole pip turns from 12 to 3 o'clock and the face inverts on press.
+- **Link:** sealed: the underline closes into a box around the text, side walls first.
+- **Field:** a ciphertext strip under the message field grows one block glyph per typed character, in groups of four; typed characters also drop into the rain as bright inverse tiles and step down to ciphertext as they fall.
+- **Dialog:** the deadbolt: the panel steps into place and a bolt is thrown into a strike plate.
+- **Success:** the rain stops and its bottom rows lock, row by row, into the message's fingerprint.
+- **Other:** radio buttons drawn as stepped pixel diamonds.
