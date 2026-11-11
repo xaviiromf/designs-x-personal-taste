@@ -123,6 +123,11 @@ Effects are added here batch by batch as designs are accepted, as built. The art
 | `testimonials-capsule-club` | `#4A148C` | electric violet | a monthly capsule-toy subscription |
 | `process-convoy-night` | `#0B3350` | petrol blue | a flight club's weekly convoy in a space-trading simulator |
 | `footer-cartridge-publisher` | `#3B2731` | dusty mauve | a publisher of new cartridges for old consoles |
+| `portfolio-chiptune-composer` | `#40103C` | aubergine | a chiptune composer and sound designer |
+| `portfolio-disk-archivist` | `#2B3A34` | sage slate | a software-preservation archivist |
+| `nav-pirate-radio` | `#3D2C08` | tarnished brass | a community radio station that began as a pirate transmitter |
+| `faq-hint-hotline` | `#5A2C24` | bakelite | a volunteer hint line for old adventure games |
+| `contact-privacy-helpdesk` | `#073B3A` | deep teal | a volunteer digital-security helpdesk |
 
 ### `portfolio-isometric-artist`
 - **Signature:** commissions as an isometric city on a low-resolution canvas: one tower per year, one floor slab per commission in the hue of its kind, read against an axis.
@@ -234,3 +239,63 @@ Effects are added here batch by batch as designs are accepted, as built. The art
 - **Field:** a stepped notch cut into the field's corner; the end label takes the chosen line's hue.
 - **Dialog:** pulled out of its sleeve: the panel slides out from behind a fixed spine in four steps.
 - **Success:** an end label with the visitor's email on a ruled line, and one gust across the wordmark.
+
+### `portfolio-chiptune-composer`
+- **Signature:** a tracker pattern (32 rows by four channels) with a playhead that jumps row to row at the track's tempo; notes under it light in their channel's hue and stepped level meters kick and fall. Optional Web Audio playback, off by default.
+- **Pointer:** the edit cursor: the row under the pointer inverts as a band, the cell is framed and the meters kick for that row (touch: tap a row; keyboard: grid arrows, Enter plays the row).
+- **Scroll:** the order list: the page's parts are the song's orders, with a marker that steps between them; while nothing plays, scrolling steps the playhead through the rows.
+- **Load:** the song loads: the pattern fills in four blocks of eight rows, then the four meters kick in channel order.
+- **Button:** pulse width: the top edge is a row of square teeth whose duty widens in steps; inverted phase (teeth on the bottom edge, face inverted) on press.
+- **Link:** vibrato: the underline becomes a square wave that flips phase three times.
+- **Field:** the current row: label and field invert together as a band, with a row number in the gutter.
+- **Dialog:** four channels: four vertical strips cut in left to right.
+- **Success:** a four-note fanfare: an eight-row pattern the playhead runs through once.
+
+### `portfolio-disk-archivist`
+- **Signature:** a block map with one square per medium that consolidates by outcome the way a disk optimiser works: a read cursor and a write cursor swap blocks until each outcome is one run and the map reads as a stacked bar.
+- **Pointer:** the read head: a marker in the margin jumps to the row under the pointer, the block is outlined and a readout names the medium (touch: tap; keyboard: arrows, Home and End).
+- **Scroll:** scroll progress is the fraction of swaps done, reversible.
+- **Load:** outcomes develop: hollow blocks first, then one outcome class at a time.
+- **Button:** a shutter plate slides aside in three steps to uncover a window; pushed into the drive on press, with a drive light.
+- **Link:** a head block jumps along sector ticks on the underline and parks at its end.
+- **Field:** four checksum pips recomputed from the field's text on every keystroke.
+- **Dialog:** magnified: 25%, 50%, then full size, in three hard frames.
+- **Success:** parity: a row of eight pips whose last pip toggles twice and settles to even parity.
+
+### `nav-pirate-radio`
+- **Signature:** the header is a tuner: a needle moves over an 87 to 108 MHz scale in 0.1 MHz detents and locks onto the station nearest within 0.3 MHz, with a lock lamp, a display plate and a five-bar signal meter.
+- **Pointer:** the needle follows the pointer along the dial in detents (touch: drag along the scale; keyboard: arrows tune station to station).
+- **Scroll:** scrolling tunes: the needle travels between stations through "between stations" and locks as each section arrives.
+- **Load:** band scan: the needle sweeps the band and each station name cuts in as it passes.
+- **Button:** a tuning eye: two blocks whose gap closes in three steps; fully closed, with the face inverted, on press.
+- **Link:** a broken underline whose gap closes from both sides.
+- **Field:** an antenna telescopes out of the field's corner in three thinning segments.
+- **Dialog:** the frame switches on a side at a time, clockwise, then the content.
+- **Success:** a paper slip drops onto a desk spike in three steps.
+
+### `faq-hint-hotline`
+- **Signature:** two-tone dialling: every key press lights the key, the tone bar of its row and the tone bar of its column; two digits open, scroll to and focus a question.
+- **Pointer:** hovering or focusing a key previews its row and column bars as outlines and what the key would do (touch: the press itself; keyboard: digit, star and hash keys).
+- **Scroll:** the cord: a pixel coil between the handset and the sticky keypad pays out loop by loop; the display follows the question being read.
+- **Load:** off the hook: the handset lifts off its cradle in two steps and the line lamp comes on.
+- **Button:** hook switches: two plungers on the top edge pop up; pushed below the edge, with the face inverted, on press.
+- **Link:** the double ring: the underline goes off, on, off, on and holds.
+- **Field:** patched through: a plug on a short cord seats in a jack socket at the field's edge.
+- **Dialog:** the line opens: from a 2 px line at mid-height to a third, two thirds and full height.
+- **Success:** the keypad dials the call-back number by itself, one key at a time.
+
+### `contact-privacy-helpdesk`
+- **Signature:** glyph rain with no idle loop: three bands of falling glyphs, one per contact route, that advance one cell per tick only when something drives them.
+- **Pointer:** a lane rains harder: hovering or focusing a route runs its band for as long as the pointer stays; the other lanes are unchanged (touch: one second of burst on tap).
+- **Scroll:** scrolling is the rain's clock: every 12 px is one tick, down falls and up rises.
+- **Load:** twelve ticks of rain into its resting positions, then the lane panels cut in.
+- **Button:** a padlock shackle standing proud of the button drops closed; a keyhole pip turns from 12 to 3 o'clock and the face inverts on press.
+- **Link:** sealed: the underline closes into a box around the text, side walls first.
+- **Field:** a ciphertext strip under the message field grows one block glyph per typed character, in groups of four; typed characters also drop into the rain as bright inverse tiles and step down to ciphertext as they fall.
+- **Dialog:** the deadbolt: the panel steps into place and a bolt is thrown into a strike plate.
+- **Success:** the rain stops and its bottom rows lock, row by row, into the message's fingerprint.
+- **Other:** radio buttons drawn as stepped pixel diamonds.
+
+## State of the collection
+
+Twenty-two designs: the seven from the Arcade series and the fifteen of series two. Before adding a twenty-third, read every block above; its subject, its ground and each of its effects must be new.
