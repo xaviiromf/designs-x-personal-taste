@@ -796,13 +796,14 @@
     // character in --plain on the well for two, then a new atlas glyph every two cells while its tone steps
     // turn-1, turn-2, cipher over the next six. It leaves a short cipher tail like any other head.
     function drawDrops(b) {
-      for (let j = drops.length - 1; j >= 0; j--) {
+      // oldest first, so a newer character is never painted over by an older one's tail
+      for (let j = 0; j < drops.length; j++) {
         const p = drops[j];
         if (p.bi !== b.i) continue;
         // plaintext is heavier than the rain: a typed character falls one cell for every two ticks, so with two
         // ticks a keystroke the last dozen characters stand as a descending diagonal
         const age = (b.T - p.t0) >> 1, r = p.r0 + age, x = p.c * cell;
-        if (r - 6 >= b.r1) { drops.splice(j, 1); continue; }
+        if (r - 6 >= b.r1) { drops.splice(j--, 1); continue; }
         if (age < 0) continue;
         for (let k = Math.min(age, 6); k >= 1; k--) {
           const rr = r - k;
