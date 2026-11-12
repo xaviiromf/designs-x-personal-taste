@@ -64,6 +64,10 @@
     --d-chalk-hold: .2s;    /* a tapped link keeps its chalk */
     --d-knot: .07s;         /* field: the string, then the knot */
     --d-peg: .07s;          /* dialog: one frame of the swing */
+    --d-grab: .25s;         /* touch: a tile is held this long before it lifts, so a swipe still scrolls */
+    --d-lift: .08s;         /* a grabbed tile lifts off the floor in two steps */
+    --d-shiver: .16s;       /* one round of the held tile's 1px shiver */
+    --d-back: .16s;         /* a tile that does not fit steps back to its space */
   }
   @media (max-width: 599px) {
     :root { --t-lede: 17px; --t-h3: 21px; --wall: 6px; --tag-w: 132px; }
@@ -288,6 +292,8 @@
     color: var(--rust-deep);
     cursor: pointer;
     -webkit-tap-highlight-color: transparent;
+    -webkit-user-select: none; user-select: none; -webkit-touch-callout: none;
+    transition: transform var(--d-lift) steps(2, end), filter var(--d-lift) steps(2, end);
   }
   .tile:focus-visible { outline-offset: 1px; }
   .tile-face {
@@ -340,6 +346,17 @@
   }
   .cell:focus-within .tag-string, .cell.is-sel .tag-string { visibility: visible; }
   .cell:focus-within .tag-card, .cell.is-sel .tag-card { visibility: visible; transition: visibility 0s linear var(--d-tag); }
+
+  /* Drag: the tile lifts off the floor in two steps over a hard rust-at-dusk shadow, and shivers by 1px while held.
+     The cell follows the pointer; a mark on the floor shows where it would land (paper: fits; fault, hatched: does not). */
+  .cell.is-held, .cell.is-back { z-index: 6; }
+  .cell.is-held .tag, .cell.is-back .tag { display: none; }
+  .cell.is-held .tile { transform: translate(-4px, -6px); filter: drop-shadow(4px 6px 0 var(--scrim)); cursor: grabbing; }
+  .cell.is-held .tile-face { animation: shiver var(--d-shiver) steps(1, end) infinite; }
+  @keyframes shiver { 0% { transform: translate(1px, 0); } 25% { transform: translate(0, 1px); } 50% { transform: translate(-1px, 0); } 75% { transform: translate(0, -1px); } }
+  .cell.is-back { transition: transform var(--d-back) steps(4, end); }
+  .drop { position: relative; z-index: 5; pointer-events: none; box-shadow: inset 0 0 0 2px var(--card); }
+  .drop.is-no { box-shadow: inset 0 0 0 2px var(--fault); background: repeating-linear-gradient(-45deg, var(--fault) 0 2px, transparent 0 8px); }
 
   /* Tidy: the crate stands empty, then the tiles are dealt one at a time in the new order. Hard cuts, nothing travels. */
   @keyframes deal { from { visibility: hidden; } }
@@ -585,7 +602,7 @@
           </div>
         </div>
         <h3 class="vh" id="crate-title">The crate</h3>
-        <p class="vh" id="crate-help">Each item is a tile sized by its kind. Use the arrow keys to move between tiles and Enter to select one.</p>
+        <p class="vh" id="crate-help">Each item is a tile sized by its kind. Use the arrow keys to move between tiles and Enter to select one. Drag a tile, or press Shift with an arrow key, to move it to a free space.</p>
         <div class="crate" id="crate">
           <div class="floor" id="floor" role="grid" aria-labelledby="crate-title" aria-describedby="crate-help"></div>
           <div class="crate-empty" id="crate-empty" hidden><p id="crate-empty-text">The crate is empty.</p></div>
@@ -876,6 +893,14 @@
     return { at, rows: rowsOf(at) };
   };
   const unplaceItem = (layout, id) => { const at = { ...layout.at }; delete at[id]; return { at, rows: rowsOf(at) }; };
+  // A hand move: the tile's whole footprint inside the crate's rows and on no other tile.
+  const fits = (layout, id, c, r, rows) => {
+    const { w, h } = layout.at[id], g = occupancy(unplaceItem(layout, id).at);
+    if (c < 0 || r < 0 || c + w > COLS || r + h > rows) return false;
+    for (let y = r; y < r + h; y++) for (let x = c; x < c + w; x++) if (g.has(y * COLS + x)) return false;
+    return true;
+  };
+  const moveItem = (layout, id, c, r) => { const at = { ...layout.at, [id]: { ...layout.at[id], c, r } }; return { at, rows: rowsOf(at) }; };
   const pack = (list) => list.reduce((l, rec) => placeItem(l, rec), { at: {}, rows: 0 });
   const sameLayout = (a, b) => {
     const ka = Object.keys(a.at), kb = Object.keys(b.at);
@@ -924,6 +949,8 @@
     }
     const L = pack(SEED.slice(0, 4)), P = placeItem(unplaceItem(L, 's02'), SEED[1]);
     eq(P.at.s02, L.at.s02, 'a removed tile goes back to its own space');
+    yes(fits(L, 's02', 9, 4, 5) && !fits(L, 's02', 1, 1, 5) && !fits(L, 's04', 9, 0, 5) && !fits(L, 's02', 0, 5, 5), 'a moved tile fits only in free space inside the crate');
+    eq(moveItem(L, 's02', 9, 4).at.s02, { c: 9, r: 4, w: 1, h: 1 }, 'move');
     yes(sameLayout(L, pack(SEED.slice(0, 4))) && !sameLayout(L, unplaceItem(L, 's01')), 'layout comparison');
     if (fails.length) console.error('SELFTEST FAIL\n' + fails.join('\n')); else console.log('SELFTEST PASS');
     return !fails.length;
@@ -1161,7 +1188,7 @@
   });
 
   // The crate: a grid of real buttons. Arrow keys move in reading order; Enter or Space selects; Escape lets go.
-  floor.addEventListener('click', (e) => { const t = e.target.closest('.tile'); if (t) select(t.dataset.id); });
+  floor.addEventListener('click', (e) => { const t = e.target.closest('.tile'); if (t && !dragged) select(t.dataset.id); });
   floor.addEventListener('focusin', (e) => {
     const t = e.target.closest('.tile'); if (!t) return;
     ui.focus = t.dataset.id;
@@ -1170,6 +1197,8 @@
   floor.addEventListener('keydown', (e) => {
     const t = e.target.closest('.tile'); if (!t) return;
     const tiles = $$('.tile', floor), i = tiles.indexOf(t), P = (b) => layout.at[b.dataset.id];
+    const step = e.shiftKey && { ArrowRight: [1, 0], ArrowLeft: [-1, 0], ArrowDown: [0, 1], ArrowUp: [0, -1] }[e.key];
+    if (step) { e.preventDefault(); const p = P(t); if (!moveTile(t.dataset.id, p.c + step[0], p.r + step[1])) say('It does not fit there.'); return; }
     let to = null;
     if (e.key === 'ArrowRight') to = tiles[i + 1];
     else if (e.key === 'ArrowLeft') to = tiles[i - 1];
@@ -1187,6 +1216,61 @@
     e.preventDefault();
     if (to) to.focus();
   });
+
+  // Moving a tile by hand: it keeps its new space until the crate is tidied or sorted (syncLayout keeps placed tiles).
+  const moveTile = (id, c, r) => {
+    const p = layout.at[id];
+    if (!p || (p.c === c && p.r === r) || !fits(layout, id, c, r, Math.max(MIN_ROWS, layout.rows))) return false;
+    layout = moveItem(layout, id, c, r); ui.focus = id;
+    renderCrate();
+    say(`Moved ${esc(byId(id).item)} to row ${r + 1}, column ${c + 1}.`);
+    return true;
+  };
+  // Drag: mouse and pen lift a tile after 4px of travel (so a click still selects); touch after a --d-grab hold (so a swipe still scrolls).
+  let drag = null, dragged = false, dropMark = null;
+  const dropAt = (d, e) => ({ c: Math.round(d.p.c + (e.clientX - d.x) / d.cw), r: Math.round(d.p.r + (e.clientY - d.y) / d.rh) });
+  const grab = () => {
+    drag.on = dragged = true;
+    drag.cell.classList.add('is-held');
+    dropMark = document.createElement('div'); dropMark.className = 'drop'; dropMark.setAttribute('aria-hidden', 'true');
+    floor.append(dropMark);
+  };
+  const letGo = (e) => {
+    const d = drag; drag = null; clearTimeout(d.hold);
+    if (!d.on) return;
+    dropMark?.remove(); dropMark = null;
+    setTimeout(() => { dragged = false; }); // after the click this release makes
+    const { c, r } = e ? dropAt(d, e) : d.p;
+    if (e && moveTile(d.id, c, r)) return; // re-rendered in its new space: a hard cut, like the deal
+    d.cell.classList.replace('is-held', 'is-back');
+    d.cell.style.transform = '';
+    setTimeout(() => d.cell.classList.remove('is-back'), sec('--d-back') * 1000);
+  };
+  floor.addEventListener('pointerdown', (e) => {
+    const t = e.target.closest('.tile');
+    if (!t || drag || e.button !== 0 || !e.isPrimary) return;
+    const cell = t.parentElement, p = layout.at[t.dataset.id], b = cell.getBoundingClientRect();
+    drag = { id: t.dataset.id, cell, p, x: e.clientX, y: e.clientY, cw: b.width / p.w, rh: b.height / p.h, pid: e.pointerId, touch: e.pointerType === 'touch', on: false };
+    if (drag.touch) drag.hold = setTimeout(grab, sec('--d-grab') * 1000);
+  });
+  window.addEventListener('pointermove', (e) => {
+    if (!drag || e.pointerId !== drag.pid) return;
+    const dx = e.clientX - drag.x, dy = e.clientY - drag.y;
+    if (!drag.on) {
+      if (Math.hypot(dx, dy) > (drag.touch ? 8 : 4)) { if (drag.touch) letGo(); else grab(); }
+      if (!drag?.on) return;
+    }
+    drag.cell.style.transform = `translate(${Math.round(dx)}px, ${Math.round(dy)}px)`;
+    const { c, r } = dropAt(drag, e), { w, h } = drag.p, rows = Math.max(MIN_ROWS, layout.rows);
+    const c0 = Math.max(0, c), c1 = Math.min(COLS, c + w), r0 = Math.max(0, r), r1 = Math.min(rows, r + h);
+    dropMark.hidden = c1 <= c0 || r1 <= r0; // clamped to the floor so the grid never grows
+    dropMark.style.gridArea = `${r0 + 1} / ${c0 + 1} / ${r1 + 1} / ${c1 + 1}`;
+    dropMark.classList.toggle('is-no', !fits(layout, drag.id, c, r, rows));
+  });
+  window.addEventListener('pointerup', (e) => { if (drag && e.pointerId === drag.pid) letGo(e); });
+  window.addEventListener('pointercancel', (e) => { if (drag && e.pointerId === drag.pid) letGo(); });
+  window.addEventListener('touchmove', (e) => { if (drag?.on) e.preventDefault(); }, { passive: false }); // a held tile does not scroll the page
+  floor.addEventListener('contextmenu', (e) => { if (drag) e.preventDefault(); });
 
   detailBody.addEventListener('click', (e) => {
     const b = e.target.closest('[data-do]'); if (!b) return;

@@ -206,6 +206,7 @@ Effects are added here batch by batch as designs are accepted, as built. The art
 - **Field:** a paper tag: a string is threaded and knotted through its hole on focus; a live reading of the typed value in its type's format.
 - **Dialog:** hung on a peg: tilted 4 degrees, then 2, then level.
 - **Success:** chalked up: the tile is dealt in with its tag and a new tally mark is stamped; delete strikes a mark, with Undo.
+- **Other:** a tile lifted out of the crate by hand: it steps up over a hard shadow and shivers by 1 px while held, a paper (fits) or hatched fault (does not) block marks where it would land, and a tile that does not fit steps back to its space (touch: a short hold to grab; keyboard: Shift with an arrow).
 
 ### `testimonials-capsule-club`
 - **Signature:** a capsule machine: one full turn of the crank releases a capsule from a staggered pile, which settles in whole steps; the capsule travels down the chute cell by cell, its lid lifts in the tray, and the card cuts to that subscriber's words.
