@@ -96,3 +96,10 @@ Every design meets this without announcing it:
 4. Replace the copy with the target project's real content. Keep its length and tone roughly the same, or revisit the layout.
 5. Translate to the target stack (React, Vue, Svelte, Tailwind, etc.) only after the tokens and copy are right. Keep the structure and the one bold idea intact.
 6. Never mix two designs' signatures in one section, and never lift a single effect out of a design to decorate another.
+
+## The catalogue's fullscreen control is not part of any design
+
+The catalogue's view pages (`/d/<slug>/`) wrap every live preview with a **Fullscreen** button and, while in fullscreen, a floating **Quit fullscreen** button. That control belongs to the site, not to the design.
+
+- When porting or building a design, do not copy it, reference it, or count it as part of the design.
+- Do not add a fullscreen control to a design for this purpose. A design's `index.html` and `design.md` never mention it.

@@ -128,6 +128,10 @@ Effects are added here batch by batch as designs are accepted, as built. The art
 | `nav-pirate-radio` | `#3D2C08` | tarnished brass | a community radio station that began as a pirate transmitter |
 | `faq-hint-hotline` | `#5A2C24` | bakelite | a volunteer hint line for old adventure games |
 | `contact-privacy-helpdesk` | `#073B3A` | deep teal | a volunteer digital-security helpdesk |
+| `hero-contour-sled` | `#6E4A0E` | contour ochre | a studio launching a night toboggan game |
+| `features-magnet-keyboards` | `#08566A` | fjord cyan | a maker of Hall-effect keyboards for retro computers and arcade play |
+| `pricing-riso-print-shop` | `#7A1438` | raspberry | a two-drum risograph print shop for homebrew game zines and manuals |
+| `gallery-polycount-jam` | `#3F5C00` | chartreuse | an online game jam limited to 300 triangles per model |
 
 ### `portfolio-isometric-artist`
 - **Signature:** commissions as an isometric city on a low-resolution canvas: one tower per year, one floor slab per commission in the hue of its kind, read against an axis.
@@ -297,9 +301,56 @@ Effects are added here batch by batch as designs are accepted, as built. The art
 - **Success:** the rain stops and its bottom rows lock, row by row, into the message's fingerprint.
 - **Other:** radio buttons drawn as stepped pixel diamonds.
 
+### `hero-contour-sled`
+- **Signature:** a live topographic map: a value-noise height field drawn by marching squares as 2px pixel-stepped isolines in five altitude bands; the copy sits on flat tarns no line crosses; one cyan line is the fall line from the summit hut, recomputed on every change.
+- **Pointer:** a hill rises under the pointer one contour interval at a time, the isolines and the run reroute around it, and it sinks interval by interval when the pointer leaves (touch: drag; click/tap: drop in, a start gate and a new fall line from that spot with a readout of drop and length; keyboard: a knoll rises at the tarn's shore beside the focused control).
+- **Scroll:** the snowline steps down the mountain one contour line at a time as the hero scrolls away.
+- **Load:** the survey: contours plotted from the summit down one level at a time, the copy cuts in when the plot reaches the valley, the name rises, then the sled runs the line.
+- **Button:** a red-white-red trail blaze painted on in three strokes; toothed brake claws dig in under the button on press.
+- **Link:** the underline rises into a stepped summit in two frames.
+- **Field:** hachures (slope ticks) step in under the field in three lengths; a valid value closes them into one solid line.
+- **Dialog:** twelve map sheets uncovered in four groups by the altitude of the ground behind them, summit first.
+- **Success:** a summit rises beside the confirmation and the run is ridden again from the hut.
+- **Other:** the name as terrain: the display word added to the height field so it stands as nested contour rings on a tilted terrace; the mountain is chosen from up to eight noise seeds so the hut's line reaches the tarn.
+
+### `features-magnet-keyboards`
+- **Signature:** a sheet of iron filings: pixel needles locked to eight 45° directions, combed by a curl-noise flow; the feature cards are bar magnets whose dipole fields bend the comb into loops; needles turn one step per tick and take a pole hue (north coral, south lilac) only when held and aligned.
+- **Pointer:** the pointer is a magnet whose pull falls off with distance; click or tap on the sheet turns it over (tips toward it, then away), with a button as the equivalent (touch: drag, the magnet lingers 0.5 s; keyboard: a focused card pulls three times harder, any other focused control becomes the magnet).
+- **Scroll:** the sheet is jolted: needles lean toward the direction of travel by speed, then step back to the comb.
+- **Load:** shaken filings settle into the comb, then the cards cut in one at a time and each one's magnet switches on.
+- **Button:** horseshoe magnet: a north cap and a south cap rise on the two ends in two steps; a keeper bar closes across them on press.
+- **Link:** an underline of filings at 45° that turn flat, then join.
+- **Field:** a compass that turns one 45° step per typed character and points north when the value is valid.
+- **Dialog:** twelve magnetic domains whose arrows step into line, then merge into the panel.
+- **Success:** the visible sheet turns north row by row from the bottom, holds, and relaxes to the comb.
+- **Other:** a card's active state as its north and south edges thickening in the pole hues.
+
+### `pricing-riso-print-shop`
+- **Signature:** a 45-degree risograph halftone screen of pixel-round dot sprites (radius 0 to 4 px, 8 px lattice); paper-grain value noise sets each dot's resting size; two inks per dot, the bigger dot in its ink and the smaller in flat overprint green; text and plates are knocked out of the screen line by line.
+- **Pointer:** inking: dots under the pointer grow one radius step per 0.05 s and dry back one step per 0.45 s (about 2 s); pointing at a run inks a ring around its plate in that run's inks (aqua; aqua and yellow in diagonal bands; yellow over aqua) and loads the pointer with them (touch: tap stamps, drag trails, tap a run to load; keyboard: focus inside a run inks its ring).
+- **Scroll:** the roller: a full-width band at mid-viewport inks the distance scrolled, aqua going down and yellow going up, so a return pass overprints green.
+- **Load:** first copies come out pale: the resting screen builds in three density steps, and the type cuts in on the third; then each run inks its ring in order.
+- **Button:** a halftone mask on the face grows from radius 1 to 4 to solid in five frames; press: fed into the rollers (2 px down, top rows gripped).
+- **Link:** saddle stitched: two staple marks punch through a thickened underline, left then right.
+- **Field:** an ink gauge column at the field's left edge fills in four steps in the ink of the run being booked.
+- **Dialog:** rolls off the drum: rotationX on the top edge, -70, -40, -14, 0 degrees.
+- **Success:** a job ticket with a job number; on close, the booked run prints across the visible page, one full pass per drum, top to bottom, then dries.
+- **Other:** the pointer stays loaded with the inks of the last run pointed at.
+
+### `gallery-polycount-jam`
+- **Signature:** an untextured low-poly scene: a triangle mesh on a noise height field, flat-shaded against one light in exactly four tones per hue, drawn without anti-aliasing at one pixel per 4 CSS px and scaled up pixelated; each card's window is a hole onto the mesh, whose triangles under the card take the entry's genre hue.
+- **Pointer:** cloth press: vertices near the pointer sink (deeper while held) and return in three stepped bounces; the noise breathes only for 700 ms after any change (touch: tap presses and bounces; keyboard: focusing a card presses a bowl under its window, as hover does).
+- **Scroll:** a diagonal fold crease travels across the mesh with section progress, height from velocity, and flattens in three bounces when scrolling stops.
+- **Load:** level-of-detail popping: the mesh rebuilds at 8x, 4x, 2x, then full density; genre regions cut in at the last step.
+- **Button:** the face splits along its diagonal into a lit and a shaded flat triangle (the second 60 ms later); on press the two tones swap.
+- **Link:** a folded ribbon: the underline gives way to a strip of lit triangles, then the shaded triangles between them.
+- **Field:** a match strip under the search: one triangle per matching entry in its genre hue, redrawn every keystroke.
+- **Dialog:** built from two triangles: a corner sliver, the upper-left half, then the whole panel.
+- **Success:** play later raises a bone pyramid in the entry's window that stamps up through the three bounces and stays.
+
 ## About me series
 
-Five designs in the `about` section, set in Departure Mono with ten hues or more each (three vivid, two muted). Unlike the rest of the collection, these designs revisit the families above on purpose: each one gathers every kind of effect as a variation and lists, in its own `design.md` under `## Lineage`, which family each variation descends from and what changed. A twenty-third design may borrow a family from here only by changing it as much again.
+Five designs in the `about` section, set in Departure Mono with ten hues or more each (three vivid, two muted). Unlike the rest of the collection, these designs revisit the families above on purpose: each one gathers every kind of effect as a variation and lists, in its own `design.md` under `## Lineage`, which family each variation descends from and what changed. A thirty-second design may borrow a family from here only by changing it as much again.
 
 | Design | Ground | Name | Palette | Subject |
 |---|---|---|---|---|
@@ -326,4 +377,4 @@ Pointer engine: a glyph editor whose edits are used at once by a live specimen l
 
 ## State of the collection
 
-Twenty-seven designs: the seven from the Arcade series, the fifteen of series two and the five of the About me series. Before adding a twenty-third, read every block above; its subject, its ground and each of its effects must be new.
+Thirty-one designs: the seven from the Arcade series, the nineteen of series two and the five of the About me series. Before adding a thirty-second, read every block above; its subject, its ground and each of its effects must be new.
