@@ -597,7 +597,7 @@
       </div>
       <div class="ed-frame"><canvas class="ed" width="240" height="108" tabindex="0" role="application" aria-label="Tile editor: a room of 40 by 18 tiles that you can paint" aria-describedby="ed-help ed-read"></canvas></div>
       <p class="ed-read cut" id="ed-read">Brush: solid ground.</p>
-      <p class="ed-help cut" id="ed-help">Move over the room to paint with the chosen tile. On touch, drag sideways or tap. With a keyboard: focus the room, arrows move, Space places, 1 to 6 pick a tile.</p>
+      <p class="ed-help cut" id="ed-help">Click or drag over the room to paint with the chosen tile. On touch, drag sideways or tap. With a keyboard: focus the room, arrows move, Space places, 1 to 6 pick a tile.</p>
       <p class="vh" id="ed-say" aria-live="polite"></p>
     </div>
   </div>
@@ -915,7 +915,7 @@
     else tile(g, t, 0, t === 4 ? 2 : 0, 6, [0, 0, 0, 0, 0, 0, 0, 0]);
   });
 
-  /* ---------- 1. The grey box: a tile editor whose brush is the pointer ---------- */
+  /* ---------- 1. The grey box: a tile editor painted by click and drag ---------- */
   const editor = (() => {
     const cv = $('.ed'), g = cv.getContext('2d'), read = $('#ed-read'), say = $('#ed-say'), brushes = $$('.brush');
     const T = 6, COLS = 40, ROWS = 18, SPAWN = [2, 12], DOOR = [36, 5];
@@ -986,8 +986,12 @@
     // A finger that lands on the room may be starting to scroll the page, so its first tile waits: it is placed when
     // the finger moves sideways (a drag) or lifts (a tap), and dropped if the browser takes the gesture for a scroll.
     let pend = null;
-    cv.addEventListener('pointerdown', (e) => { last = null; if (e.pointerType === 'touch') pend = cellAt(e); else stroke(e); });
-    cv.addEventListener('pointermove', (e) => { if (pend) { last = pend; pend = null; } stroke(e); });
+    cv.addEventListener('pointerdown', (e) => { last = null; if (e.button !== 0) return; if (e.pointerType === 'touch') pend = cellAt(e); else stroke(e); });
+    // A hovering mouse or pen only moves the cell cursor; tiles are laid while the button (or finger) is down.
+    cv.addEventListener('pointermove', (e) => {
+      if (pend) { last = pend; pend = null; }
+      if (e.buttons & 1) stroke(e); else if (build == null) { last = null; cur = cellAt(e); queue(); }
+    });
     cv.addEventListener('pointerup', (e) => { if (pend) { pend = null; last = null; stroke(e); } });
     cv.addEventListener('pointerleave', () => { last = null; if (document.activeElement !== cv) cur = null; queue(); });
     cv.addEventListener('pointercancel', () => { last = null; pend = null; });
